@@ -44,26 +44,18 @@ export default function Hero() {
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="order-2 md:order-1 text-right"
+                        className="order-1 text-right"
                     >
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="glass-panel inline-flex items-center gap-2 px-4 py-2 rounded-full text-[var(--color-primary)] font-medium text-sm mb-8 shadow-sm"
-                        >
-                            <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse shadow-[0_0_10px_var(--color-accent)]"></span>
-                            סדנאות מבוססות כלבים, מותאם אישית לשטח
-                        </motion.div>
+
 
                         <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-[1.1] text-[var(--color-text)] tracking-tight">
                             <span className="text-gradient">ברק אלוני</span>
                             <br />
-                            סדנאות כלבנות טיפולית
+                            סדנאות כלבנות והעצמה
                         </h1>
 
                         <p className="text-xl text-[var(--color-text-muted)] mb-10 leading-relaxed max-w-lg ml-auto">
-                            חינוך, קהילה וארגונים. נבנה יחד חוויה טיפולית, ערכית ומחברת – עם מעל 10 שנות ניסיון בשטח.
+                            חינוך, קהילה וארגונים. נבנה יחד חוויה מעצימה, ערכית ומחברת – עם מעל 10 שנות ניסיון בשטח.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 mb-10">
@@ -99,7 +91,7 @@ export default function Hero() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="order-1 md:order-2 relative"
+                        className="order-2 relative"
                     >
                         {/* Video Trigger Card */}
                         <div

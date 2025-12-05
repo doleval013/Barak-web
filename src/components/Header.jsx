@@ -98,7 +98,7 @@ export default function Header() {
               initial={{ opacity: 0, y: -20, scaleY: 0.9 }}
               animate={{ opacity: 1, y: 0, scaleY: 1 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-20 left-4 right-4 glass-panel rounded-2xl shadow-xl p-6 flex flex-col gap-4 md:hidden origin-top"
+              className="absolute top-20 left-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-100 p-6 flex flex-col gap-4 md:hidden origin-top"
             >
               {navLinks.map((link) => (
                 <a
@@ -114,50 +114,10 @@ export default function Header() {
                 href="#contact"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="btn-shine bg-[var(--color-primary)] text-white py-3 rounded-xl font-bold text-center mt-2 shadow-lg"
+                style={{ color: '#ffffff' }}
               >
                 בואו נדבר
               </a>
-
-              {/* Social Links in Mobile Menu */}
-              <div className="flex justify-center gap-8 mt-4 pt-4 border-t border-[var(--color-border)]">
-                <a
-                  href="https://www.facebook.com/barakaloni.dogs"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/50 text-[#1877F2] hover:bg-[#1877F2] hover:text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
-                  aria-label="Facebook"
-                >
-                  <Facebook size={20} />
-                </a>
-                <a
-                  href="https://www.instagram.com/barakaloni.dogs/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/50 text-[#E1306C] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
-                  aria-label="Instagram"
-                >
-                  <Instagram size={20} />
-                </a>
-                <a
-                  href="https://www.tiktok.com/@barakaloni"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/50 text-black hover:bg-black hover:text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
-                  aria-label="TikTok"
-                >
-                  <TikTok size={18} />
-                </a>
-                <a
-                  href="https://www.youtube.com/channel/UC56vSCOnTh1K-5FkiwoIdvA/videos"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/50 text-[#FF0000] hover:bg-[#FF0000] hover:text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm"
-                  aria-label="YouTube"
-                >
-                  <Youtube size={20} />
-                </a>
-              </div>
-
             </motion.div>
           )}
         </AnimatePresence>

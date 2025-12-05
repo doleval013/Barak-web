@@ -8,4 +8,13 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    host: true, // Needed for Docker/Cloud
+    port: process.env.PORT ? parseInt(process.env.PORT) : 5173,
+  },
+  preview: {
+    host: true, // Needed for Docker/Cloud
+    port: process.env.PORT ? parseInt(process.env.PORT) : 4173,
+    allowedHosts: true,
+  },
 })

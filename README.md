@@ -76,9 +76,5 @@ This will generate a `dist` folder containing your optimized assets.
 3.  Set the **Build Command** to: `npm run build`
 4.  Set the **Output Directory** (Publish Directory) to: `dist`
 
-## 🔒 Security Note
-*   **Git Safety**: The `.gitignore` file is configured to exclude `node_modules`, `dist`, logs, and environment files (`.env`).
-*   **No Secrets**: Ensure you do not commit real API keys or tokens directly into the code. Use environment variables if expanding the backend functionality.
-
 ---
 *Built with ❤️ for Barak Aloni*

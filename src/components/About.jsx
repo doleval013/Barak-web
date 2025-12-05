@@ -42,7 +42,7 @@ export default function About() {
 
                             <div className="space-y-6 text-lg leading-relaxed text-[var(--color-text-muted)]">
                                 <p>
-                                    <strong className="text-[var(--color-text)]">אני ברק,</strong> מדריך ומוביל תוכניות חינוכיות בכלבנות טיפולית.
+                                    <strong className="text-[var(--color-text)]">אני ברק,</strong> מדריך ומוביל תוכניות חינוכיות בכלבנות והעצמה.
                                     הצוות שלי ואני מפעילים פרויקטים בבתי ספר, בעמותות, בקייטנות ובארגונים בכל הארץ.
                                 </p>
                                 <p>

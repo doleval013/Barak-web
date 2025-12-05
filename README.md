@@ -2,7 +2,7 @@
 
 A premium, responsive, and high-performance single-page application (SPA) built for Barak Aloni's therapeutic dog training business. This project showcases modern web development practices with a focus on aesthetics, user experience, and accessibility.
 
-![Project Banner](/public/assets/BARAK-ALONI-logo-1024x319.png)
+![Project Banner](public/assets/BARAK-ALONI-logo-1024x319.png)
 
 ## 🚀 Key Features
 
@@ -29,7 +29,7 @@ A premium, responsive, and high-performance single-page application (SPA) built 
 1.  **Clone the repository**:
     ```bash
     git clone https://github.com/your-username/barak-web.git
-    cd barak-web/app
+    cd barak-web
     ```
 
 2.  **Install dependencies**:
@@ -72,8 +72,9 @@ This will generate a `dist` folder containing your optimized assets.
 
 ### Deploying to Netlify / Vercel / AWS Amplify
 1.  Connect your Git repository.
-2.  Set the **Build Command** to: `npm run build`
-3.  Set the **Output Directory** (Publish Directory) to: `dist`
+2.  Set the **Root Directory** to: `.` (or leave empty)
+3.  Set the **Build Command** to: `npm run build`
+4.  Set the **Output Directory** (Publish Directory) to: `dist`
 
 ## 🔒 Security Note
 *   **Git Safety**: The `.gitignore` file is configured to exclude `node_modules`, `dist`, logs, and environment files (`.env`).

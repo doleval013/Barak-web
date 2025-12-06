@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: barak-web
+  labels:
+    app: barak-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: barak-web
+  template:
+    metadata:
+      labels:
+        app: barak-web
+    spec:
+      containers:
+      - name: barak-web
+        image: doleval013/barak-web:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: barak-web-service
+spec:
+  selector:
+    app: barak-web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  # On k3s/Single-Node, 'LoadBalancer' will bind to the Host's Port 80
+  type: LoadBalancer

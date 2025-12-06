@@ -57,15 +57,16 @@ export default function Programs() {
                     </motion.h2>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="flex md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory hide-scrollbar">
                     {programs.map((program, index) => (
                         <motion.div
                             key={program.id}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
+                            whileTap={{ scale: 0.98 }}
                             transition={{ delay: index * 0.1, duration: 0.5 }}
-                            className="group relative glass-panel rounded-[2rem] p-6 md:p-8 hover:bg-white transition-all duration-500 hover:shadow-glow flex flex-col h-full hover:-translate-y-2"
+                            className="min-w-[85vw] md:min-w-0 snap-center group relative glass-panel rounded-[2rem] p-6 md:p-8 hover:bg-white transition-all duration-500 hover:shadow-glow flex flex-col h-full hover:-translate-y-2"
                         >
 
                             <div className="relative z-10 flex flex-col h-full">

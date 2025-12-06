@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import LegalModal from './components/LegalModal';
 import CookieBanner from './components/CookieBanner';
 import AccessibilityWidget from './components/AccessibilityWidget';
+import FloatingWhatsApp from './components/FloatingWhatsApp';
 
 function App() {
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
@@ -36,6 +37,7 @@ function App() {
       />
       <CookieBanner onOpenPrivacy={() => openLegal('privacy')} />
       <AccessibilityWidget />
+      <FloatingWhatsApp />
     </div>
   );
 }

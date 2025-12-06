@@ -48,7 +48,7 @@ export default function Hero() {
                     >
 
 
-                        <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-[1.1] text-[var(--color-text)] tracking-tight">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-[1.1] text-[var(--color-text)] tracking-tight">
                             <span className="text-gradient">ברק אלוני</span>
                             <br />
                             סדנאות כלבנות והעצמה

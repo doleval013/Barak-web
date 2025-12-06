@@ -23,7 +23,7 @@ export default function About() {
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="glass-panel relative p-8 md:p-14 rounded-[2.5rem] hover:shadow-glow transition-all duration-500"
+                        className="glass-panel relative p-6 md:p-14 rounded-[2.5rem] hover:shadow-glow transition-all duration-500"
                     >
                         {/* Decorative Quote Icon */}
                         <div className="absolute top-8 right-8 text-[var(--color-primary)]/5">

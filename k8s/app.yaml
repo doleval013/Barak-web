@@ -38,5 +38,27 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-  # On k3s/Single-Node, 'LoadBalancer' will bind to the Host's Port 80
-  type: LoadBalancer
+  # On k3s/Single-Node, 'ClusterIP' is usually enough if using Ingress, 
+  # but LoadBalancer is fine too (ServiceLB). 
+  # For Traefik to pick it up easily, let's keep it simple.
+  type: ClusterIP 
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: barak-web-ingress
+  annotations:
+    # Tell Traefik to handle this simple catch-all rule
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: barak-web-service
+            port:
+              number: 80

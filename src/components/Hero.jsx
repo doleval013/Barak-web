@@ -59,7 +59,8 @@ export default function Hero() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                            <a
+                            <motion.a
+                                whileTap={{ scale: 0.95 }}
                                 href="#contact"
                                 className="btn-shine inline-flex items-center justify-center gap-2 rounded-full font-bold text-lg transition-all transform hover:-translate-y-1 shadow-glow hover:shadow-lg bg-[var(--color-primary)] px-8 py-4"
                                 style={{ color: '#ffffff' }}
@@ -68,13 +69,14 @@ export default function Hero() {
                                     בואו נדבר
                                     <ArrowLeft size={20} />
                                 </span>
-                            </a>
-                            <a
+                            </motion.a>
+                            <motion.a
+                                whileTap={{ scale: 0.95 }}
                                 href="#programs"
                                 className="glass-panel inline-flex items-center justify-center gap-2 text-[var(--color-text)] px-8 py-4 rounded-full font-bold text-lg hover:bg-white/80 transition-all shadow-sm"
                             >
                                 למי זה מתאים?
-                            </a>
+                            </motion.a>
                         </div>
 
                         <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-[var(--color-text-muted)]">

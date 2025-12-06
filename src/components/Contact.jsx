@@ -45,7 +45,7 @@ export default function Contact() {
                     <div className="grid lg:grid-cols-5">
 
                         {/* Contact Info Side */}
-                        <div className="lg:col-span-2 p-10 md:p-14 bg-[var(--color-primary)] text-white flex flex-col justify-between relative overflow-hidden">
+                        <div className="lg:col-span-2 p-6 md:p-14 bg-[var(--color-primary)] text-white flex flex-col justify-between relative overflow-hidden">
                             <div className="relative z-10 flex flex-col gap-8">
                                 <div>
                                     <h2 className="text-3xl font-bold mb-6">צרו קשר</h2>
@@ -114,7 +114,7 @@ export default function Contact() {
                                 {/* Social Links - Added Here */}
                                 <div className="mt-8 pt-10 border-t border-white/10 flex flex-col gap-12 items-center">
                                     <h3 className="text-lg font-bold opacity-90">עקבו אחרינו</h3>
-                                    <div className="flex gap-12 justify-center">
+                                    <div className="flex gap-5 min-[500px]:gap-10 md:gap-12 justify-center">
                                         {/* Facebook - Blue */}
                                         <a
                                             href="https://www.facebook.com/barakaloni.dogs"
@@ -168,11 +168,11 @@ export default function Contact() {
                         </div>
 
                         {/* Form Side */}
-                        <div className="lg:col-span-3 p-10 md:p-14 bg-white/50 backdrop-blur-sm border-r border-gray-100">
+                        <div className="lg:col-span-3 p-6 md:p-14 bg-white/50 backdrop-blur-sm border-r border-gray-100">
                             <form
                                 action="https://formspree.io/f/mdkqdljn"
                                 method="POST"
-                                className="space-y-6 max-w-lg mx-auto lg:mx-0 p-8 rounded-3xl border border-gray-100 bg-white shadow-sm"
+                                className="space-y-6 max-w-lg mx-auto lg:mx-0 p-6 md:p-8 rounded-3xl border border-gray-100 bg-white shadow-sm"
                             >
                                 <input type="hidden" name="_subject" value="פנייה מהאתר של ברק" />
 

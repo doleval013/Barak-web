@@ -55,7 +55,7 @@ export default function Hero() {
                         </h1>
 
                         <p className="text-xl text-[var(--color-text-muted)] mb-10 leading-relaxed max-w-lg ml-auto">
-                            חינוך, קהילה וארגונים. נבנה יחד חוויה מעצימה, ערכית ומחברת – עם מעל 10 שנות ניסיון בשטח.
+                            חינוך, קהילה וארגונים. נבנה יחד חוויה מעצימה, ערכית ומחברת - עם מעל 10 שנות ניסיון בשטח.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 mb-10">
@@ -80,7 +80,7 @@ export default function Hero() {
                         </div>
 
                         <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-[var(--color-text-muted)]">
-                            {['+10 שנות ניסיון', 'פריסה ארצית', 'מותאם לכל גיל'].map((tag, i) => (
+                            {['+10 שנות ניסיון', 'פריסה ארצית', 'מותאם לכל גיל ואוכלוסייה'].map((tag, i) => (
                                 <div key={i} className="flex items-center gap-2">
                                     <CheckCircle size={16} className="text-[var(--color-accent)]" />
                                     {tag}

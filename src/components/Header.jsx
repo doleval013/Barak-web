@@ -31,7 +31,6 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { name: 'אודות', href: '#about' },
     { name: 'תוכניות', href: '#programs' },
     { name: 'צור קשר', href: '#contact' },
   ];

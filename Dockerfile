@@ -21,8 +21,11 @@ FROM nginx:alpine
 # Copy the built files from the builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 80
+# Update Nginx to listen on port 3000
+RUN sed -i 's/listen       80;/listen       3000;/' /etc/nginx/conf.d/default.conf
+
+# Expose port 3000
+EXPOSE 3000
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -91,9 +91,13 @@ export default function Contact() {
                                     </div>
 
                                     <div className="flex items-start gap-5">
-                                        <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-sm flex-shrink-0 text-white">
+                                        <a
+                                            href="mailto:dogs@barakaloni.com"
+                                            className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center backdrop-blur-sm flex-shrink-0 text-white shadow-lg shadow-indigo-500/30 hover:scale-110 transition-transform"
+                                            aria-label="Send Email"
+                                        >
                                             <Mail size={24} />
-                                        </div>
+                                        </a>
                                         <div>
                                             <div className="text-sm text-white/60 mb-1 font-medium">אימייל</div>
                                             <a href="mailto:dogs@barakaloni.com" className="font-bold text-lg hover:text-[var(--color-accent)] transition-colors">Dogs@barakaloni.com</a>
@@ -233,7 +237,7 @@ export default function Contact() {
                                 </button>
 
                                 <p className="text-xs text-center text-[var(--color-text-muted)] mt-4">
-                                    * הנתונים נשלחים ישירות למייל של ברק ולא מועברים לצד ג'.
+                                    * הנתונים נשלחים ישירות למייל שלנו ולא מועברים לצד ג'.
                                 </p>
                             </form>
                         </div>

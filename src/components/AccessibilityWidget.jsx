@@ -57,7 +57,7 @@ export default function AccessibilityWidget() {
             {/* Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed left-4 bottom-4 z-[80] p-3 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none focus:ring-4 focus:ring-blue-300 text-white border-2 border-white/20 hover:border-white shadow-glow"
+                className="fixed left-4 bottom-4 z-[80] p-3 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none focus:ring-4 focus:ring-blue-300 text-white border-4 border-white ring-1 ring-black shadow-glow"
                 aria-label="פתח תפריט נגישות"
                 title="תפריט נגישות"
                 style={{ backgroundColor: '#0f172a' }}

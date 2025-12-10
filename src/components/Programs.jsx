@@ -1,31 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { School, PartyPopper, HeartHandshake, ChevronDown, Sparkles, X, Play } from 'lucide-react';
 
 const programs = [
     {
         id: 'education',
-        title: 'גפן / מוסדות חינוך',
+        title: 'גפ"ן / מוסדות חינוך',
         icon: School,
-        content: 'תוכניות שנתיות וליווי כיתות, עבודה צמודה עם צוותים פדגוגיים, קבוצות חברתיות ופרויקטים העצמה משולבי יעדים לימודיים ורגשיים.'
+        content: 'תוכנית תהליכית לתלמידים מכיתות א\' – י"ב, המותאמת לחינוך רגיל, חינוך מיוחד, נוער בסיכון, עולים חדשים ועוד. אנו מעניקים מענה תומך ומשלים לתהליכים החינוכיים המתקיימים במסגרת בית הספר.',
+        video: 'https://www.youtube.com/embed/HC4Sm4KhXlU?autoplay=1&rel=0'
     },
     {
         id: 'events',
-        title: 'קייטנות ואירועים חד-פעמיים',
+        title: 'סדנאות ואירועים חד-פעמיים',
         icon: PartyPopper,
-        content: 'פעילויות חווייתיות מלאות אנרגיה: ימי הולדת, קייטנות, סדנאות לחגים ומפגשים עונתיים. הכלבים והצוות מביאים שמחה, למידה דרך משחק, ותחושת העצמה אישית לכל ילד וילדה.'
+        content: 'פעילויות חווייתיות מלאות אנרגיה המתאימות ל: ימי הולדת, קייטנות, סדנאות גיבוש ועוד! הכלבים והצוות שלנו מביאים שמחה, למידה ותחושת העצמה אישית לכל המשתתפים.',
+        video: 'https://www.youtube.com/embed/kZMeB9DZNAs?rel=0'
     },
     {
         id: 'community',
-        title: 'עמותות / קהילות / אוכלוסיות מיוחדות',
+        title: 'אוכלוסיות מיוחדות',
         icon: HeartHandshake,
-        content: 'התאמות ייעודיות עבור PTSD, קשישים, נוער בסיכון, מרכזי יום וחברות הייטק שמחפשות פעילות גיבוש עם ערך. משלבים כלים מעצימים,  ועבודה קבוצתית שמחזקת אמון ותחושת ביטחון.',
-        video: 'https://www.youtube.com/embed/kZMeB9DZNAs?rel=0'
+        content: 'התאמות ייעודיות עבור אוכלוסיות שונות כמו: PTSD, קשישים, נוער בסיכון, מרכזי יום ועוד. אנו משלבים כלים מעצימים, ועבודה קבוצתית שמחזקת אמון ואת תחושת ביטחון.'
     }
 ];
 
 export default function Programs() {
     const [videoModal, setVideoModal] = useState(null);
+    const [activeSlide, setActiveSlide] = useState(0);
+    const scrollRef = useRef(null);
+
+    const handleScroll = () => {
+        const el = scrollRef.current;
+        if (!el) return;
+
+        // Math.abs handles RTL negative scroll values on some browsers
+        const currentScroll = Math.abs(el.scrollLeft);
+        const maxScroll = el.scrollWidth - el.clientWidth;
+
+        if (maxScroll <= 0) {
+            setActiveSlide(0);
+            return;
+        }
+
+        const index = Math.round((currentScroll / maxScroll) * (programs.length - 1));
+        setActiveSlide(index);
+    };
+
+    const scrollToSlide = (index) => {
+        const el = scrollRef.current;
+        if (el && el.children[index]) {
+            el.children[index].scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'center'
+            });
+        }
+    };
 
     return (
         <section id="programs" className="section-padding relative overflow-hidden">
@@ -57,7 +88,11 @@ export default function Programs() {
                     </motion.h2>
                 </div>
 
-                <div className="flex md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory hide-scrollbar">
+                <div
+                    ref={scrollRef}
+                    onScroll={handleScroll}
+                    className="flex items-stretch md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory hide-scrollbar"
+                >
                     {programs.map((program, index) => (
                         <motion.div
                             key={program.id}
@@ -66,42 +101,66 @@ export default function Programs() {
                             viewport={{ once: true }}
                             whileTap={{ scale: 0.98 }}
                             transition={{ delay: index * 0.1, duration: 0.5 }}
-                            className="min-w-[85vw] md:min-w-0 snap-center group relative glass-panel rounded-[2rem] p-6 md:p-8 hover:bg-white transition-all duration-500 hover:shadow-glow flex flex-col h-full hover:-translate-y-2"
+                            className="min-w-[80vw] md:min-w-0 min-h-[22rem] snap-center group relative glass-panel rounded-[2rem] px-6 pt-6 pb-2 md:p-8 hover:bg-white transition-all duration-500 hover:shadow-glow flex flex-col h-full hover:-translate-y-2"
                         >
 
-                            <div className="relative z-10 flex flex-col h-full">
-                                <div className="w-16 h-16 rounded-2xl bg-[var(--color-bg)] text-[var(--color-primary)] group-hover:bg-[var(--color-accent)] group-hover:text-white flex items-center justify-center transition-all duration-500 mb-8 shadow-sm group-hover:shadow-[0_10px_20px_-5px_var(--color-accent)] group-hover:scale-110 group-hover:rotate-3">
-                                    <program.icon size={32} />
+                            <div className="relative z-10 flex flex-col flex-grow h-full justify-between">
+                                <div>
+                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-[var(--color-bg)] text-[var(--color-primary)] group-hover:bg-[var(--color-accent)] group-hover:text-white flex items-center justify-center transition-all duration-500 mb-4 md:mb-8 shadow-sm group-hover:shadow-[0_10px_20px_-5px_var(--color-accent)] group-hover:scale-110 group-hover:rotate-3">
+                                        <program.icon size={32} />
+                                    </div>
+
+                                    <h3 className="text-2xl font-bold text-[var(--color-primary)] mb-4 group-hover:text-[var(--color-accent)] transition-colors">
+                                        {program.title}
+                                    </h3>
+
+                                    <p className="text-[var(--color-text-muted)] leading-relaxed mb-4 text-sm md:text-base">
+                                        {program.content}
+                                    </p>
                                 </div>
 
-                                <h3 className="text-2xl font-bold text-[var(--color-primary)] mb-4 group-hover:text-[var(--color-accent)] transition-colors">
-                                    {program.title}
-                                </h3>
-
-                                <p className="text-[var(--color-text-muted)] leading-relaxed mb-8 flex-grow">
-                                    {program.content}
-                                </p>
-
-                                <div className="mt-auto pt-6 border-t border-[var(--color-border)]">
+                                <div className="mt-auto pt-4 border-t border-[var(--color-border)] w-full">
                                     {program.video ? (
                                         <button
                                             onClick={() => setVideoModal(program.video)}
-                                            className="w-full py-3 px-4 rounded-xl bg-[var(--color-bg)] text-[var(--color-primary)] font-bold hover:bg-[var(--color-primary)] hover:text-white transition-all flex items-center justify-center gap-2 group/btn"
+                                            className="w-full py-3 px-4 rounded-xl btn-youtube font-bold flex items-center justify-center gap-2 group/btn"
                                         >
                                             צפה בסרטון
-                                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-2 group-hover/btn:bg-white/30 transition-colors">
-                                                <Play size={14} className="fill-current" />
+                                            <div className="w-8 h-8 rounded-full icon-circle flex items-center justify-center mr-2">
+                                                <Play size={18} className="fill-current ml-0.5" />
                                             </div>
                                         </button>
                                     ) : (
-                                        <a href="#contact" className="inline-flex items-center font-bold text-[var(--color-primary)] hover:text-[var(--color-accent)] transition-colors group/link">
+                                        <a
+                                            href="#contact"
+                                            className="w-full py-3 px-4 rounded-xl glass-panel font-bold text-[var(--color-primary)] flex items-center justify-center gap-2 group/link hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-sm"
+                                        >
                                             לפרטים נוספים
-                                            <ChevronDown size={18} className="mr-1 rotate-90 group-hover/link:-translate-x-1 transition-transform" />
+                                            <div className="w-8 h-8 rounded-full bg-[var(--color-bg)] flex items-center justify-center mr-2 group-hover/link:bg-white/20 transition-colors">
+                                                <ChevronDown size={18} className="rotate-90 group-hover/link:-translate-x-0.5 transition-transform" />
+                                            </div>
                                         </a>
                                     )}
                                 </div>
                             </div>
                         </motion.div>
+                    ))}
+                </div>
+
+                {/* Mobile Scroll Indicators */}
+                <div className="flex md:hidden justify-center gap-2 mt-2">
+                    {programs.map((_, index) => (
+                        <div
+                            key={index}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => scrollToSlide(index)}
+                            aria-label={`Go to slide ${index + 1}`}
+                            className={`scroll-dot h-2 rounded-full transition-all duration-300 cursor-pointer ${index === activeSlide
+                                ? 'w-8 bg-[var(--color-accent)]'
+                                : 'w-2 bg-[var(--color-primary)]/20 hover:bg-[var(--color-primary)]/40'
+                                }`}
+                        />
                     ))}
                 </div>
             </div>

@@ -18,7 +18,7 @@ spec:
       - name: barak-web
         image: doleval013/barak-web:latest
         ports:
-        - containerPort: 80
+        - containerPort: 3000
         resources:
           requests:
             memory: "64Mi"
@@ -37,7 +37,7 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: 3000
   # On k3s/Single-Node, 'ClusterIP' is usually enough if using Ingress, 
   # but LoadBalancer is fine too (ServiceLB). 
   # For Traefik to pick it up easily, let's keep it simple.

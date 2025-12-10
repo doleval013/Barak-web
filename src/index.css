@@ -248,3 +248,30 @@ body.high-contrast iframe {
   color: #000 !important;
   border: 2px solid #000 !important;
 }
+
+/* YouTube Button Style - Soft & Elegant */
+.btn-youtube {
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FEE2E2;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.05);
+}
+
+.btn-youtube:hover {
+  background-color: #DC2626;
+  color: #ffffff;
+  border-color: #DC2626;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(220, 38, 38, 0.4);
+}
+
+.btn-youtube .icon-circle {
+  background-color: rgba(220, 38, 38, 0.1);
+  transition: all 0.3s ease;
+}
+
+.btn-youtube:hover .icon-circle {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}

@@ -53,7 +53,8 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:
-  - http:
+  - host: dogs.barakaloni.com
+    http:
       paths:
       - path: /
         pathType: Prefix

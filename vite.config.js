@@ -10,7 +10,7 @@ export default defineConfig({
   ],
   server: {
     host: true, // Needed for Docker/Cloud
-    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 80,
   },
   preview: {
     host: true, // Needed for Docker/Cloud

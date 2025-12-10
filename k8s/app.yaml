@@ -40,9 +40,8 @@ spec:
       port: 80
       targetPort: 80
   # On k3s/Single-Node, 'ClusterIP' is usually enough if using Ingress, 
-  # but LoadBalancer is fine too (ServiceLB). 
-  # For Traefik to pick it up easily, let's keep it simple.
-  type: ClusterIP 
+  # but since Traefik is missing/disabled, we use LoadBalancer to expose port 80 directly.
+  type: LoadBalancer 
 
 ---
 apiVersion: networking.k8s.io/v1

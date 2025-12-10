@@ -19,7 +19,11 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy custom nginx config
+# Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy the built files from the builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Fix permissions
 RUN chmod -R 755 /usr/share/nginx/html

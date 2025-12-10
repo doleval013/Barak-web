@@ -5,9 +5,10 @@ import { School, PartyPopper, HeartHandshake, ChevronDown, Sparkles, X, Play } f
 const programs = [
     {
         id: 'education',
-        title: 'גפן / מוסדות חינוך',
+        title: 'גפ"ן / מוסדות חינוך',
         icon: School,
-        content: 'תוכניות שנתיות וליווי כיתות, עבודה צמודה עם צוותים פדגוגיים, קבוצות חברתיות ופרויקטים העצמה משולבי יעדים לימודיים ורגשיים.'
+        content: 'תוכניות שנתיות וליווי כיתות, עבודה צמודה עם צוותים פדגוגיים, קבוצות חברתיות ופרויקטים העצמה משולבי יעדים לימודיים ורגשיים.',
+        video: 'https://www.youtube.com/embed/HC4Sm4KhXlU?autoplay=1&rel=0'
     },
     {
         id: 'events',

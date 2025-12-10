@@ -50,6 +50,7 @@ metadata:
   name: barak-web-ingress
   annotations:
     # Tell Traefik to handle this simple catch-all rule
+    kubernetes.io/ingress.class: "traefik"
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:

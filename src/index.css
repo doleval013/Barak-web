@@ -228,7 +228,7 @@ body.high-contrast {
   color: #fff !important;
 }
 
-body.high-contrast *:not(img):not(video):not(iframe):not(.accessibility-widget):not(.accessibility-widget *):not(.video-overlay):not(.video-overlay *) {
+body.high-contrast *:not(img):not(video):not(iframe):not(.accessibility-widget):not(.accessibility-widget *):not(.video-overlay):not(.video-overlay *):not(.scroll-dot) {
   background-color: #000 !important;
   color: #fff !important;
   border-color: #fff !important;
@@ -274,4 +274,15 @@ body.high-contrast iframe {
 .btn-youtube:hover .icon-circle {
   background-color: rgba(255, 255, 255, 0.2);
   transform: scale(1.1);
+}
+
+/* High Contrast fixes for scroll indicators */
+body.high-contrast .scroll-dot {
+  background-color: #666 !important;
+  border: 1px solid #fff !important;
+}
+
+body.high-contrast .scroll-dot[class*="w-8"] {
+  background-color: #fff !important;
+  border-color: #fff !important;
 }

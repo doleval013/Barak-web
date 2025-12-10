@@ -7,7 +7,7 @@ const programs = [
         id: 'education',
         title: 'גפ"ן / מוסדות חינוך',
         icon: School,
-        content: 'תוכניות שנתיות וליווי כיתות, עבודה צמודה עם צוותים פדגוגיים, קבוצות חברתיות ופרויקטים העצמה משולבי יעדים לימודיים ורגשיים.',
+        content: 'תוכנית תהליכית לתלמידים מכיתות א\' – י"ב, המותאמת לחינוך רגיל, חינוך מיוחד, נוער בסיכון, עולים חדשים ועוד. אנו מעניקים מענה תומך ומשלים לתהליכים החינוכיים המתקיימים במסגרת בית הספר.',
         video: 'https://www.youtube.com/embed/HC4Sm4KhXlU?autoplay=1&rel=0'
     },
     {
@@ -91,7 +91,7 @@ export default function Programs() {
                 <div
                     ref={scrollRef}
                     onScroll={handleScroll}
-                    className="flex md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory hide-scrollbar"
+                    className="flex items-stretch md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory hide-scrollbar"
                 >
                     {programs.map((program, index) => (
                         <motion.div
@@ -101,27 +101,29 @@ export default function Programs() {
                             viewport={{ once: true }}
                             whileTap={{ scale: 0.98 }}
                             transition={{ delay: index * 0.1, duration: 0.5 }}
-                            className="min-w-[85vw] md:min-w-0 snap-center group relative glass-panel rounded-[2rem] p-6 md:p-8 hover:bg-white transition-all duration-500 hover:shadow-glow flex flex-col h-full hover:-translate-y-2"
+                            className="min-w-[80vw] md:min-w-0 min-h-[22rem] snap-center group relative glass-panel rounded-[2rem] px-6 pt-6 pb-2 md:p-8 hover:bg-white transition-all duration-500 hover:shadow-glow flex flex-col h-full hover:-translate-y-2"
                         >
 
-                            <div className="relative z-10 flex flex-col h-full">
-                                <div className="w-16 h-16 rounded-2xl bg-[var(--color-bg)] text-[var(--color-primary)] group-hover:bg-[var(--color-accent)] group-hover:text-white flex items-center justify-center transition-all duration-500 mb-8 shadow-sm group-hover:shadow-[0_10px_20px_-5px_var(--color-accent)] group-hover:scale-110 group-hover:rotate-3">
-                                    <program.icon size={32} />
+                            <div className="relative z-10 flex flex-col flex-grow h-full justify-between">
+                                <div>
+                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-[var(--color-bg)] text-[var(--color-primary)] group-hover:bg-[var(--color-accent)] group-hover:text-white flex items-center justify-center transition-all duration-500 mb-4 md:mb-8 shadow-sm group-hover:shadow-[0_10px_20px_-5px_var(--color-accent)] group-hover:scale-110 group-hover:rotate-3">
+                                        <program.icon size={32} />
+                                    </div>
+
+                                    <h3 className="text-2xl font-bold text-[var(--color-primary)] mb-4 group-hover:text-[var(--color-accent)] transition-colors">
+                                        {program.title}
+                                    </h3>
+
+                                    <p className="text-[var(--color-text-muted)] leading-relaxed mb-4 text-sm md:text-base">
+                                        {program.content}
+                                    </p>
                                 </div>
 
-                                <h3 className="text-2xl font-bold text-[var(--color-primary)] mb-4 group-hover:text-[var(--color-accent)] transition-colors">
-                                    {program.title}
-                                </h3>
-
-                                <p className="text-[var(--color-text-muted)] leading-relaxed mb-8 flex-grow">
-                                    {program.content}
-                                </p>
-
-                                <div className="mt-auto pt-6 border-t border-[var(--color-border)]">
+                                <div className="mt-auto pt-4 border-t border-[var(--color-border)] w-full">
                                     {program.video ? (
                                         <button
                                             onClick={() => setVideoModal(program.video)}
-                                            className="w-full py-3 px-4 rounded-xl btn-youtube font-bold flex items-center justify-center gap-2 group/btn mb-2"
+                                            className="w-full py-3 px-4 rounded-xl btn-youtube font-bold flex items-center justify-center gap-2 group/btn"
                                         >
                                             צפה בסרטון
                                             <div className="w-8 h-8 rounded-full icon-circle flex items-center justify-center mr-2">
@@ -129,9 +131,14 @@ export default function Programs() {
                                             </div>
                                         </button>
                                     ) : (
-                                        <a href="#contact" className="inline-flex items-center font-bold text-[var(--color-primary)] hover:text-[var(--color-accent)] transition-colors group/link">
+                                        <a
+                                            href="#contact"
+                                            className="w-full py-3 px-4 rounded-xl glass-panel font-bold text-[var(--color-primary)] flex items-center justify-center gap-2 group/link hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-sm"
+                                        >
                                             לפרטים נוספים
-                                            <ChevronDown size={18} className="mr-1 rotate-90 group-hover/link:-translate-x-1 transition-transform" />
+                                            <div className="w-8 h-8 rounded-full bg-[var(--color-bg)] flex items-center justify-center mr-2 group-hover/link:bg-white/20 transition-colors">
+                                                <ChevronDown size={18} className="rotate-90 group-hover/link:-translate-x-0.5 transition-transform" />
+                                            </div>
                                         </a>
                                     )}
                                 </div>
@@ -149,7 +156,7 @@ export default function Programs() {
                             tabIndex={0}
                             onClick={() => scrollToSlide(index)}
                             aria-label={`Go to slide ${index + 1}`}
-                            className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${index === activeSlide
+                            className={`scroll-dot h-2 rounded-full transition-all duration-300 cursor-pointer ${index === activeSlide
                                 ? 'w-8 bg-[var(--color-accent)]'
                                 : 'w-2 bg-[var(--color-primary)]/20 hover:bg-[var(--color-primary)]/40'
                                 }`}

@@ -15,9 +15,11 @@ import {
     Eye,
     MousePointer2
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function AccessibilityWidget({ isBannerOpen }) {
     const [isOpen, setIsOpen] = useState(false);
+    const { t } = useLanguage();
     const [settings, setSettings] = useState({
         scale: 1,
         grayscale: false,
@@ -102,8 +104,8 @@ export default function AccessibilityWidget({ isBannerOpen }) {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="fixed left-4 z-[80] p-3 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none focus:ring-4 focus:ring-blue-300 text-white border-4 border-white ring-1 ring-black shadow-glow"
-                aria-label="פתח תפריט נגישות"
-                title="תפריט נגישות"
+                aria-label={t('accessibility_tools')}
+                title={t('accessibility_tools')}
                 style={{
                     backgroundColor: '#0f172a',
                     bottom: isBannerOpen ? '240px' : '1rem',
@@ -120,7 +122,8 @@ export default function AccessibilityWidget({ isBannerOpen }) {
                         initial={{ opacity: 0, x: -20, scale: 0.95 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: -20, scale: 0.95 }}
-                        className="accessibility-widget fixed left-4 z-[90] w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden text-[#0f172a]"
+                        className="accessibility-widget fixed left-4 z-[90] w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden text-[#0f172a] rtl:text-right ltr:text-left"
+                        dir="auto"
                         style={{
                             bottom: isBannerOpen ? '300px' : '5rem',
                             transition: 'bottom 0.3s ease-in-out'
@@ -130,7 +133,7 @@ export default function AccessibilityWidget({ isBannerOpen }) {
                         <div className="bg-[var(--color-primary)] p-4 flex items-center justify-between text-white">
                             <h3 className="font-bold text-lg flex items-center gap-2">
                                 <Accessibility size={20} />
-                                כלי נגישות
+                                {t('accessibility_tools')}
                             </h3>
                             <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1 rounded-full transition-colors">
                                 <X size={20} />
@@ -142,58 +145,58 @@ export default function AccessibilityWidget({ isBannerOpen }) {
                                 active={settings.grayscale}
                                 onClick={() => toggleSetting('grayscale')}
                                 icon={Barcode}
-                                label="גווני אפור"
+                                label={t('grayscale')}
                             />
                             <AccessBtn
                                 active={settings.invertContrast}
                                 onClick={() => toggleSetting('invertContrast')}
                                 icon={Contrast}
-                                label="ניגודיות הפוכה"
+                                label={t('invert_contrast')}
                             />
                             <AccessBtn
                                 onClick={() => updateScale(-0.1)}
                                 icon={Minus}
-                                label="הקטנת טקסט"
+                                label={t('decrease_text')}
                             />
                             <AccessBtn
                                 onClick={() => updateScale(0.1)}
                                 icon={Plus}
-                                label="הגדלת טקסט"
+                                label={t('increase_text')}
                             />
                             <AccessBtn
                                 active={settings.highlightHeadings}
                                 onClick={() => toggleSetting('highlightHeadings')}
                                 icon={HeadingIcon}
-                                label="הדגשת כותרות"
+                                label={t('highlight_headings')}
                             />
                             <AccessBtn
                                 active={settings.highlightLinks}
                                 onClick={() => toggleSetting('highlightLinks')}
                                 icon={UnderlineIcon}
-                                label="הדגשת קישורים"
+                                label={t('highlight_links')}
                             />
                             <AccessBtn
                                 active={settings.readableFont}
                                 onClick={() => toggleSetting('readableFont')}
                                 icon={Eye}
-                                label="גופן קריא"
+                                label={t('readable_font')}
                             />
                             <AccessBtn
                                 active={settings.cursor}
                                 onClick={() => toggleSetting('cursor')}
                                 icon={MousePointer2}
-                                label="סמן גדול"
+                                label={t('big_cursor')}
                             />
                             <AccessBtn
                                 active={settings.stopAnimations}
                                 onClick={() => toggleSetting('stopAnimations')}
                                 icon={PauseCircle}
-                                label="עצירת אנימציות"
+                                label={t('stop_animations')}
                             />
                             <AccessBtn
                                 onClick={resetSettings}
                                 icon={RotateCcw}
-                                label="איפוס הגדרות"
+                                label={t('reset_settings')}
                             />
                         </div>
 
@@ -216,7 +219,7 @@ function AccessBtn({ active, onClick, icon: Icon, label }) {
             style={active ? { backgroundColor: 'var(--color-primary)', color: 'white', borderColor: 'var(--color-primary)' } : {}}
         >
             <Icon size={24} />
-            <span className="text-xs font-bold">{label}</span>
+            <span className="text-xs font-bold text-center">{label}</span>
         </button>
     );
 }

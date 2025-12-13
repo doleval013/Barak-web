@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Menu, X, Globe } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const TikTok = ({ size = 24, className = "" }) => (
   <svg
@@ -21,6 +22,7 @@ const TikTok = ({ size = 24, className = "" }) => (
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { language, toggleLanguage, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,7 +33,7 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { name: 'תוכניות', href: '#programs' },
+    { name: t('programs'), href: '#programs' },
   ];
 
   return (
@@ -69,6 +71,15 @@ export default function Header() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--color-accent)] transition-all duration-300 group-hover:w-full"></span>
             </a>
           ))}
+
+          <button
+            onClick={toggleLanguage}
+            className={`flex items-center gap-2 font-bold px-3 py-1 rounded-full transition-all ${isScrolled ? 'text-[var(--color-primary)] hover:bg-black/5' : 'text-[var(--color-primary)] hover:bg-white/20'}`}
+          >
+            <Globe size={20} />
+            <span className="uppercase">{language === 'he' ? 'EN' : 'עב'}</span>
+          </button>
+
           <a
             href="#contact"
             className={`btn-shine px-8 py-3 rounded-full font-bold transition-all transform hover:-translate-y-0.5 ${isScrolled
@@ -77,17 +88,27 @@ export default function Header() {
               }`}
             style={{ color: isScrolled ? '#ffffff' : 'var(--color-primary)' }}
           >
-            <span className="relative z-20">בואו נדבר</span>
+            <span className="relative z-20">{t('lets_talk')}</span>
           </a>
         </nav>
 
         {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2 z-50 text-[var(--color-primary)]"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
+        <div className="flex items-center gap-4 md:hidden z-50">
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center gap-1 font-bold text-[var(--color-primary)]"
+          >
+            <Globe size={20} />
+            <span className="uppercase text-sm">{language === 'he' ? 'EN' : 'עב'}</span>
+          </button>
+
+          <button
+            className="p-2 text-[var(--color-primary)]"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
 
         {/* Mobile Nav Overlay */}
         <AnimatePresence>
@@ -114,12 +135,11 @@ export default function Header() {
                 className="btn-shine bg-[var(--color-primary)] text-white py-3 rounded-xl font-bold text-center mt-2 shadow-lg"
                 style={{ color: '#ffffff' }}
               >
-                בואו נדבר
+                {t('lets_talk')}
               </a>
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
     </motion.header>
   );

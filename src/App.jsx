@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { LanguageProvider } from './context/LanguageContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 
@@ -34,29 +35,31 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <Hero />
+    <LanguageProvider>
+      <div className="min-h-screen">
+        <Header />
+        <main>
+          <Hero />
 
-        <Programs />
-        <Contact />
-      </main>
-      <Footer onOpenLegal={openLegal} />
+          <Programs />
+          <Contact />
+        </main>
+        <Footer onOpenLegal={openLegal} />
 
-      <LegalModal
-        isOpen={isLegalModalOpen}
-        onClose={() => setIsLegalModalOpen(false)}
-        initialTab={legalTab}
-      />
-      <CookieBanner
-        isVisible={isCookieBannerOpen}
-        onAccept={handleCookieAccept}
-        onOpenPrivacy={() => openLegal('privacy')}
-      />
-      <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
-      <FloatingWhatsApp isBannerOpen={isCookieBannerOpen} />
-    </div>
+        <LegalModal
+          isOpen={isLegalModalOpen}
+          onClose={() => setIsLegalModalOpen(false)}
+          initialTab={legalTab}
+        />
+        <CookieBanner
+          isVisible={isCookieBannerOpen}
+          onAccept={handleCookieAccept}
+          onOpenPrivacy={() => openLegal('privacy')}
+        />
+        <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
+        <FloatingWhatsApp isBannerOpen={isCookieBannerOpen} />
+      </div>
+    </LanguageProvider>
   );
 }
 

@@ -2,14 +2,16 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, FileText, CheckCircle2, Users, BookOpen, Heart, Check } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 
 export default function ProgramModal({ isOpen, onClose }) {
+    const { t } = useLanguage();
     if (!isOpen) return null;
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 text-right" dir="rtl">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 text-right rtl:text-right ltr:text-left" dir="auto">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -31,12 +33,12 @@ export default function ProgramModal({ isOpen, onClose }) {
                                 <FileText size={28} />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-bold text-gray-900 leading-tight">גפ"ן / מוסדות חינוך</h3>
+                                <h3 className="text-2xl font-bold text-gray-900 leading-tight">{t('program_modal_title')}</h3>
                                 <div className="text-sm text-gray-500 font-medium mt-1 flex flex-wrap items-center gap-2">
-                                    <span>הדרכת כלבנות טיפולית</span>
+                                    <span>{t('therapeutic_dog_training')}</span>
                                     <span className="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
                                         <CheckCircle2 size={14} className="text-green-600" strokeWidth={2.5} />
-                                        תוכנית מאושרת גפ"ן
+                                        {t('gefen_approved')}
                                     </span>
                                 </div>
                             </div>
@@ -56,25 +58,24 @@ export default function ProgramModal({ isOpen, onClose }) {
                             {/* Introduction */}
                             <section>
                                 <p className="text-xl text-gray-700 leading-relaxed font-medium">
-                                    התוכנית הינה תוכנית חינוכית המשלבת בין עולם הכלבנות לבין  עולם ההתפתחות האישית.
-                                    התוכנית נועדה לפתח מיומנויות חברתיות, תקשורת וביטחון עצמי אצל התלמידים.
+                                    {t('program_intro')}
                                 </p>
                             </section>
 
                             {/* Goals Grid */}
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div className="relative p-8 rounded-3xl bg-white shadow-[0_2px_20px_-10px_rgba(59,130,246,0.15)] border border-blue-50 hover:border-blue-100 transition-colors group">
-                                    <div className="absolute top-0 right-8 -translate-y-1/2 bg-blue-50 text-blue-600 p-3 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                                    <div className="absolute top-0 right-8 rtl:right-8 ltr:left-8 ltr:right-auto -translate-y-1/2 bg-blue-50 text-blue-600 p-3 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                                         <span className="text-2xl">🎯</span>
                                     </div>
-                                    <h4 className="text-xl font-bold text-gray-900 mt-4 mb-6">מטרות התוכנית</h4>
+                                    <h4 className="text-xl font-bold text-gray-900 mt-4 mb-6">{t('program_goals_title')}</h4>
                                     <ul className="space-y-4">
                                         {[
-                                            "העצמה אישית וקבוצתית",
-                                            "קבלת האחר וקבלה עצמית",
-                                            "חיזוק ופיתוח כישורי חיים",
-                                            "התגברות על פחדים",
-                                            "חיזוק מעורבות חברתית"
+                                            t('program_goal_1'),
+                                            t('program_goal_2'),
+                                            t('program_goal_3'),
+                                            t('program_goal_4'),
+                                            t('program_goal_5')
                                         ].map((goal, i) => (
                                             <li key={i} className="flex items-start gap-3">
                                                 <CheckCircle2 size={18} className="text-blue-500 shrink-0 mt-0.5" />
@@ -85,17 +86,17 @@ export default function ProgramModal({ isOpen, onClose }) {
                                 </div>
 
                                 <div className="relative p-8 rounded-3xl bg-white shadow-[0_2px_20px_-10px_rgba(99,102,241,0.15)] border border-indigo-50 hover:border-indigo-100 transition-colors group">
-                                    <div className="absolute top-0 right-8 -translate-y-1/2 bg-indigo-50 text-indigo-600 p-3 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                                    <div className="absolute top-0 right-8 rtl:right-8 ltr:left-8 ltr:right-auto -translate-y-1/2 bg-indigo-50 text-indigo-600 p-3 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                                         <span className="text-2xl">💡</span>
                                     </div>
-                                    <h4 className="text-xl font-bold text-gray-900 mt-4 mb-6">יעדים וערכים</h4>
+                                    <h4 className="text-xl font-bold text-gray-900 mt-4 mb-6">{t('program_targets_title')}</h4>
                                     <ul className="space-y-4">
                                         {[
-                                            "יצירת סביבה חינוכית בטוחה",
-                                            "דיונים ללא שיפוטיות",
-                                            "הבעת דעות ללא חשש",
-                                            "לקיחת אחריות אישית",
-                                            "השתתפות מתוך רצון ובחירה"
+                                            t('program_target_1'),
+                                            t('program_target_2'),
+                                            t('program_target_3'),
+                                            t('program_target_4'),
+                                            t('program_target_5')
                                         ].map((goal, i) => (
                                             <li key={i} className="flex items-start gap-3">
                                                 <CheckCircle2 size={18} className="text-indigo-500 shrink-0 mt-0.5" />
@@ -113,11 +114,8 @@ export default function ProgramModal({ isOpen, onClose }) {
                                         <Users size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold text-gray-900 mb-2">קהל היעד</h4>
-                                        <p className="text-gray-600 leading-relaxed">
-                                            התוכנית מיועדת לתלמידים מכיתה <span className="font-bold text-gray-900">א' ועד י"ב</span> מכל המגזרים.
-                                            <br />
-                                            מותאמת למגוון רחב של אוכלוסיות: מצטיינים, מחוננים, חינוך מיוחד, נוער בסיכון, הפרעות קשב, לקויות  למידה, עולים חדשים וכו'.
+                                        <h4 className="text-xl font-bold text-gray-900 mb-2">{t('target_audience_title')}</h4>
+                                        <p className="text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: t('target_audience_content') }}>
                                         </p>
                                     </div>
                                 </div>
@@ -127,14 +125,12 @@ export default function ProgramModal({ isOpen, onClose }) {
                                         <BookOpen size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold text-gray-900 mb-2">דרכי פעולה</h4>
+                                        <h4 className="text-xl font-bold text-gray-900 mb-2">{t('methods_title')}</h4>
                                         <p className="text-gray-600 leading-relaxed mb-2">
-                                            דרך עולם הכלבנות נלמד תקשורת אפקטיבית, שפת גוף, אילוף בסיסי, ספורט כלבני וכלבי שירות.
-                                            ההדרכה מתבצעת "בגובה העיניים" תוך יצירת אמון ומחויבות הדדית.
+                                            {t('methods_content_1')}
                                         </p>
                                         <p className="text-gray-600 leading-relaxed">
-                                            הקבוצות הינן קבועות (ללא חילופי תלמידים) כדי לשמור על מרחב בטוח ואינטימי.
-                                            אנו מבצעים מעקב אישי אחר כל תלמיד כדי לדייק את המענה.
+                                            {t('methods_content_2')}
                                         </p>
                                     </div>
                                 </div>
@@ -144,24 +140,14 @@ export default function ProgramModal({ isOpen, onClose }) {
                                         <Heart size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold text-gray-900 mb-2">תוצאות מצופות</h4>
+                                        <h4 className="text-xl font-bold text-gray-900 mb-2">{t('expected_results_title')}</h4>
                                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-gray-600">
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-5 h-5 text-rose-500 shrink-0" />
-                                                ביטחון עצמי וחברתי
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-5 h-5 text-rose-500 shrink-0" />
-                                                יצירת קשרים חברתיים
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-5 h-5 text-rose-500 shrink-0" />
-                                                פיתוח אמפתיה וחמלה
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <Check className="w-5 h-5 text-rose-500 shrink-0" />
-                                                מוסריות כלפי בעלי חיים
-                                            </li>
+                                            {[t('result_1'), t('result_2'), t('result_3'), t('result_4')].map((result, i) => (
+                                                <li key={i} className="flex items-center gap-2">
+                                                    <Check className="w-5 h-5 text-rose-500 shrink-0" />
+                                                    {result}
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
                                 </div>
@@ -169,11 +155,11 @@ export default function ProgramModal({ isOpen, onClose }) {
 
                             {/* Details Box */}
                             <div className="bg-gray-50 rounded-2xl p-6 text-sm text-gray-500 border border-gray-100">
-                                <h5 className="font-bold text-gray-900 mb-2">פרטים טכניים:</h5>
+                                <h5 className="font-bold text-gray-900 mb-2">{t('technical_details_title')}</h5>
                                 <ul className="space-y-1">
-                                    <li>• גודל קבוצה: 6-8 תלמידים</li>
-                                    <li>• דרישות: כיתה קבועה, ליווי יועץ חינוכי</li>
-                                    <li>• פרטי קשר: ברק אלוני | 050-8391268 | Dogs@barakaloni.com</li>
+                                    <li>{t('group_size')}</li>
+                                    <li>{t('requirements')}</li>
+                                    <li>{t('contact_details_modal')}</li>
                                 </ul>
                             </div>
                         </div>

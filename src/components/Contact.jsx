@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, Mail, User, Send, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 
 const TikTok = ({ size = 24, className = "" }) => (
     <svg
@@ -32,6 +33,8 @@ const WhatsApp = ({ size = 24, className = "" }) => (
 );
 
 export default function Contact() {
+    const { t } = useLanguage();
+
     return (
         <section id="contact" className="section-padding pb-20 bg-white">
             <div className="container max-w-6xl">
@@ -46,12 +49,11 @@ export default function Contact() {
 
                         {/* Contact Info Side */}
                         <div className="lg:col-span-2 p-6 md:p-14 bg-[var(--color-primary)] text-white flex flex-col justify-between relative overflow-hidden">
-                            <div className="relative z-10 flex flex-col gap-8">
+                            <div className="relative z-10 flex flex-col gap-8 rtl:text-right ltr:text-left">
                                 <div>
-                                    <h2 className="text-3xl font-bold mb-6">צרו קשר</h2>
-                                    <p className="text-white/80 text-lg leading-relaxed">
-                                        רוצים לשמוע עוד? <br />
-                                        אנחנו זמינים לכל שאלה, התייעצות או בקשה.
+                                    <h2 className="text-3xl font-bold mb-6">{t('contact_title')}</h2>
+                                    <p className="text-white/80 text-lg leading-relaxed whitespace-pre-line">
+                                        {t('contact_subtitle')}
                                     </p>
                                 </div>
 
@@ -61,14 +63,14 @@ export default function Contact() {
                                             <User size={24} />
                                         </div>
                                         <div>
-                                            <div className="text-sm text-white/60 mb-1 font-medium">עם מי מדברים?</div>
-                                            <div className="font-bold text-lg">ברק אלוני</div>
+                                            <div className="text-sm text-white/60 mb-1 font-medium">{t('who_we_are')}</div>
+                                            <div className="font-bold text-lg">{t('barak_aloni')}</div>
                                         </div>
                                     </div>
 
                                     <div className="flex items-start gap-5">
                                         <a
-                                            href="https://wa.me/972508391268?text=%D7%90%D7%A9%D7%9E%D7%97+%D7%9C%D7%A9%D7%9E%D7%95%D7%A2+%D7%A2%D7%95%D7%93+%D7%A4%D7%A8%D7%98%D7%99%D7%9D+%D7%A2%D7%9C+%D7%94%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D+%D7%A9%D7%9C%D7%9B%D7%9D"
+                                            href={`https://wa.me/972508391268?text=${encodeURIComponent(t('whatsapp_message'))}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="w-12 h-12 rounded-2xl bg-[#25D366] flex items-center justify-center backdrop-blur-sm flex-shrink-0 text-white shadow-lg shadow-green-900/20 hover:scale-110 transition-transform"
@@ -79,7 +81,7 @@ export default function Contact() {
                                         <div>
                                             <div className="text-sm text-white/60 mb-1 font-medium">Whatsapp</div>
                                             <a
-                                                href="https://wa.me/972508391268?text=%D7%90%D7%A9%D7%9E%D7%97+%D7%9C%D7%A9%D7%9E%D7%95%D7%A2+%D7%A2%D7%95%D7%93+%D7%A4%D7%A8%D7%98%D7%99%D7%9D+%D7%A2%D7%9C+%D7%94%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D+%D7%A9%D7%9C%D7%9B%D7%9D"
+                                                href={`https://wa.me/972508391268?text=${encodeURIComponent(t('whatsapp_message'))}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="font-bold text-lg hover:text-[var(--color-accent)] transition-colors"
@@ -99,7 +101,7 @@ export default function Contact() {
                                             <Mail size={24} />
                                         </a>
                                         <div>
-                                            <div className="text-sm text-white/60 mb-1 font-medium">אימייל</div>
+                                            <div className="text-sm text-white/60 mb-1 font-medium">{t('email')}</div>
                                             <a href="mailto:dogs@barakaloni.com" className="font-bold text-lg hover:text-[var(--color-accent)] transition-colors">Dogs@barakaloni.com</a>
                                         </div>
                                     </div>
@@ -109,15 +111,15 @@ export default function Contact() {
                                             <MapPin size={24} />
                                         </div>
                                         <div>
-                                            <div className="text-sm text-white/60 mb-1 font-medium">אזור פעילות</div>
-                                            <div className="font-bold text-lg">פריסה ארצית</div>
+                                            <div className="text-sm text-white/60 mb-1 font-medium">{t('area')}</div>
+                                            <div className="font-bold text-lg">{t('nationwide')}</div>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Social Links - Added Here */}
                                 <div className="mt-8 pt-10 border-t border-white/10 flex flex-col gap-12 items-center">
-                                    <h3 className="text-lg font-bold opacity-90">עקבו אחרינו</h3>
+                                    <h3 className="text-lg font-bold opacity-90">{t('follow_us')}</h3>
                                     <div className="flex gap-5 min-[500px]:gap-10 md:gap-12 justify-center">
                                         {/* Facebook - Blue */}
                                         <a
@@ -176,24 +178,24 @@ export default function Contact() {
                             <form
                                 action="https://formspree.io/f/mdkqdljn"
                                 method="POST"
-                                className="space-y-6 max-w-lg mx-auto lg:mx-0 p-6 md:p-8 rounded-3xl border border-gray-100 bg-white shadow-sm"
+                                className="space-y-6 max-w-lg mx-auto lg:mx-0 p-6 md:p-8 rounded-3xl border border-gray-100 bg-white shadow-sm rtl:text-right ltr:text-left"
                             >
                                 <input type="hidden" name="_subject" value="פנייה מהאתר של ברק" />
 
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div>
-                                        <label htmlFor="name" className="block text-sm font-bold text-[var(--color-text)] mb-2">שם מלא</label>
+                                        <label htmlFor="name" className="block text-sm font-bold text-[var(--color-text)] mb-2">{t('full_name')}</label>
                                         <input
                                             type="text"
                                             id="name"
                                             name="name"
                                             required
-                                            placeholder="ישראל ישראלי"
+                                            placeholder="John Doe"
                                             className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-light)]/50 outline-none transition-all bg-gray-50 focus:bg-white"
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="phone" className="block text-sm font-bold text-[var(--color-text)] mb-2">טלפון</label>
+                                        <label htmlFor="phone" className="block text-sm font-bold text-[var(--color-text)] mb-2">{t('phone_label')}</label>
                                         <input
                                             type="tel"
                                             id="phone"
@@ -205,7 +207,7 @@ export default function Contact() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-bold text-[var(--color-text)] mb-2">אימייל</label>
+                                    <label htmlFor="email" className="block text-sm font-bold text-[var(--color-text)] mb-2">{t('email_label')}</label>
                                     <input
                                         type="email"
                                         id="email"
@@ -217,12 +219,12 @@ export default function Contact() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="message" className="block text-sm font-bold text-[var(--color-text)] mb-2">הודעה (אופציונלי)</label>
+                                    <label htmlFor="message" className="block text-sm font-bold text-[var(--color-text)] mb-2">{t('message_optional')}</label>
                                     <textarea
                                         id="message"
                                         name="message"
                                         rows="4"
-                                        placeholder="היי, אשמח לשמוע פרטים על..."
+                                        placeholder={t('message_placeholder')}
                                         className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-light)]/50 outline-none transition-all bg-gray-50 focus:bg-white resize-none"
                                     ></textarea>
                                 </div>
@@ -232,12 +234,12 @@ export default function Contact() {
                                     className="btn-shine w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-lg transition-all transform hover:-translate-y-1 shadow-glow group text-white"
                                     style={{ backgroundColor: '#0f172a' }}
                                 >
-                                    <span>שלחו פרטים</span>
+                                    <span>{t('send_details')}</span>
                                     <Send size={20} className="group-hover:translate-x-1 transition-transform rtl:rotate-180" />
                                 </button>
 
                                 <p className="text-xs text-center text-[var(--color-text-muted)] mt-4">
-                                    * הנתונים נשלחים ישירות למייל שלנו ולא מועברים לצד ג'.
+                                    {t('privacy_note')}
                                 </p>
                             </form>
                         </div>

@@ -2,36 +2,38 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { School, PartyPopper, HeartHandshake, ChevronDown, Sparkles, X, Play, FileText } from 'lucide-react';
 import ProgramModal from './ProgramModal';
-
-const programs = [
-    {
-        id: 'education',
-        title: 'גפ"ן / מוסדות חינוך',
-        icon: School,
-        content: 'תוכנית תהליכית לתלמידים מכיתות א\' – י"ב, המותאמת לחינוך רגיל, חינוך מיוחד, נוער בסיכון, עולים חדשים ועוד. אנו מעניקים מענה תומך ומשלים לתהליכים החינוכיים המתקיימים במסגרת בית הספר.',
-        video: 'https://www.youtube.com/embed/HC4Sm4KhXlU?autoplay=1&rel=0',
-        hasModal: true
-    },
-    {
-        id: 'events',
-        title: 'סדנאות ואירועים חד-פעמיים',
-        icon: PartyPopper,
-        content: 'פעילויות חווייתיות מלאות אנרגיה המתאימות ל: ימי הולדת, קייטנות, סדנאות גיבוש ועוד! הכלבים והצוות שלנו מביאים שמחה, למידה ותחושת העצמה אישית לכל המשתתפים.',
-        video: 'https://www.youtube.com/embed/kZMeB9DZNAs?rel=0'
-    },
-    {
-        id: 'community',
-        title: 'אוכלוסיות מיוחדות',
-        icon: HeartHandshake,
-        content: 'התאמות ייעודיות עבור אוכלוסיות שונות כמו: PTSD, קשישים, נוער בסיכון, מרכזי יום ועוד. אנו משלבים כלים מעצימים, ועבודה קבוצתית שמחזקת אמון ואת תחושת ביטחון.'
-    }
-];
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Programs() {
+    const { t } = useLanguage();
     const [videoModal, setVideoModal] = useState(null);
     const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
     const [activeSlide, setActiveSlide] = useState(0);
     const scrollRef = useRef(null);
+
+    const programs = [
+        {
+            id: 'education',
+            title: t('program_education_title'),
+            icon: School,
+            content: t('program_education_content'),
+            video: 'https://www.youtube.com/embed/HC4Sm4KhXlU?autoplay=1&rel=0',
+            hasModal: true
+        },
+        {
+            id: 'events',
+            title: t('program_events_title'),
+            icon: PartyPopper,
+            content: t('program_events_content'),
+            video: 'https://www.youtube.com/embed/kZMeB9DZNAs?rel=0'
+        },
+        {
+            id: 'community',
+            title: t('program_special_title'),
+            icon: HeartHandshake,
+            content: t('program_special_content')
+        }
+    ];
 
     const handleScroll = () => {
         const el = scrollRef.current;
@@ -75,7 +77,7 @@ export default function Programs() {
                         className="glass-panel inline-flex items-center gap-2 px-4 py-2 rounded-full text-[var(--color-accent)] font-bold text-sm mb-6"
                     >
                         <Sparkles size={16} />
-                        <span>התוכניות שלנו</span>
+                        <span>{t('our_programs')}</span>
                     </motion.div>
 
                     <motion.h2
@@ -85,9 +87,9 @@ export default function Programs() {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-5xl font-bold mb-6 tracking-tight"
                     >
-                        <span className="text-[var(--color-primary)]">פתרונות מותאמים אישית</span>
+                        <span className="text-[var(--color-primary)]">{t('tailored_solutions')}</span>
                         <br />
-                        <span className="text-gradient-accent text-3xl md:text-4xl font-normal">למסגרות חינוך וארגונים</span>
+                        <span className="text-gradient-accent text-3xl md:text-4xl font-normal">{t('for_education')}</span>
                     </motion.h2>
                 </div>
 
@@ -128,7 +130,7 @@ export default function Programs() {
                                             onClick={() => setIsProgramModalOpen(true)}
                                             className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                         >
-                                            לפרטים נוספים
+                                            {t('more_details')}
                                             <FileText size={18} />
                                         </button>
                                     )}
@@ -138,7 +140,7 @@ export default function Programs() {
                                             onClick={() => setVideoModal(program.video)}
                                             className="w-full py-3 px-4 rounded-xl btn-youtube font-bold flex items-center justify-center gap-2 group/btn"
                                         >
-                                            צפה בסרטון
+                                            {t('watch_video')}
                                             <div className="w-8 h-8 rounded-full icon-circle flex items-center justify-center mr-2">
                                                 <Play size={18} className="fill-current ml-0.5" />
                                             </div>

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Shield, Eye, FileText } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function LegalModal({ isOpen, onClose, initialTab = 'accessibility' }) {
     const [activeTab, setActiveTab] = useState(initialTab);
+    const { t } = useLanguage();
 
     useEffect(() => {
         if (isOpen) {
@@ -16,14 +18,14 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'accessibilit
     }, [isOpen, initialTab]);
 
     const tabs = [
-        { id: 'accessibility', label: 'הצהרת נגישות', icon: Eye },
-        { id: 'privacy', label: 'מדיניות פרטיות', icon: Shield },
+        { id: 'accessibility', label: t('accessibility_statement'), icon: Eye },
+        { id: 'privacy', label: t('privacy_policy'), icon: Shield },
     ];
 
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 rtl:text-right ltr:text-left" dir="auto">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -39,7 +41,7 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'accessibilit
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
-                            <h2 className="text-2xl font-bold text-[var(--color-primary)]">מידע משפטי</h2>
+                            <h2 className="text-2xl font-bold text-[var(--color-primary)]">{t('legal_info')}</h2>
                             <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
                                 <X size={24} />
                             </button>
@@ -52,8 +54,8 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'accessibilit
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 px-6 py-4 font-bold transition-colors whitespace-nowrap ${activeTab === tab.id
-                                            ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)] bg-blue-50/50'
-                                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                                        ? 'text-[var(--color-primary)] border-b-2 border-[var(--color-primary)] bg-blue-50/50'
+                                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                                         }`}
                                 >
                                     <tab.icon size={18} />
@@ -63,47 +65,47 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'accessibilit
                         </div>
 
                         {/* Content */}
-                        <div className="flex-1 overflow-y-auto p-8 text-right bg-white custom-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                             {activeTab === 'accessibility' && (
                                 <div className="space-y-6 text-gray-700">
-                                    <h3 className="text-xl font-bold text-[var(--color-primary)]">הצהרת נגישות</h3>
-                                    <p>אנו בברק אלוני רואים חשיבות עליונה במתן שירות שוויוני לכלל הלקוחות והגולשים ובשיפור השירות הניתן ללקוחות עם מוגבלות.</p>
-                                    <p>בהתאם לכך, אנו משקיעים משאבים רבים בהנגשת האתר שלנו, במטרה לאפשר למרבית האוכלוסייה לגלוש בו בקלות ובנוחות וליהנות מהשירותים ומהתכנים המתפרסמים בו.</p>
+                                    <h3 className="text-xl font-bold text-[var(--color-primary)]">{t('accessibility_statement')}</h3>
+                                    <p>{t('accessibility_intro')}</p>
+                                    <p>{t('accessibility_resources')}</p>
 
-                                    <h4 className="font-bold mt-4">רמת הנגישות</h4>
-                                    <p>האתר נבנה בהתאם לתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), תשע"ג-2013, ולתקן הישראלי ת"י 5568 לנגישות תכנים באינטרנט ברמת AA.</p>
+                                    <h4 className="font-bold mt-4">{t('accessibility_level')}</h4>
+                                    <p>{t('accessibility_standard')}</p>
 
-                                    <h4 className="font-bold mt-4">התאמות שבוצעו באתר</h4>
+                                    <h4 className="font-bold mt-4">{t('adjustments_made')}</h4>
                                     <ul className="list-disc list-inside space-y-2">
-                                        <li>האתר מותאם לצפייה בדפדפנים הנפוצים (Chrome, Firefox, Safari, Edge).</li>
-                                        <li>תכני האתר כתובים בשפה ברורה וקריאה.</li>
-                                        <li>מבנה האתר מושתת על ניווט נוח וברור ותפריטים הבנויים באמצעות רשימות המאפשרים התמצאות קלה ופשוטה.</li>
-                                        <li>האתר מותאם לגלישה במכשירים ניידים (רספונסיבי).</li>
-                                        <li>התמונות באתר כוללות תיאור טקסטואלי חלופי (Alt Text).</li>
-                                        <li>האתר מאפשר שינוי גודל הגופן על ידי שימוש במקלדת (Ctrl + / -).</li>
+                                        <li>{t('adjustment_1')}</li>
+                                        <li>{t('adjustment_2')}</li>
+                                        <li>{t('adjustment_3')}</li>
+                                        <li>{t('adjustment_4')}</li>
+                                        <li>{t('adjustment_5')}</li>
+                                        <li>{t('adjustment_6')}</li>
                                     </ul>
 
-                                    <h4 className="font-bold mt-4">יצירת קשר בנושא נגישות</h4>
-                                    <p>אם נתקלתם בקושי כלשהו בגלישה באתר או שיש לכם הערה בנושא, נשמח אם תצרו איתנו קשר כדי שנוכל לטפל בבעיה:</p>
-                                    <p>אימייל: dogs@barakaloni.com</p>
-                                    <p>טלפון: 050-8391-268</p>
+                                    <h4 className="font-bold mt-4">{t('accessibility_contact_title')}</h4>
+                                    <p>{t('accessibility_contact_text')}</p>
+                                    <p>{t('accessibility_email')}</p>
+                                    <p>{t('accessibility_phone')}</p>
                                 </div>
                             )}
 
                             {activeTab === 'privacy' && (
                                 <div className="space-y-6 text-gray-700">
-                                    <h3 className="text-xl font-bold text-[var(--color-primary)]">מדיניות פרטיות</h3>
-                                    <p>אנו מכבדים את פרטיות המשתמשים באתר ומחויבים להגן על המידע האישי שאתם משתפים איתנו.</p>
+                                    <h3 className="text-xl font-bold text-[var(--color-primary)]">{t('privacy_policy')}</h3>
+                                    <p>{t('privacy_intro')}</p>
 
-                                    <h4 className="font-bold mt-4">איסוף מידע</h4>
-                                    <p>כאשר אתם משאירים פרטים באתר (שם, טלפון, אימייל) לצורך יצירת קשר, אנו אוספים את המידע הזה אך ורק למטרת חזרה אליכם ומתן שירות.</p>
+                                    <h4 className="font-bold mt-4">{t('data_collection')}</h4>
+                                    <p>{t('data_collection_text')}</p>
 
-                                    <h4 className="font-bold mt-4">שימוש במידע</h4>
-                                    <p>המידע שנאסף לא יועבר לצדדים שלישיים ללא הסכמתכם, אלא אם כן נדרשנו לכך על פי חוק.</p>
+                                    <h4 className="font-bold mt-4">{t('data_use')}</h4>
+                                    <p>{t('data_use_text')}</p>
 
-                                    <h4 className="font-bold mt-4">עוגיות (Cookies)</h4>
-                                    <p>האתר עשוי להשתמש ב"עוגיות" (Cookies) לצורך תפעולו השוטף והתקין, ובכלל זה כדי לאסוף נתונים סטטיסטיים אודות השימוש באתר, לאימות פרטים, וכדי להתאים את האתר להעדפותיכם האישיות.</p>
-                                    <p>דפדפנים מודרניים מאפשרים לכם להימנע מקבלת Cookies. אם אינכם יודעים כיצד לעשות זאת, בדקו בקובץ העזרה של הדפדפן שבו אתם משתמשים.</p>
+                                    <h4 className="font-bold mt-4">{t('cookies_policy_title')}</h4>
+                                    <p>{t('cookies_policy_text_1')}</p>
+                                    <p>{t('cookies_policy_text_2')}</p>
                                 </div>
                             )}
                         </div>

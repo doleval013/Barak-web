@@ -1,5 +1,6 @@
 import React from 'react';
 import { Facebook, Instagram, Youtube } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const TikTok = ({ size = 24, className = "" }) => (
     <svg
@@ -18,6 +19,7 @@ const TikTok = ({ size = 24, className = "" }) => (
 );
 
 export default function Footer({ onOpenLegal }) {
+    const { t } = useLanguage();
     const socialLinks = [
         { icon: Facebook, href: "https://www.facebook.com/barakaloni.dogs", label: "Facebook" },
         { icon: Instagram, href: "https://www.instagram.com/barakaloni.dogs/", label: "Instagram" },
@@ -36,18 +38,18 @@ export default function Footer({ onOpenLegal }) {
                         onClick={() => onOpenLegal('accessibility')}
                         className="hover:text-[var(--color-accent)] transition-colors"
                     >
-                        הצהרת נגישות
+                        {t('accessibility_statement')}
                     </button>
                     <span className="opacity-30">|</span>
                     <button
                         onClick={() => onOpenLegal('privacy')}
                         className="hover:text-[var(--color-accent)] transition-colors"
                     >
-                        מדיניות פרטיות
+                        {t('privacy_policy')}
                     </button>
                 </div>
-                <p className="text-[var(--color-text-muted)] text-sm opacity-80">
-                    © כל הזכויות באתר זה שמורות לברק אלוני {new Date().getFullYear()}. אין להעתיק, לשכפל ולצלם.
+                <p className="text-[var(--color-text-muted)] text-sm opacity-80" dir="ltr">
+                    {t('copyright').replace('{year}', new Date().getFullYear())}
                 </p>
             </div>
         </footer>

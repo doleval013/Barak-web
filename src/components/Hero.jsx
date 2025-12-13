@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CheckCircle, X, Play } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Hero() {
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
+    const { t } = useLanguage();
 
     return (
         <section className="relative pt-48 pb-32 overflow-hidden">
@@ -44,18 +46,18 @@ export default function Hero() {
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="order-1 text-right"
+                        className="order-1 rtl:text-right ltr:text-left"
                     >
 
 
                         <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-[1.1] text-[var(--color-text)] tracking-tight">
-                            <span className="text-gradient">ברק אלוני</span>
+                            <span className="text-gradient">{t('hero_title')}</span>
                             <br />
-                            סדנאות כלבנות והעצמה
+                            {t('hero_subtitle')}
                         </h1>
 
-                        <p className="text-xl text-[var(--color-text-muted)] mb-10 leading-relaxed max-w-lg ml-auto">
-                            חינוך, קהילה וארגונים. נבנה יחד חוויה מעצימה, ערכית ומחברת - עם מעל 10 שנות ניסיון בשטח.
+                        <p className="text-xl text-[var(--color-text-muted)] mb-10 leading-relaxed max-w-lg ml-auto rtl:ml-auto ltr:mr-auto">
+                            {t('hero_description')}
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 mb-10">
@@ -66,8 +68,8 @@ export default function Hero() {
                                 style={{ color: '#ffffff' }}
                             >
                                 <span className="relative z-20 flex items-center gap-2">
-                                    בואו נדבר
-                                    <ArrowLeft size={20} />
+                                    {t('lets_talk')}
+                                    <ArrowLeft size={20} className="rtl:rotate-0 ltr:rotate-180" />
                                 </span>
                             </motion.a>
                             <motion.a
@@ -75,7 +77,7 @@ export default function Hero() {
                                 href="#programs"
                                 className="glass-panel inline-flex items-center justify-center gap-2 text-[var(--color-text)] px-8 py-4 rounded-full font-bold text-lg hover:bg-white/80 transition-all shadow-sm"
                             >
-                                למי זה מתאים?
+                                {t('who_is_it_for')}
                             </motion.a>
                         </div>
 
@@ -95,7 +97,7 @@ export default function Hero() {
                             animate="show"
                             className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-6 text-sm font-medium text-[var(--color-text-muted)]"
                         >
-                            {['+10 שנות ניסיון', 'פריסה ארצית', 'מותאם לכל גיל ואוכלוסייה'].map((tag, i) => (
+                            {[t('experience'), t('nationwide'), t('all_ages')].map((tag, i) => (
                                 <motion.div
                                     key={i}
                                     variants={{

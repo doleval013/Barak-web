@@ -95,7 +95,7 @@ export const LanguageProvider = ({ children }) => {
             'result_4': 'מוסריות כלפי בעלי חיים',
             'technical_details_title': 'פרטים טכניים:',
             'group_size': '• גודל קבוצה: 6-8 תלמידים',
-            'requirements': '• דרישות: כיתה קבועה, ליווי יועץ חינוכי',
+            'requirements': '• דרישות: כיתה קבועה, ליווי ייעוץ חינוכי מטעם המוסד',
             'contact_details_modal': '• פרטי קשר: ברק אלוני | 050-8391268 | Dogs@barakaloni.com',
 
             // Accessibility Widget

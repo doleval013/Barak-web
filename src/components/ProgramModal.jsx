@@ -156,11 +156,17 @@ export default function ProgramModal({ isOpen, onClose }) {
                             {/* Details Box */}
                             <div className="bg-gray-50 rounded-2xl p-6 text-sm text-gray-500 border border-gray-100">
                                 <h5 className="font-bold text-gray-900 mb-2">{t('technical_details_title')}</h5>
-                                <ul className="space-y-1">
+                                <ul className="space-y-1 mb-6">
                                     <li>{t('group_size')}</li>
                                     <li>{t('requirements')}</li>
-                                    <li>{t('contact_details_modal')}</li>
                                 </ul>
+                                <a
+                                    href="#contact"
+                                    onClick={onClose}
+                                    className="flex w-full items-center justify-center px-6 py-3 bg-[var(--color-primary)] !text-white font-bold rounded-xl shadow-lg hover:bg-[var(--color-primary)]/90 transition-all transform hover:-translate-y-0.5"
+                                >
+                                    {t('contact_title')}
+                                </a>
                             </div>
                         </div>
                     </div>

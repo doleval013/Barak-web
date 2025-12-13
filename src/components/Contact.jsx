@@ -118,9 +118,10 @@ export default function Contact() {
                                 </div>
 
                                 {/* Social Links - Added Here */}
-                                <div className="mt-8 pt-10 border-t border-white/10 flex flex-col gap-12 items-center">
+                                {/* Social Links - Added Here */}
+                                <div className="mt-8 pt-10 pb-10 -mx-6 md:-mx-14 -mb-6 md:-mb-14 border-t border-white/10 flex flex-col gap-8 items-center bg-gradient-to-b from-white/5 to-white/25 relative z-20">
                                     <h3 className="text-lg font-bold opacity-90">{t('follow_us')}</h3>
-                                    <div className="flex gap-5 min-[500px]:gap-10 md:gap-12 justify-center">
+                                    <div className="flex flex-wrap gap-4 min-[500px]:gap-8 justify-center w-full px-4">
                                         {/* Facebook - Blue */}
                                         <a
                                             href="https://www.facebook.com/barakaloni.dogs"

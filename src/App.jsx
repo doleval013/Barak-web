@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 
@@ -13,6 +13,20 @@ import FloatingWhatsApp from './components/FloatingWhatsApp';
 function App() {
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState('accessibility');
+  const [isCookieBannerOpen, setIsCookieBannerOpen] = useState(false);
+
+  useEffect(() => {
+    const consent = localStorage.getItem('cookieConsent');
+    if (!consent) {
+      const timer = setTimeout(() => setIsCookieBannerOpen(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleCookieAccept = () => {
+    localStorage.setItem('cookieConsent', 'true');
+    setIsCookieBannerOpen(false);
+  };
 
   const openLegal = (tab) => {
     setLegalTab(tab);
@@ -35,9 +49,13 @@ function App() {
         onClose={() => setIsLegalModalOpen(false)}
         initialTab={legalTab}
       />
-      <CookieBanner onOpenPrivacy={() => openLegal('privacy')} />
-      <AccessibilityWidget />
-      <FloatingWhatsApp />
+      <CookieBanner
+        isVisible={isCookieBannerOpen}
+        onAccept={handleCookieAccept}
+        onOpenPrivacy={() => openLegal('privacy')}
+      />
+      <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
+      <FloatingWhatsApp isBannerOpen={isCookieBannerOpen} />
     </div>
   );
 }

@@ -14,13 +14,17 @@ const WhatsAppIcon = ({ size = 24, className = "" }) => (
     </svg>
 );
 
-export default function FloatingWhatsApp() {
+export default function FloatingWhatsApp({ isBannerOpen }) {
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 1, duration: 0.5 }}
-            className="fixed bottom-6 right-6 z-40"
+            className="fixed right-6 z-40"
+            style={{
+                bottom: isBannerOpen ? '240px' : '1.5rem',
+                transition: 'bottom 0.3s ease-in-out'
+            }}
         >
             <motion.div
                 className="absolute inset-0 bg-[#25D366] rounded-full opacity-60"

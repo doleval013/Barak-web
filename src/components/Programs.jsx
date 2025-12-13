@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { School, PartyPopper, HeartHandshake, ChevronDown, Sparkles, X, Play } from 'lucide-react';
+import { School, PartyPopper, HeartHandshake, ChevronDown, Sparkles, X, Play, FileText } from 'lucide-react';
+import ProgramModal from './ProgramModal';
 
 const programs = [
     {
@@ -8,7 +9,8 @@ const programs = [
         title: 'גפ"ן / מוסדות חינוך',
         icon: School,
         content: 'תוכנית תהליכית לתלמידים מכיתות א\' – י"ב, המותאמת לחינוך רגיל, חינוך מיוחד, נוער בסיכון, עולים חדשים ועוד. אנו מעניקים מענה תומך ומשלים לתהליכים החינוכיים המתקיימים במסגרת בית הספר.',
-        video: 'https://www.youtube.com/embed/HC4Sm4KhXlU?autoplay=1&rel=0'
+        video: 'https://www.youtube.com/embed/HC4Sm4KhXlU?autoplay=1&rel=0',
+        hasModal: true
     },
     {
         id: 'events',
@@ -27,6 +29,7 @@ const programs = [
 
 export default function Programs() {
     const [videoModal, setVideoModal] = useState(null);
+    const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
     const [activeSlide, setActiveSlide] = useState(0);
     const scrollRef = useRef(null);
 
@@ -84,7 +87,7 @@ export default function Programs() {
                     >
                         <span className="text-[var(--color-primary)]">פתרונות מותאמים אישית</span>
                         <br />
-                        <span className="text-gradient-accent text-3xl md:text-4xl font-normal">לכל צורך ומטרה</span>
+                        <span className="text-gradient-accent text-3xl md:text-4xl font-normal">למסגרות חינוך וארגונים</span>
                     </motion.h2>
                 </div>
 
@@ -119,8 +122,18 @@ export default function Programs() {
                                     </p>
                                 </div>
 
-                                <div className="mt-auto pt-4 border-t border-[var(--color-border)] w-full">
-                                    {program.video ? (
+                                <div className="mt-auto pt-4 border-t border-[var(--color-border)] w-full flex flex-col gap-3">
+                                    {program.hasModal && (
+                                        <button
+                                            onClick={() => setIsProgramModalOpen(true)}
+                                            className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                        >
+                                            לפרטים נוספים
+                                            <FileText size={18} />
+                                        </button>
+                                    )}
+
+                                    {program.video && (
                                         <button
                                             onClick={() => setVideoModal(program.video)}
                                             className="w-full py-3 px-4 rounded-xl btn-youtube font-bold flex items-center justify-center gap-2 group/btn"
@@ -130,16 +143,6 @@ export default function Programs() {
                                                 <Play size={18} className="fill-current ml-0.5" />
                                             </div>
                                         </button>
-                                    ) : (
-                                        <a
-                                            href="#contact"
-                                            className="w-full py-3 px-4 rounded-xl glass-panel font-bold text-[var(--color-primary)] flex items-center justify-center gap-2 group/link hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-sm"
-                                        >
-                                            לפרטים נוספים
-                                            <div className="w-8 h-8 rounded-full bg-[var(--color-bg)] flex items-center justify-center mr-2 group-hover/link:bg-white/20 transition-colors">
-                                                <ChevronDown size={18} className="rotate-90 group-hover/link:-translate-x-0.5 transition-transform" />
-                                            </div>
-                                        </a>
                                     )}
                                 </div>
                             </div>
@@ -199,6 +202,11 @@ export default function Programs() {
                     </div>
                 )}
             </AnimatePresence>
+
+            <ProgramModal
+                isOpen={isProgramModalOpen}
+                onClose={() => setIsProgramModalOpen(false)}
+            />
         </section>
     );
 }

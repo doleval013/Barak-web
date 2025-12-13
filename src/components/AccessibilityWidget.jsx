@@ -1,32 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Accessibility, Type, Sun, Link as LinkIcon, X, Eye, MousePointer2 } from 'lucide-react';
+import {
+    Accessibility,
+    X,
+    Type,
+    Minus,
+    Plus,
+    Underline as UnderlineIcon,
+    Heading as HeadingIcon,
+    PauseCircle,
+    RotateCcw,
+    Barcode,
+    Contrast,
+    Eye,
+    MousePointer2
+} from 'lucide-react';
 
-export default function AccessibilityWidget() {
+export default function AccessibilityWidget({ isBannerOpen }) {
     const [isOpen, setIsOpen] = useState(false);
     const [settings, setSettings] = useState({
-        largeText: false,
-        highContrast: false,
+        scale: 1,
+        grayscale: false,
+        invertContrast: false,
         highlightLinks: false,
+        highlightHeadings: false,
         readableFont: false,
-        cursor: false
+        cursor: false,
+        stopAnimations: false
     });
 
     // Apply settings to document
     useEffect(() => {
         const body = document.body;
+        const html = document.documentElement;
 
-        // Large Text
-        if (settings.largeText) body.classList.add('large-text');
-        else body.classList.remove('large-text');
+        // Scale Text
+        html.style.fontSize = `${settings.scale * 100}%`;
 
-        // High Contrast
-        if (settings.highContrast) body.classList.add('high-contrast');
+        // Invert Contrast
+        if (settings.invertContrast) body.classList.add('high-contrast');
         else body.classList.remove('high-contrast');
 
         // Highlight Links
         if (settings.highlightLinks) body.classList.add('access-links');
+
         else body.classList.remove('access-links');
+
+        // Highlight Headings
+        if (settings.highlightHeadings) body.classList.add('highlight-headings');
+        else body.classList.remove('highlight-headings');
 
         // Readable Font
         if (settings.readableFont) body.classList.add('readable-font');
@@ -36,7 +58,18 @@ export default function AccessibilityWidget() {
         if (settings.cursor) body.classList.add('access-cursor');
         else body.classList.remove('access-cursor');
 
+        // Stop Animations
+        if (settings.stopAnimations) body.classList.add('stop-animations');
+        else body.classList.remove('stop-animations');
+
     }, [settings]);
+
+    const updateScale = (delta) => {
+        setSettings(prev => {
+            const newScale = Math.min(Math.max(prev.scale + delta, 0.8), 1.5);
+            return { ...prev, scale: newScale };
+        });
+    };
 
     const toggleSetting = (key) => {
         setSettings(prev => ({ ...prev, [key]: !prev[key] }));
@@ -44,23 +77,38 @@ export default function AccessibilityWidget() {
 
     const resetSettings = () => {
         setSettings({
-            largeText: false,
-            highContrast: false,
+            scale: 1,
+            grayscale: false,
+            invertContrast: false,
             highlightLinks: false,
+            highlightHeadings: false,
             readableFont: false,
-            cursor: false
+            cursor: false,
+            stopAnimations: false
         });
     };
 
     return (
         <>
+            {/* Grayscale Overlay */}
+            {settings.grayscale && (
+                <div
+                    className="fixed inset-0 z-[100] pointer-events-none"
+                    style={{ backdropFilter: 'grayscale(100%)', WebkitBackdropFilter: 'grayscale(100%)' }}
+                />
+            )}
+
             {/* Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed left-4 bottom-4 z-[80] p-3 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none focus:ring-4 focus:ring-blue-300 text-white border-4 border-white ring-1 ring-black shadow-glow"
+                className="fixed left-4 z-[80] p-3 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none focus:ring-4 focus:ring-blue-300 text-white border-4 border-white ring-1 ring-black shadow-glow"
                 aria-label="פתח תפריט נגישות"
                 title="תפריט נגישות"
-                style={{ backgroundColor: '#0f172a' }}
+                style={{
+                    backgroundColor: '#0f172a',
+                    bottom: isBannerOpen ? '240px' : '1rem',
+                    transition: 'bottom 0.3s ease-in-out'
+                }}
             >
                 <Accessibility size={32} strokeWidth={2.5} />
             </button>
@@ -72,8 +120,13 @@ export default function AccessibilityWidget() {
                         initial={{ opacity: 0, x: -20, scale: 0.95 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: -20, scale: 0.95 }}
-                        className="accessibility-widget fixed left-4 bottom-20 z-[90] w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
+                        className="accessibility-widget fixed left-4 z-[90] w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden text-[#0f172a]"
+                        style={{
+                            bottom: isBannerOpen ? '300px' : '5rem',
+                            transition: 'bottom 0.3s ease-in-out'
+                        }}
                     >
+                        {/* Header */}
                         <div className="bg-[var(--color-primary)] p-4 flex items-center justify-between text-white">
                             <h3 className="font-bold text-lg flex items-center gap-2">
                                 <Accessibility size={20} />
@@ -84,24 +137,40 @@ export default function AccessibilityWidget() {
                             </button>
                         </div>
 
-                        <div className="p-4 grid grid-cols-2 gap-3">
+                        <div className="p-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto custom-scrollbar">
                             <AccessBtn
-                                active={settings.largeText}
-                                onClick={() => toggleSetting('largeText')}
-                                icon={Type}
-                                label="הגדל טקסט"
+                                active={settings.grayscale}
+                                onClick={() => toggleSetting('grayscale')}
+                                icon={Barcode}
+                                label="גווני אפור"
                             />
                             <AccessBtn
-                                active={settings.highContrast}
-                                onClick={() => toggleSetting('highContrast')}
-                                icon={Sun}
-                                label="ניגודיות גבוהה"
+                                active={settings.invertContrast}
+                                onClick={() => toggleSetting('invertContrast')}
+                                icon={Contrast}
+                                label="ניגודיות הפוכה"
+                            />
+                            <AccessBtn
+                                onClick={() => updateScale(-0.1)}
+                                icon={Minus}
+                                label="הקטנת טקסט"
+                            />
+                            <AccessBtn
+                                onClick={() => updateScale(0.1)}
+                                icon={Plus}
+                                label="הגדלת טקסט"
+                            />
+                            <AccessBtn
+                                active={settings.highlightHeadings}
+                                onClick={() => toggleSetting('highlightHeadings')}
+                                icon={HeadingIcon}
+                                label="הדגשת כותרות"
                             />
                             <AccessBtn
                                 active={settings.highlightLinks}
                                 onClick={() => toggleSetting('highlightLinks')}
-                                icon={LinkIcon}
-                                label="הדגש קישורים"
+                                icon={UnderlineIcon}
+                                label="הדגשת קישורים"
                             />
                             <AccessBtn
                                 active={settings.readableFont}
@@ -115,16 +184,20 @@ export default function AccessibilityWidget() {
                                 icon={MousePointer2}
                                 label="סמן גדול"
                             />
+                            <AccessBtn
+                                active={settings.stopAnimations}
+                                onClick={() => toggleSetting('stopAnimations')}
+                                icon={PauseCircle}
+                                label="עצירת אנימציות"
+                            />
+                            <AccessBtn
+                                onClick={resetSettings}
+                                icon={RotateCcw}
+                                label="איפוס הגדרות"
+                            />
                         </div>
 
-                        <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
-                            <button
-                                onClick={resetSettings}
-                                className="text-sm text-red-500 font-bold hover:underline"
-                            >
-                                איפוס הגדרות
-                            </button>
-                        </div>
+
                     </motion.div>
                 )}
             </AnimatePresence>

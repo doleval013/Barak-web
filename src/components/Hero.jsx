@@ -79,14 +79,36 @@ export default function Hero() {
                             </motion.a>
                         </div>
 
-                        <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-[var(--color-text-muted)]">
+                        <motion.div
+                            variants={{
+                                hidden: { opacity: 0, y: 10 },
+                                show: {
+                                    opacity: 1,
+                                    y: 0,
+                                    transition: {
+                                        staggerChildren: 0.1,
+                                        delayChildren: 0.4
+                                    }
+                                }
+                            }}
+                            initial="hidden"
+                            animate="show"
+                            className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-6 text-sm font-medium text-[var(--color-text-muted)]"
+                        >
                             {['+10 שנות ניסיון', 'פריסה ארצית', 'מותאם לכל גיל ואוכלוסייה'].map((tag, i) => (
-                                <div key={i} className="flex items-center gap-2">
-                                    <CheckCircle size={16} className="text-[var(--color-accent)]" />
-                                    {tag}
-                                </div>
+                                <motion.div
+                                    key={i}
+                                    variants={{
+                                        hidden: { opacity: 0, scale: 0.9 },
+                                        show: { opacity: 1, scale: 1 }
+                                    }}
+                                    className="flex items-center gap-2 bg-[var(--color-accent)]/5 px-3 py-1.5 rounded-full border border-[var(--color-accent)]/10 md:bg-transparent md:p-0 md:border-0"
+                                >
+                                    <CheckCircle size={16} className="text-[var(--color-accent)] shrink-0" />
+                                    <span>{tag}</span>
+                                </motion.div>
                             ))}
-                        </div>
+                        </motion.div>
                     </motion.div>
 
                     <motion.div

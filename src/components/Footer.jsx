@@ -47,7 +47,7 @@ export default function Footer({ onOpenLegal }) {
                     </button>
                 </div>
                 <p className="text-[var(--color-text-muted)] text-sm opacity-80">
-                    © {new Date().getFullYear()} ברק אלוני - סדנאות כלבנות והעצמה. כל הזכויות שמורות.
+                    © כל הזכויות באתר זה שמורות לברק אלוני {new Date().getFullYear()}. אין להעתיק, לשכפל ולצלם.
                 </p>
             </div>
         </footer>

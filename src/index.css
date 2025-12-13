@@ -277,12 +277,36 @@ body.high-contrast iframe {
 }
 
 /* High Contrast fixes for scroll indicators */
-body.high-contrast .scroll-dot {
-  background-color: #666 !important;
-  border: 1px solid #fff !important;
-}
-
 body.high-contrast .scroll-dot[class*="w-8"] {
   background-color: #fff !important;
   border-color: #fff !important;
+}
+
+/* Additional Accessibility Modes */
+
+/* Boosted Specificity for Accessibility Highlights (overrides High Contrast) */
+body.highlight-headings #root h1,
+body.highlight-headings #root h2,
+body.highlight-headings #root h3,
+body.highlight-headings #root h4,
+body.highlight-headings #root h5,
+body.highlight-headings #root h6 {
+  background-color: yellow !important;
+  color: black !important;
+  width: fit-content;
+  display: inline-block;
+  padding: 0 4px;
+}
+
+body.access-links #root a {
+  text-decoration: underline !important;
+  background-color: yellow !important;
+  color: black !important;
+  font-weight: bold !important;
+}
+
+body.stop-animations *,
+body.stop-animations {
+  animation: none !important;
+  transition: none !important;
 }

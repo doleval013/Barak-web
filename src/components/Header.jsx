@@ -32,7 +32,6 @@ export default function Header() {
 
   const navLinks = [
     { name: 'תוכניות', href: '#programs' },
-    { name: 'צור קשר', href: '#contact' },
   ];
 
   return (

@@ -191,7 +191,7 @@ export default function Contact() {
                                             id="name"
                                             name="name"
                                             required
-                                            placeholder="John Doe"
+                                            placeholder={t('name_placeholder')}
                                             className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-light)]/50 outline-none transition-all bg-gray-50 focus:bg-white"
                                         />
                                     </div>
@@ -201,7 +201,7 @@ export default function Contact() {
                                             type="tel"
                                             id="phone"
                                             name="phone"
-                                            placeholder="050-0000000"
+                                            placeholder={t('phone_placeholder')}
                                             className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-light)]/50 outline-none transition-all bg-gray-50 focus:bg-white"
                                         />
                                     </div>
@@ -214,7 +214,7 @@ export default function Contact() {
                                         id="email"
                                         name="email"
                                         required
-                                        placeholder="your@email.com"
+                                        placeholder={t('email_placeholder')}
                                         className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary-light)]/50 outline-none transition-all bg-gray-50 focus:bg-white"
                                     />
                                 </div>

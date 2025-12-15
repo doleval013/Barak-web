@@ -59,6 +59,9 @@ export const LanguageProvider = ({ children }) => {
             'send_details': 'שלחו פרטים',
             'privacy_note': '* הנתונים נשלחים ישירות למייל שלנו ולא מועברים לצד ג\'.',
             'whatsapp_message': 'אשמח לשמוע עוד פרטים על השירותים שלכם',
+            'name_placeholder': 'ישראל ישראלי',
+            'phone_placeholder': '050-0000000',
+            'email_placeholder': 'your@email.com',
 
             // Footer
             'accessibility_statement': 'הצהרת נגישות',
@@ -151,7 +154,7 @@ export const LanguageProvider = ({ children }) => {
 
             // Hero
             'hero_title': 'Barak Aloni',
-            'hero_subtitle': 'Dog Training & Empowerment Workshops',
+            'hero_subtitle': 'Therapy Dog Workshops & Empowerment',
             'hero_description': 'Education, community, and organizations. Building an empowering, values-driven, and connecting experience together – with over 10 years of field experience.',
             'who_is_it_for': 'Who is it for?',
             'experience': '+10 Years Experience',
@@ -188,6 +191,9 @@ export const LanguageProvider = ({ children }) => {
             'send_details': 'Send Details',
             'privacy_note': '* Data is sent directly to our email and not shared with third parties.',
             'whatsapp_message': 'I would like to hear more details about your services',
+            'name_placeholder': 'John Doe',
+            'phone_placeholder': '050-0000000',
+            'email_placeholder': 'your@email.com',
 
             // Footer
             'accessibility_statement': 'Accessibility Statement',

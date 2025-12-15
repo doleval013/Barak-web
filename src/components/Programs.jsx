@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { School, PartyPopper, HeartHandshake, ChevronDown, Sparkles, X, Play, FileText } from 'lucide-react';
 import ProgramModal from './ProgramModal';
@@ -9,6 +9,8 @@ export default function Programs() {
     const [videoModal, setVideoModal] = useState(null);
     const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
     const [activeSlide, setActiveSlide] = useState(0);
+    const [isFocused, setIsFocused] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
     const scrollRef = useRef(null);
 
     const programs = [
@@ -35,22 +37,63 @@ export default function Programs() {
         }
     ];
 
-    const handleScroll = () => {
-        const el = scrollRef.current;
-        if (!el) return;
+    const checkActiveState = () => {
+        const container = scrollRef.current;
+        if (!container) return;
 
-        // Math.abs handles RTL negative scroll values on some browsers
-        const currentScroll = Math.abs(el.scrollLeft);
-        const maxScroll = el.scrollWidth - el.clientWidth;
+        // 1. Vertical Center Check (Viewport)
+        // Ensure the component is roughly in the middle 40% of the screen
+        const rect = container.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const containerCenterY = rect.top + rect.height / 2;
+        const viewportCenterY = viewportHeight / 2;
+        const isVerticallyCentered = Math.abs(containerCenterY - viewportCenterY) < (viewportHeight * 0.2);
 
-        if (maxScroll <= 0) {
-            setActiveSlide(0);
-            return;
-        }
+        // 2. Horizontal Center Check (Carousel)
+        const containerCenterX = rect.left + rect.width / 2;
+        // 15% threshold for horizontal snap (approx 50px)
+        const focusThresholdX = container.clientWidth * 0.15;
 
-        const index = Math.round((currentScroll / maxScroll) * (programs.length - 1));
-        setActiveSlide(index);
+        let closestIndex = 0;
+        let minDistanceX = Number.MAX_VALUE;
+
+        Array.from(container.children).forEach((child, index) => {
+            const childRect = child.getBoundingClientRect();
+            const childCenterX = childRect.left + childRect.width / 2;
+            const distanceX = Math.abs(childCenterX - containerCenterX);
+
+            if (distanceX < minDistanceX) {
+                minDistanceX = distanceX;
+                closestIndex = index;
+            }
+        });
+
+        setActiveSlide(closestIndex);
+        // Compound Focus: Center of screen AND Center of carousel
+        setIsFocused(isVerticallyCentered && minDistanceX < focusThresholdX);
     };
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+            checkActiveState();
+        };
+
+        handleResize();
+
+        // Listen to global scroll for vertical detection
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('scroll', checkActiveState, { passive: true });
+
+        // Initial delayed check
+        const timeoutId = setTimeout(checkActiveState, 100);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('scroll', checkActiveState);
+            clearTimeout(timeoutId);
+        };
+    }, []);
 
     const scrollToSlide = (index) => {
         const el = scrollRef.current;
@@ -95,61 +138,94 @@ export default function Programs() {
 
                 <div
                     ref={scrollRef}
-                    onScroll={handleScroll}
-                    className="flex items-stretch md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory hide-scrollbar"
+                    onScroll={checkActiveState}
+                    className="flex items-stretch md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-12 pt-4 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory hide-scrollbar"
                 >
-                    {programs.map((program, index) => (
-                        <motion.div
-                            key={program.id}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            whileTap={{ scale: 0.98 }}
-                            transition={{ delay: index * 0.1, duration: 0.5 }}
-                            className="min-w-[80vw] md:min-w-0 min-h-[22rem] snap-center group relative glass-panel rounded-[2rem] px-6 pt-6 pb-2 md:p-8 hover:bg-white transition-all duration-500 hover:shadow-glow flex flex-col h-full hover:-translate-y-2"
-                        >
+                    {programs.map((program, index) => {
+                        const isActiveMobile = isMobile && activeSlide === index && isFocused;
 
-                            <div className="relative z-10 flex flex-col flex-grow h-full justify-between">
-                                <div>
-                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-[var(--color-bg)] text-[var(--color-primary)] group-hover:bg-[var(--color-accent)] group-hover:text-white flex items-center justify-center transition-all duration-500 mb-4 md:mb-8 shadow-sm group-hover:shadow-[0_10px_20px_-5px_var(--color-accent)] group-hover:scale-110 group-hover:rotate-3">
-                                        <program.icon size={32} />
+                        // Base classes common to both
+                        const baseCardClasses = "min-h-[22rem] flex flex-col h-full transition-all duration-300 relative glass-panel rounded-[2rem] px-6 pt-6 pb-2 md:p-8";
+
+                        // Mobile-specific classes (Focus/Scroll driven only)
+                        const mobileCardClasses = isActiveMobile
+                            ? "min-w-[80vw] snap-center bg-white shadow-2xl -translate-y-4 scale-105 z-10 border-blue-100" // Active Pop
+                            : "min-w-[80vw] snap-center scale-95 opacity-60 grayscale-[0.5]"; // Inactive / Greyish
+
+                        // Desktop-specific classes (Hover driven)
+                        const desktopCardClasses = "min-w-0 group hover:bg-white hover:shadow-glow hover:-translate-y-2";
+
+                        const cardClasses = `${baseCardClasses} ${isMobile ? mobileCardClasses : desktopCardClasses}`;
+
+                        // Icon Styles
+                        const activeIconStyles = "bg-[var(--color-accent)] text-white shadow-[0_10px_20px_-5px_var(--color-accent)] scale-110 rotate-3";
+                        const inactiveIconStyles = "bg-[var(--color-bg)] text-[var(--color-primary)] shadow-sm";
+                        const hoverIconStyles = !isMobile ? "group-hover:bg-[var(--color-accent)] group-hover:text-white group-hover:shadow-[0_10px_20px_-5px_var(--color-accent)] group-hover:scale-110 group-hover:rotate-3" : "";
+
+                        const iconClasses = `w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center transition-all duration-500 mb-4 md:mb-8 ${(isMobile && isActiveMobile) ? activeIconStyles : `${inactiveIconStyles} ${hoverIconStyles}`
+                            }`;
+
+                        // Title Styles
+                        const activeTitleStyles = "text-[var(--color-accent)]";
+                        const inactiveTitleStyles = "text-[var(--color-primary)]";
+                        const hoverTitleStyles = !isMobile ? "group-hover:text-[var(--color-accent)]" : "";
+
+                        const titleClasses = `text-2xl font-bold mb-4 transition-colors ${(isMobile && isActiveMobile) ? activeTitleStyles : `${inactiveTitleStyles} ${hoverTitleStyles}`
+                            }`;
+
+                        return (
+                            <motion.div
+                                key={program.id}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ delay: index * 0.1, duration: 0.5 }}
+                                className={cardClasses}
+                            >
+
+                                <div className="relative z-10 flex flex-col flex-grow h-full justify-between">
+                                    <div>
+                                        <div className={iconClasses}>
+                                            <program.icon size={32} />
+                                        </div>
+
+                                        <h3 className={titleClasses}>
+                                            {program.title}
+                                        </h3>
+
+                                        <p className="text-[var(--color-text-muted)] leading-relaxed mb-4 text-sm md:text-base">
+                                            {program.content}
+                                        </p>
                                     </div>
 
-                                    <h3 className="text-2xl font-bold text-[var(--color-primary)] mb-4 group-hover:text-[var(--color-accent)] transition-colors">
-                                        {program.title}
-                                    </h3>
+                                    <div className="mt-auto pt-4 border-t border-[var(--color-border)] w-full flex flex-col gap-3">
+                                        {program.hasModal && (
+                                            <button
+                                                onClick={() => setIsProgramModalOpen(true)}
+                                                className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                            >
+                                                {t('more_details')}
+                                                <FileText size={18} />
+                                            </button>
+                                        )}
 
-                                    <p className="text-[var(--color-text-muted)] leading-relaxed mb-4 text-sm md:text-base">
-                                        {program.content}
-                                    </p>
+                                        {program.video && (
+                                            <button
+                                                onClick={() => setVideoModal(program.video)}
+                                                className="w-full py-3 px-4 rounded-xl btn-youtube font-bold flex items-center justify-center gap-2 group/btn"
+                                            >
+                                                {t('watch_video')}
+                                                <div className="w-8 h-8 rounded-full icon-circle flex items-center justify-center mr-2">
+                                                    <Play size={18} className="fill-current ml-0.5" />
+                                                </div>
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-
-                                <div className="mt-auto pt-4 border-t border-[var(--color-border)] w-full flex flex-col gap-3">
-                                    {program.hasModal && (
-                                        <button
-                                            onClick={() => setIsProgramModalOpen(true)}
-                                            className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                                        >
-                                            {t('more_details')}
-                                            <FileText size={18} />
-                                        </button>
-                                    )}
-
-                                    {program.video && (
-                                        <button
-                                            onClick={() => setVideoModal(program.video)}
-                                            className="w-full py-3 px-4 rounded-xl btn-youtube font-bold flex items-center justify-center gap-2 group/btn"
-                                        >
-                                            {t('watch_video')}
-                                            <div className="w-8 h-8 rounded-full icon-circle flex items-center justify-center mr-2">
-                                                <Play size={18} className="fill-current ml-0.5" />
-                                            </div>
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        );
+                    })}
                 </div>
 
                 {/* Mobile Scroll Indicators */}
@@ -211,4 +287,5 @@ export default function Programs() {
             />
         </section>
     );
+
 }

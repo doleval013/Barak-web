@@ -48,10 +48,12 @@ export default function Footer({ onOpenLegal }) {
                         {t('privacy_policy')}
                     </button>
                 </div>
-                <p className="text-[var(--color-text-muted)] text-sm opacity-80" dir="ltr">
-                    {t('copyright').replace('{year}', new Date().getFullYear())}
-                </p>
+                <div className="cursor-default select-none inline-block p-2">
+                    <p className="text-[var(--color-text-muted)] text-sm opacity-80" dir="ltr">
+                        {t('copyright').replace('{year}', new Date().getFullYear())}
+                    </p>
+                </div>
             </div>
-        </footer>
+        </footer >
     );
 }

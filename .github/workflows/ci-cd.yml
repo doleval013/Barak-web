@@ -32,7 +32,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest
 
-      - name: Build and push Docker image
+      - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -40,6 +40,13 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/barak-web-backend:latest
+          
       - name: Update Kubernetes Manifest
         run: |
           # Get the version from the tag (e.g., v1.0.0 -> 1.0.0 or just use the tag)
@@ -47,8 +54,7 @@ jobs:
           # Remove 'v' prefix to match docker/metadata-action behavior
           VERSION=${VERSION#v}
           
-          # Update the image tag in app.yaml
-          # Use specific image with tag
+          # Update the image tag in app.yaml for Frontend
           sed -i "s|image: doleval013/barak-web:.*|image: doleval013/barak-web:$VERSION|g" k8s/app.yaml
           
           cat k8s/app.yaml # Debug: show content

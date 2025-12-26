@@ -5,7 +5,7 @@ metadata:
   labels:
     app: barak-web
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: barak-web
@@ -28,6 +28,52 @@ spec:
             memory: "128Mi"
             cpu: "500m"
 ---
+# Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: barak-web-backend
+  labels:
+    app: barak-web-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: barak-web-backend
+  template:
+    metadata:
+      labels:
+        app: barak-web-backend
+    spec:
+      containers:
+      - name: backend
+        image: doleval013/barak-web-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DB_PATH
+          value: "/data/analytics.db"
+        volumeMounts:
+        - name: db-data
+          mountPath: /data
+      volumes:
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: barak-web-db-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: barak-web-db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -36,12 +82,25 @@ spec:
   selector:
     app: barak-web
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
       targetPort: 80
-  # On k3s/Single-Node, 'ClusterIP' is usually enough if using Ingress, 
-  # but since Traefik is missing/disabled, we use LoadBalancer to expose port 80 directly.
-  # Switch back to internal ClusterIP because the Ingress Controller will be the LoadBalancer now
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: barak-web-backend-service
+spec:
+  selector:
+    app: barak-web-backend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
   type: ClusterIP
 
 ---
@@ -52,8 +111,9 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    # Force HTTPS redirect
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # Rewrite /api requests to strip prefix if needed, but our backend uses /api prefix so no rewrite needed usually.
+    # Actually my backend code defines listening on /api/..., so passing /api from ingress is correct.
 spec:
   tls:
   - hosts:
@@ -63,6 +123,13 @@ spec:
   - host: dogs.barakaloni.com
     http:
       paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: barak-web-backend-service
+            port:
+              number: 80
       - path: /
         pathType: Prefix
         backend:

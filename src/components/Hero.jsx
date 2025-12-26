@@ -15,12 +15,12 @@ export default function Hero() {
         const zones = [
             { left: [2, 20], top: [5, 25] },    // Top-Left
             { left: [80, 98], top: [5, 25] },   // Top-Right
-            { left: [2, 20], top: [75, 95] },   // Bottom-Left
-            { left: [80, 98], top: [75, 95] },  // Bottom-Right
+            { left: [2, 20], top: [60, 80] },   // Bottom-Left (Raised from 95)
+            { left: [80, 98], top: [60, 80] },  // Bottom-Right (Raised from 95)
             { left: [1, 15], top: [30, 60] },    // Mid-Left (Side)
             { left: [85, 99], top: [30, 60] },   // Mid-Right (Side)
             { left: [30, 70], top: [2, 12] },    // Top-Center (Very high)
-            { left: [30, 70], top: [88, 98] },   // Bottom-Center (Very low)
+            { left: [30, 70], top: [70, 82] },   // Bottom-Center (Raised from 98)
         ];
 
         return zones.map((zone, i) => ({
@@ -36,34 +36,9 @@ export default function Hero() {
 
     return (
         <section className="relative pt-48 pb-32 overflow-hidden">
-            {/* Abstract Background Shapes */}
-            <motion.div
-                animate={{
-                    y: [0, -20, 0],
-                    rotate: [0, 5, 0],
-                    scale: [1, 1.05, 1]
-                }}
-                transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                }}
-                className="absolute top-0 right-0 w-2/3 h-full bg-[var(--color-secondary)]/5 -skew-x-12 translate-x-1/4 -z-10 blur-3xl"
-            />
-            <motion.div
-                animate={{
-                    y: [0, 30, 0],
-                    rotate: [0, -5, 0],
-                    scale: [1, 1.1, 1]
-                }}
-                transition={{
-                    duration: 10,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1
-                }}
-                className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-[var(--color-accent)]/10 rounded-full blur-3xl -z-10"
-            />
+
+
+
 
             <div className="container">
                 <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -166,13 +141,19 @@ export default function Hero() {
 
                         {/* Decorative Elements */}
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--color-accent)]/20 rounded-full blur-2xl -z-10"></div>
-                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[var(--color-primary)]/10 rounded-full blur-2xl -z-10"></div>
+                        <div className="absolute bottom-20 -left-10 w-40 h-40 bg-[var(--color-primary)]/10 rounded-full blur-2xl -z-10"></div>
                     </motion.div>
                 </div>
             </div>
 
             {/* Elegant Floating Paws Background Decoration */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden -z-5">
+            <div
+                className="absolute inset-0 pointer-events-none overflow-hidden -z-5"
+                style={{
+                    maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
+                }}
+            >
                 {pawPrints.map((paw) => (
                     <motion.img
                         key={paw.id}
@@ -197,6 +178,11 @@ export default function Hero() {
                     />
                 ))}
             </div>
+
+
+
+
+
 
 
 

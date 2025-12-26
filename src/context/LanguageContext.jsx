@@ -26,7 +26,7 @@ export const LanguageProvider = ({ children }) => {
 
             // Hero
             'hero_title': 'ברק אלוני',
-            'hero_subtitle': 'טיפול באמצעות כלבים / כלבנות טיפולית',
+            'hero_subtitle': 'סדנאות כלבנות והעצמה',
             'hero_description': 'חינוך, קהילה וארגונים. נבנה יחד חוויה מעצימה, ערכית ומחברת - עם מעל 10 שנות ניסיון בשטח.',
             'who_is_it_for': 'למי זה מתאים?',
             'experience': '+10 שנות ניסיון',

@@ -44,8 +44,8 @@ jobs:
         run: |
           # Get the version from the tag (e.g., v1.0.0 -> 1.0.0 or just use the tag)
           VERSION=${{ github.ref_name }}
-          # Remove 'v' prefix if present for consistent Docker tagging if needed, but here we used full tag in meta
-          # We'll just use the exact tag that triggered the workflow
+          # Remove 'v' prefix to match docker/metadata-action behavior
+          VERSION=${VERSION#v}
           
           # Update the image tag in app.yaml
           # Use specific image with tag

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: barak-web
-        image: doleval013/barak-web:v1.4.2
+        image: doleval013/barak-web:1.4.2
         imagePullPolicy: Always
         ports:
         - containerPort: 80

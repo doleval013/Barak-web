@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -36,3 +39,26 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Update Kubernetes Manifest
+        run: |
+          # Get the version from the tag (e.g., v1.0.0 -> 1.0.0 or just use the tag)
+          VERSION=${{ github.ref_name }}
+          # Remove 'v' prefix if present for consistent Docker tagging if needed, but here we used full tag in meta
+          # We'll just use the exact tag that triggered the workflow
+          
+          # Update the image tag in app.yaml
+          # Use specific image with tag
+          sed -i "s|image: doleval013/barak-web:.*|image: doleval013/barak-web:$VERSION|g" k8s/app.yaml
+          
+          cat k8s/app.yaml # Debug: show content
+          
+          # Configure Git
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Commit and Push
+          git add k8s/app.yaml
+          git commit -m "Update Kubernetes manifest to version $VERSION [skip ci]"
+          git push origin HEAD:main
+

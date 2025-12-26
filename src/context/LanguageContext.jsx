@@ -5,10 +5,14 @@ const LanguageContext = createContext();
 export const useLanguage = () => useContext(LanguageContext);
 
 export const LanguageProvider = ({ children }) => {
-    const [language, setLanguage] = useState('he');
+    const [language, setLanguage] = useState(() => {
+        const savedLanguage = localStorage.getItem('language');
+        return savedLanguage ? savedLanguage : 'he';
+    });
 
     // Set initial language based on browser preference if needed
     useEffect(() => {
+        localStorage.setItem('language', language);
         document.documentElement.lang = language;
         document.documentElement.dir = language === 'he' ? 'rtl' : 'ltr';
     }, [language]);
@@ -22,20 +26,20 @@ export const LanguageProvider = ({ children }) => {
 
             // Hero
             'hero_title': 'ברק אלוני',
-            'hero_subtitle': 'סדנאות כלבנות והעצמה',
+            'hero_subtitle': 'טיפול באמצעות כלבים / כלבנות טיפולית',
             'hero_description': 'חינוך, קהילה וארגונים. נבנה יחד חוויה מעצימה, ערכית ומחברת - עם מעל 10 שנות ניסיון בשטח.',
             'who_is_it_for': 'למי זה מתאים?',
             'experience': '+10 שנות ניסיון',
             'nationwide': 'פריסה ארצית',
             'all_ages': 'מותאם לכל גיל ואוכלוסייה',
-            'video_title': 'סרטון תדמית – ברק אלוני',
+            'video_title': 'סרטון תדמית - ברק אלוני',
 
             // Programs
             'our_programs': 'התוכניות שלנו',
             'tailored_solutions': 'פתרונות מותאמים אישית',
             'for_education': 'למסגרות חינוך וארגונים',
             'program_education_title': 'גפ"ן / מוסדות חינוך',
-            'program_education_content': 'תוכנית תהליכית לתלמידים מכיתות א\' – י"ב, המותאמת לחינוך רגיל, חינוך מיוחד, נוער בסיכון, עולים חדשים ועוד. אנו מעניקים מענה תומך ומשלים לתהליכים החינוכיים המתקיימים במסגרת בית הספר.',
+            'program_education_content': 'תוכנית תהליכית לתלמידים מכיתות א\' - י"ב, המותאמת לחינוך רגיל, חינוך מיוחד, נוער בסיכון, עולים חדשים ועוד. אנו מעניקים מענה תומך ומשלים לתהליכים החינוכיים המתקיימים במסגרת בית הספר.',
             'program_events_title': 'סדנאות ואירועים חד-פעמיים',
             'program_events_content': 'פעילויות חווייתיות מלאות אנרגיה המתאימות ל: ימי הולדת, קייטנות, סדנאות גיבוש ועוד! הכלבים והצוות שלנו מביאים שמחה, למידה ותחושת העצמה אישית לכל המשתתפים.',
             'program_special_title': 'אוכלוסיות מיוחדות',

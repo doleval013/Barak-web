@@ -200,6 +200,8 @@ export default function Hero() {
 
 
 
+
+
             {/* Lightbox Modal */}
             <AnimatePresence>
                 {isVideoExpanded && (

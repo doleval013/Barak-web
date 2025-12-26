@@ -41,9 +41,13 @@ function App() {
         <main>
           <Hero />
 
+
+
           <Programs />
           <Contact />
         </main>
+
+
         <Footer onOpenLegal={openLegal} />
 
         <LegalModal

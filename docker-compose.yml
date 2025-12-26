@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:80"
+    container_name: barak-web-app
+    restart: always

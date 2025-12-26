@@ -127,7 +127,7 @@ export default function Hero() {
                             <div className="aspect-video relative">
                                 <img
                                     src="https://img.youtube.com/vi/HC4Sm4KhXlU/maxresdefault.jpg"
-                                    alt="Video Thumbnail"
+                                    alt={t('video_title')}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
                                 <div className="video-overlay absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">

@@ -58,7 +58,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: var(--color-bg);
+  background-color: #f8fafc;
   /* Organic Mesh Gradient Background */
   background-image:
     radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
@@ -309,4 +309,23 @@ body.stop-animations *,
 body.stop-animations {
   animation: none !important;
   transition: none !important;
+}
+
+/* Walking Dog Animation Keyframes */
+@keyframes walkAcross {
+  0% {
+    transform: translateX(-15vw);
+  }
+
+  /* Start off-screen left */
+  100% {
+    transform: translateX(100vw);
+  }
+
+  /* Walk to off-screen right */
+}
+
+.animate-walking-dog {
+  animation: walkAcross 30s linear infinite;
+  /* Slow, steady walk across the entire screen */
 }

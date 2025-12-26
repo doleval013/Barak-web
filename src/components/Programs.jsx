@@ -202,7 +202,14 @@ export default function Programs() {
                                     <div className="mt-auto pt-4 border-t border-[var(--color-border)] w-full flex flex-col gap-3">
                                         {program.hasModal && (
                                             <button
-                                                onClick={() => setIsProgramModalOpen(true)}
+                                                onClick={() => {
+                                                    setIsProgramModalOpen(true);
+                                                    fetch('/api/event', {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ type: 'program_view', name: 'program_card', metadata: t(program.title) })
+                                                    }).catch(console.error);
+                                                }}
                                                 className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                             >
                                                 {t('more_details')}
@@ -212,7 +219,14 @@ export default function Programs() {
 
                                         {program.video && (
                                             <button
-                                                onClick={() => setVideoModal(program.video)}
+                                                onClick={() => {
+                                                    setVideoModal(program.video);
+                                                    fetch('/api/event', {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ type: 'video_click', name: 'video_play', metadata: t(program.title) })
+                                                    }).catch(console.error);
+                                                }}
                                                 className="w-full py-3 px-4 rounded-xl btn-youtube font-bold flex items-center justify-center gap-2 group/btn"
                                             >
                                                 {t('watch_video')}

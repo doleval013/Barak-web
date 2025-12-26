@@ -36,7 +36,14 @@ export default function Contact() {
     const { t } = useLanguage();
 
     return (
-        <section id="contact" className="section-padding pb-20 bg-white">
+        <section id="contact" className="section-padding pb-20 bg-white relative">
+            {/* Top Wavy Divider - acts as bottom of previous section */}
+            <div className="absolute top-0 left-0 w-full overflow-hidden leading-none z-10 -translate-y-full rotate-180">
+                <svg className="relative block w-full h-[50px] md:h-[80px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="#ffffff" opacity="1"></path>
+                </svg>
+            </div>
+
             <div className="container max-w-6xl">
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
@@ -73,6 +80,11 @@ export default function Contact() {
                                             href={`https://wa.me/972508391268?text=${encodeURIComponent(t('whatsapp_message'))}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            onClick={() => fetch('/api/event', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ type: 'contact_click', name: 'whatsapp_icon', metadata: 'WhatsApp Icon Click' })
+                                            }).catch(console.error)}
                                             className="w-12 h-12 rounded-2xl bg-[#25D366] flex items-center justify-center backdrop-blur-sm flex-shrink-0 text-white shadow-lg shadow-green-900/20 hover:scale-110 transition-transform"
                                             aria-label="WhatsApp"
                                         >
@@ -84,6 +96,11 @@ export default function Contact() {
                                                 href={`https://wa.me/972508391268?text=${encodeURIComponent(t('whatsapp_message'))}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
+                                                onClick={() => fetch('/api/event', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ type: 'contact_click', name: 'whatsapp_phone', metadata: 'Phone Number Click' })
+                                                }).catch(console.error)}
                                                 className="font-bold text-lg hover:text-[var(--color-accent)] transition-colors"
                                                 dir="ltr"
                                             >
@@ -95,6 +112,11 @@ export default function Contact() {
                                     <div className="flex items-start gap-5">
                                         <a
                                             href="mailto:dogs@barakaloni.com"
+                                            onClick={() => fetch('/api/event', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ type: 'contact_click', name: 'email_icon', metadata: 'Email Icon Click' })
+                                            }).catch(console.error)}
                                             className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center backdrop-blur-sm flex-shrink-0 text-white shadow-lg shadow-indigo-500/30 hover:scale-110 transition-transform"
                                             aria-label="Send Email"
                                         >
@@ -102,7 +124,17 @@ export default function Contact() {
                                         </a>
                                         <div>
                                             <div className="text-sm text-white/60 mb-1 font-medium">{t('email')}</div>
-                                            <a href="mailto:dogs@barakaloni.com" className="font-bold text-lg hover:text-[var(--color-accent)] transition-colors">Dogs@barakaloni.com</a>
+                                            <a
+                                                href="mailto:dogs@barakaloni.com"
+                                                onClick={() => fetch('/api/event', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ type: 'contact_click', name: 'email_address', metadata: 'Email Address Click' })
+                                                }).catch(console.error)}
+                                                className="font-bold text-lg hover:text-[var(--color-accent)] transition-colors"
+                                            >
+                                                Dogs@barakaloni.com
+                                            </a>
                                         </div>
                                     </div>
 

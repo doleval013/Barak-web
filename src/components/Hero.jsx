@@ -1,43 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CheckCircle, X, Play } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+
 
 export default function Hero() {
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
     const { t } = useLanguage();
 
+    // Generate random positions for paw prints once on mount
+    const pawPrints = useMemo(() => {
+        // Define 8 "Safe Zones" around the edges to ensure spread and avoid covering center text
+        // Format: { leftRange: [min, max], topRange: [min, max] }
+        const zones = [
+            { left: [2, 20], top: [5, 25] },    // Top-Left
+            { left: [80, 98], top: [5, 25] },   // Top-Right
+            { left: [2, 20], top: [60, 80] },   // Bottom-Left (Raised from 95)
+            { left: [80, 98], top: [60, 80] },  // Bottom-Right (Raised from 95)
+            { left: [1, 15], top: [30, 60] },    // Mid-Left (Side)
+            { left: [85, 99], top: [30, 60] },   // Mid-Right (Side)
+            { left: [30, 70], top: [2, 12] },    // Top-Center (Very high)
+            { left: [30, 70], top: [70, 82] },   // Bottom-Center (Raised from 98)
+        ];
+
+        return zones.map((zone, i) => ({
+            id: i,
+            // Random position strictly within the assigned zone
+            left: `${zone.left[0] + Math.random() * (zone.left[1] - zone.left[0])}%`,
+            top: `${zone.top[0] + Math.random() * (zone.top[1] - zone.top[0])}%`,
+            delay: Math.random() * 10,
+            duration: 18 + Math.random() * 10,
+            rotate: Math.random() * 60 - 30
+        }));
+    }, []);
+
     return (
         <section className="relative pt-48 pb-32 overflow-hidden">
-            {/* Abstract Background Shapes */}
-            {/* Abstract Background Shapes */}
-            <motion.div
-                animate={{
-                    y: [0, -20, 0],
-                    rotate: [0, 5, 0],
-                    scale: [1, 1.05, 1]
-                }}
-                transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                }}
-                className="absolute top-0 right-0 w-2/3 h-full bg-[var(--color-secondary)]/5 -skew-x-12 translate-x-1/4 -z-10 blur-3xl"
-            />
-            <motion.div
-                animate={{
-                    y: [0, 30, 0],
-                    rotate: [0, -5, 0],
-                    scale: [1, 1.1, 1]
-                }}
-                transition={{
-                    duration: 10,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1
-                }}
-                className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-[var(--color-accent)]/10 rounded-full blur-3xl -z-10"
-            />
+
+
+
 
             <div className="container">
                 <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -140,11 +141,52 @@ export default function Hero() {
 
                         {/* Decorative Elements */}
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--color-accent)]/20 rounded-full blur-2xl -z-10"></div>
-                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[var(--color-primary)]/10 rounded-full blur-2xl -z-10"></div>
+                        <div className="absolute bottom-20 -left-10 w-40 h-40 bg-[var(--color-primary)]/10 rounded-full blur-2xl -z-10"></div>
                     </motion.div>
-
                 </div>
             </div>
+
+            {/* Elegant Floating Paws Background Decoration */}
+            <div
+                className="absolute inset-0 pointer-events-none overflow-hidden -z-5"
+                style={{
+                    maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
+                }}
+            >
+                {pawPrints.map((paw) => (
+                    <motion.img
+                        key={paw.id}
+                        src="/assets/paw_solid.png"
+                        alt=""
+                        initial={{ opacity: 0, y: 50, rotate: Math.random() * 30 - 15 }}
+                        animate={{
+                            opacity: [0, 0.15, 0],
+                            y: -100,
+                        }}
+                        transition={{
+                            duration: paw.duration,
+                            repeat: Infinity,
+                            delay: paw.delay,
+                            ease: "easeInOut"
+                        }}
+                        className="absolute w-16 md:w-24 blur-[0.5px]"
+                        style={{
+                            left: paw.left,
+                            top: paw.top,
+                        }}
+                    />
+                ))}
+            </div>
+
+
+
+
+
+
+
+
+
 
             {/* Lightbox Modal */}
             <AnimatePresence>

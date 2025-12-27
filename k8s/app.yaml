@@ -57,9 +57,11 @@ spec:
           value: "barakpassword"
         - name: POSTGRES_DB
           value: "barakdb"
+        - name: PGDATA
+          value: "/var/lib/postgresql/storage/data"
         volumeMounts:
         - name: db-data
-          mountPath: /var/lib/postgresql/data
+          mountPath: /var/lib/postgresql/storage
       volumes:
       - name: db-data
         persistentVolumeClaim:
@@ -114,9 +116,9 @@ spec:
         - name: ADMIN_HASH
           value: "30e2bc1d0003c567206d31c09f075c1b518a7810f096f1d2ea0c880a8629578d"
         - name: APP_VERSION
-          value: "1.4.6" # Updated by CI/CD
+          value: "latest" # Updated by CI/CD
         - name: GIT_COMMIT
-          value: "f89d54752261e861ccbc726b1d0bec32ba21fa14"   # Updated by CI/CD
+          value: "HEAD"   # Updated by CI/CD
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

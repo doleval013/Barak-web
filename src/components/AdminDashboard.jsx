@@ -235,7 +235,7 @@ export default function AdminDashboard() {
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis
-                                    dataKey="name"
+                                    dataKey="date"
                                     axisLine={false}
                                     tickLine={false}
                                     tick={{ fill: '#94a3b8', fontSize: 12 }}

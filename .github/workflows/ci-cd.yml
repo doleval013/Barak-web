@@ -57,6 +57,10 @@ jobs:
           # Update the image tag in app.yaml for Frontend
           sed -i "s|image: doleval013/barak-web:.*|image: doleval013/barak-web:$VERSION|g" k8s/app.yaml
           
+          # Inject Version and Commit Hash into app.yaml env vars
+          sed -i "s|value: \"latest\" # Updated by CI/CD|value: \"$VERSION\" # Updated by CI/CD|g" k8s/app.yaml
+          sed -i "s|value: \"HEAD\"   # Updated by CI/CD|value: \"${{ github.sha }}\"   # Updated by CI/CD|g" k8s/app.yaml
+          
           cat k8s/app.yaml # Debug: show content
           
           # Configure Git

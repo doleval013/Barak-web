@@ -49,6 +49,25 @@ initDb();
 app.use(cors());
 app.use(express.json());
 
+// Auth Middleware
+const authenticate = (req, res, next) => {
+    const authHeader = req.headers['x-admin-auth'];
+    const validHash = process.env.ADMIN_HASH;
+
+    // If no hash is set in env, default to open (or handle as error). 
+    // For security, if validHash is missing, we should probably fail safe, 
+    // but here we might want to warn. 
+    if (!validHash) {
+        console.warn('ADMIN_HASH not set in environment.');
+        return next();
+    }
+
+    if (authHeader !== validHash) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    next();
+};
+
 // Helper to hash IP
 const hashIp = (req) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -57,7 +76,7 @@ const hashIp = (req) => {
 
 // Routes
 
-// 1. Record Visit
+// 1. Record Visit (Public)
 app.post('/api/visit', async (req, res) => {
     const { page } = req.body;
     const ip_hash = hashIp(req);
@@ -73,7 +92,7 @@ app.post('/api/visit', async (req, res) => {
     }
 });
 
-// 2. Record Event
+// 2. Record Event (Public)
 app.post('/api/event', async (req, res) => {
     const { type, name, metadata } = req.body;
 
@@ -88,8 +107,8 @@ app.post('/api/event', async (req, res) => {
     }
 });
 
-// 3. Get Stats
-app.get('/api/stats', async (req, res) => {
+// 3. Get Stats (Protected)
+app.get('/api/stats', authenticate, async (req, res) => {
     try {
         const stats = {};
 
@@ -105,6 +124,16 @@ app.get('/api/stats', async (req, res) => {
                 WHERE timestamp >= NOW() - INTERVAL '6 days'
                 GROUP BY date
                 ORDER BY date ASC
+            `),
+            // Get earliest data point
+            pool.query('SELECT MIN(timestamp) as first_seen FROM visits'),
+            // Get recent activity logs (Last 20 items from both tables)
+            pool.query(`
+                SELECT 'visit' as type, page as name, timestamp, NULL as metadata FROM visits
+                UNION ALL
+                SELECT 'event' as type, event_name as name, timestamp, metadata FROM events
+                ORDER BY timestamp DESC
+                LIMIT 20
             `)
         ]);
 
@@ -113,6 +142,12 @@ app.get('/api/stats', async (req, res) => {
         stats.contactClicks = parseInt(results[2].rows[0].count);
         stats.programViews = parseInt(results[3].rows[0].count);
         stats.trendData = results[4].rows;
+        stats.firstSeen = results[5].rows[0].first_seen;
+        stats.recentLogs = results[6].rows;
+
+        stats.uptime = process.uptime();
+        stats.version = process.env.APP_VERSION || 'Unknown';
+        stats.gitCommit = process.env.GIT_COMMIT || 'Unknown';
 
         res.json(stats);
     } catch (err) {

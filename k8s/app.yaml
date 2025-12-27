@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: barak-web
-        image: doleval013/barak-web:1.4.6
+        image: doleval013/barak-web:1.4.7
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -120,7 +120,7 @@ spec:
         - name: IMAGE_NAME
           value: "doleval013/barak-web-backend"
         - name: GIT_COMMIT
-          value: "HEAD"   # Updated by CI/CD
+          value: "0c8115509a98c8623a29f8a3f577f41f9fc5f90f"   # Updated by CI/CD
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

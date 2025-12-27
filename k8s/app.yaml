@@ -28,6 +28,57 @@ spec:
             memory: "128Mi"
             cpu: "500m"
 ---
+# Database Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: barak-web-db
+  labels:
+    app: barak-web-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: barak-web-db
+  template:
+    metadata:
+      labels:
+        app: barak-web-db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "barakuser"
+        - name: POSTGRES_PASSWORD
+          value: "barakpassword"
+        - name: POSTGRES_DB
+          value: "barakdb"
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: barak-web-db-pvc
+---
+# Database Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: barak-web-db-service
+spec:
+  selector:
+    app: barak-web-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+---
 # Backend Deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -52,16 +103,14 @@ spec:
         ports:
         - containerPort: 3000
         env:
-        - name: DB_PATH
-          value: "/data/analytics.db"
-        volumeMounts:
-        - name: db-data
-          mountPath: /data
-      volumes:
-      - name: db-data
-        persistentVolumeClaim:
-          claimName: barak-web-db-pvc
-
+        - name: DB_HOST
+          value: "barak-web-db-service"
+        - name: DB_USER
+          value: "barakuser"
+        - name: DB_PASSWORD
+          value: "barakpassword"
+        - name: DB_NAME
+          value: "barakdb"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -87,7 +136,6 @@ spec:
       port: 80
       targetPort: 80
   type: ClusterIP
-
 ---
 apiVersion: v1
 kind: Service
@@ -102,7 +150,6 @@ spec:
       port: 80
       targetPort: 3000
   type: ClusterIP
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -112,8 +159,6 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    # Rewrite /api requests to strip prefix if needed, but our backend uses /api prefix so no rewrite needed usually.
-    # Actually my backend code defines listening on /api/..., so passing /api from ingress is correct.
 spec:
   tls:
   - hosts:

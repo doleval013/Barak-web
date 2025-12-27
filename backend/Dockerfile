@@ -7,9 +7,7 @@ RUN npm install --production
 
 COPY . .
 
-# Create directory for DB
-RUN mkdir -p /data
-VOLUME /data
+
 
 EXPOSE 3000
 

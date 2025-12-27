@@ -125,9 +125,64 @@ app.get('/api/stats', authenticate, async (req, res) => {
                 GROUP BY date
                 ORDER BY date ASC
             `),
-            // Get earliest data point
+            // 6. Get earliest data point
             pool.query('SELECT MIN(timestamp) as first_seen FROM visits'),
-            // Get recent activity logs (Last 20 items from both tables)
+
+            // 7. Device Breakdown
+            pool.query(`
+                SELECT device_type, COUNT(*) as count 
+                FROM visits 
+                GROUP BY device_type 
+                ORDER BY count DESC
+            `),
+            // 8. Top Pages
+            pool.query(`
+                SELECT page, COUNT(*) as count 
+                FROM visits 
+                GROUP BY page 
+                ORDER BY count DESC 
+                LIMIT 5
+            `),
+            // 9. Top Videos
+            pool.query(`
+                SELECT event_name as name, COUNT(*) as count 
+                FROM events 
+                WHERE event_type = 'video_click'
+                GROUP BY event_name 
+                ORDER BY count DESC 
+                LIMIT 5
+            `),
+            // 10. Popular Programs
+            pool.query(`
+                SELECT event_name as name, COUNT(*) as count 
+                FROM events 
+                WHERE event_type = 'program_view'
+                GROUP BY event_name 
+                ORDER BY count DESC 
+                LIMIT 5
+            `),
+            // 11. Contact/Media Engagement
+            pool.query(`
+                SELECT event_name as name, COUNT(*) as count 
+                FROM events 
+                WHERE event_type = 'contact_click'
+                GROUP BY event_name 
+                ORDER BY count DESC 
+                LIMIT 5
+            `),
+            // 12. Visits Today
+            pool.query(`
+                SELECT COUNT(*) as count 
+                FROM visits 
+                WHERE CAST(timestamp AS DATE) = CURRENT_DATE
+            `),
+            // 13. Total Events Today
+            pool.query(`
+                SELECT COUNT(*) as count 
+                FROM events 
+                WHERE CAST(timestamp AS DATE) = CURRENT_DATE
+            `),
+            // 14. Recent Logs
             pool.query(`
                 SELECT 'visit' as type, page as name, timestamp, NULL as metadata FROM visits
                 UNION ALL
@@ -137,16 +192,31 @@ app.get('/api/stats', authenticate, async (req, res) => {
             `)
         ]);
 
+        // Basic Counts
         stats.visits = parseInt(results[0].rows[0].count);
         stats.videoClicks = parseInt(results[1].rows[0].count);
         stats.contactClicks = parseInt(results[2].rows[0].count);
         stats.programViews = parseInt(results[3].rows[0].count);
+
+        // Trend Data
         stats.trendData = results[4].rows;
         stats.firstSeen = results[5].rows[0].first_seen;
-        stats.recentLogs = results[6].rows;
+
+        // Specific Stats
+        stats.deviceStats = results[6].rows;
+        stats.pageStats = results[7].rows;
+        stats.videoStats = results[8].rows;
+        stats.programStats = results[9].rows;
+        stats.contactStats = results[10].rows;
+
+        // Time Stats
+        stats.visitsToday = parseInt(results[11].rows[0].count);
+        stats.totalEventsToday = parseInt(results[12].rows[0].count);
+        stats.recentLogs = results[13].rows;
 
         stats.uptime = process.uptime();
         stats.version = process.env.APP_VERSION || 'Unknown';
+        stats.imageName = process.env.IMAGE_NAME || 'Unknown';
         stats.gitCommit = process.env.GIT_COMMIT || 'Unknown';
 
         res.json(stats);

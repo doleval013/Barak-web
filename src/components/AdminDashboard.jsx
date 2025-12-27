@@ -11,6 +11,7 @@ export default function AdminDashboard() {
     const [password, setPassword] = useState('');
     const [stats, setStats] = useState({
         visits: 0,
+        visitsToday: 0,
         videoClicks: 0,
         contactClicks: 0,
         programViews: 0,
@@ -20,6 +21,8 @@ export default function AdminDashboard() {
         deviceStats: [],
         pageStats: [],
         videoStats: [],
+        programStats: [],
+        contactStats: [],
         version: '',
         gitCommit: ''
     });
@@ -147,7 +150,7 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] p-6 md:p-10">
+        <div className="min-h-screen bg-[#f8fafc] p-6 md:p-10" dir="ltr">
             <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
                     <div>
@@ -160,7 +163,7 @@ export default function AdminDashboard() {
                             <span>System Active</span>
                         </div>
                         <button
-                            onClick={fetchStats}
+                            onClick={() => fetchStats(authToken)}
                             className="p-3 bg-white text-slate-600 rounded-full shadow-sm hover:shadow-md transition-all active:scale-95 border border-slate-100"
                         >
                             <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
@@ -197,8 +200,13 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
                             <h3 className="text-slate-500 font-medium mb-1">Total Visits</h3>
-                            <div className="text-4xl font-bold text-slate-900 font-display">
-                                {stats.visits.toLocaleString()}
+                            <div className="flex items-baseline gap-2">
+                                <div className="text-4xl font-bold text-slate-900 font-display">
+                                    {stats.visits.toLocaleString()}
+                                </div>
+                                <div className="text-sm font-medium text-green-500 bg-green-50 px-2 py-1 rounded-lg">
+                                    +{stats.visitsToday || 0} today
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -304,13 +312,58 @@ export default function AdminDashboard() {
                                             <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500">
                                                 <Video size={14} />
                                             </div>
-                                            <span className="text-slate-600 font-medium truncate max-w-[120px]" title={video.video}>{video.video}</span>
+                                            <span className="text-slate-600 font-medium truncate max-w-[120px]" title={video.name}>{video.name}</span>
                                         </div>
                                         <span className="font-bold text-slate-900">{video.count}</span>
                                     </div>
                                 ))}
                                 {(!stats.videoStats || stats.videoStats.length === 0) && (
                                     <p className="text-slate-400 text-sm">No video data yet</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Additional Details Row */}
+                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                        {/* Popular Programs */}
+                        <div className="bg-white p-6 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100">
+                            <h3 className="text-lg font-bold text-slate-900 mb-4">Top Programs</h3>
+                            <div className="space-y-4">
+                                {stats.programStats?.map((prog, i) => (
+                                    <div key={i} className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-500">
+                                                <BarChart size={14} />
+                                            </div>
+                                            <span className="text-slate-600 font-medium">{prog.name}</span>
+                                        </div>
+                                        <span className="font-bold text-slate-900">{prog.count}</span>
+                                    </div>
+                                ))}
+                                {(!stats.programStats || stats.programStats.length === 0) && (
+                                    <p className="text-slate-400 text-sm">No program views yet</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Contact Methods */}
+                        <div className="bg-white p-6 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100">
+                            <h3 className="text-lg font-bold text-slate-900 mb-4">Contact Engagement</h3>
+                            <div className="space-y-4">
+                                {stats.contactStats?.map((contact, i) => (
+                                    <div key={i} className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-500">
+                                                <MousePointer size={14} />
+                                            </div>
+                                            <span className="text-slate-600 font-medium capitalize">{contact.name}</span>
+                                        </div>
+                                        <span className="font-bold text-slate-900">{contact.count}</span>
+                                    </div>
+                                ))}
+                                {(!stats.contactStats || stats.contactStats.length === 0) && (
+                                    <p className="text-slate-400 text-sm">No contact clicks yet</p>
                                 )}
                             </div>
                         </div>
@@ -415,7 +468,7 @@ export default function AdminDashboard() {
                             Data Collection Started: <span className="font-mono text-slate-600">{stats.firstSeen ? new Date(stats.firstSeen).toLocaleDateString() : 'Pending...'}</span>
                         </p>
                         <p>
-                            Current Version: <span className="font-mono text-slate-600">{stats.version}</span>
+                            Image: <span className="font-mono text-slate-600">{stats.imageName}:{stats.version}</span>
                             <span className="mx-2">•</span>
                             Commit: <a href={`https://github.com/doleval013/Barak-web/commit/${stats.gitCommit}`} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline font-mono">{stats.gitCommit?.substring(0, 7) || 'Unknown'}</a>
                         </p>

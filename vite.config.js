@@ -11,6 +11,12 @@ export default defineConfig({
   server: {
     host: true, // Needed for Docker/Cloud
     port: process.env.PORT ? parseInt(process.env.PORT) : 80,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      }
+    }
   },
   preview: {
     host: true, // Needed for Docker/Cloud

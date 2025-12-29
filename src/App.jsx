@@ -36,25 +36,50 @@ function App() {
         // 1. Get Today's Date Key (YYYY-MM-DD)
         const today = new Date().toISOString().split('T')[0];
         const storageKey = `visited_${today}`;
-        const hasVisitedToday = localStorage.getItem(storageKey);
+        const hasVisitedToday = sessionStorage.getItem(storageKey); // Use sessionStorage to track per session for better duration tracking, or stick to localStorage but create a new visit anyway?
+        // User wants "for each visit how much time...". Usually "visit" = session.
+        // If I use localStorage, I only count 1 visit per day. That's fine for "Unique Visitors" but validation of "Duration" might require a session ID.
+        // Let's create a NEW visit entry for every session (page load) if we want to track DURATION of that session.
+        // But the previous logic was "Unique Visitors".
+        // Let's keep "Unique Visitors" logic for the "Visits" count, but maybe always create a visit ID for duration tracking?
+        // Okay, the backend creates a row in 'visits'. If I don't call it, I don't get a row.
+        // If I only call it once per day (localStorage), then I can only track duration for that ONE visit.
+        // If the user opens the page again later, no new visit row, no tracking.
+        // Compromise: Use sessionStorage. One visit per session.
 
-        if (!hasVisitedToday) {
-          // New distinct visit for today
+        let visitId = sessionStorage.getItem('current_visit_id');
+
+        if (!visitId) {
           if (process.env.NODE_ENV !== 'development') {
-            // Send to self-hosted backend
-            fetch('/api/visit', {
+            const res = await fetch('/api/visit', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ page: 'home' })
+              body: JSON.stringify({ page: 'home', language: localStorage.getItem('language') || 'he' })
             });
-          } else {
-            // Dev mode
-            console.log('Dev: Tracking visit to /api/visit');
-          }
+            if (res.ok) {
+              const data = await res.json();
+              visitId = data.id;
+              sessionStorage.setItem('current_visit_id', visitId);
 
-          // Mark locally
-          localStorage.setItem(storageKey, 'true');
+              // Also mark daily unique visit for local checks if needed
+              localStorage.setItem(storageKey, 'true');
+            }
+          }
         }
+
+        if (visitId && process.env.NODE_ENV !== 'development') {
+          // Start Heartbeat
+          const interval = setInterval(() => {
+            fetch('/api/visit/heartbeat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ visitId })
+            }).catch(err => console.error('Heartbeat failed', err));
+          }, 30000); // Every 30 seconds
+
+          return () => clearInterval(interval);
+        }
+
       } catch (err) {
         console.error(err);
       }

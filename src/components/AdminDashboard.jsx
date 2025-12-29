@@ -15,7 +15,9 @@ export default function AdminDashboard() {
         videoClicks: 0,
         contactClicks: 0,
         programViews: 0,
-        trendData: [],
+        videoTrend: [],
+        contactTrend: [],
+        durationTrend: [],
         firstSeen: null,
         recentLogs: [],
         deviceStats: [],
@@ -149,6 +151,46 @@ export default function AdminDashboard() {
         );
     }
 
+    const engagementData = React.useMemo(() => {
+        if (!stats.videoTrend || !stats.contactTrend) return [];
+        const dates = new Set([...(stats.videoTrend || []).map(d => d.date), ...(stats.contactTrend || []).map(d => d.date)]);
+        const sortedDates = Array.from(dates).sort();
+        return sortedDates.map(date => {
+            const v = stats.videoTrend.find(d => d.date === date);
+            const c = stats.contactTrend.find(d => d.date === date);
+            return {
+                date,
+                video: v ? parseInt(v.count) : 0,
+                contact: c ? parseInt(c.count) : 0
+            };
+        });
+    }, [stats.videoTrend, stats.contactTrend]);
+
+    const durationData = React.useMemo(() => {
+        return (stats.durationTrend || []).map(d => ({
+            ...d,
+            avg_duration_mins: parseFloat((d.avg_duration / 60).toFixed(2))
+        }));
+    }, [stats.durationTrend]);
+
+    const processedTrendData = React.useMemo(() => {
+        if (!stats.trendData) return [];
+        const grouped = {};
+
+        // Ensure data is array (backend might return directly rows)
+        const data = Array.isArray(stats.trendData) ? stats.trendData : [];
+
+        data.forEach(item => {
+            if (!grouped[item.date]) {
+                grouped[item.date] = { date: item.date, he: 0, en: 0 };
+            }
+            const lang = item.language === 'en' ? 'en' : 'he';
+            grouped[item.date][lang] += parseInt(item.visits || 0);
+        });
+
+        return Object.values(grouped).sort((a, b) => a.date.localeCompare(b.date));
+    }, [stats.trendData]);
+
     return (
         <div className="min-h-screen bg-[#f8fafc] p-6 md:p-10" dir="ltr">
             <div className="max-w-6xl mx-auto">
@@ -199,13 +241,10 @@ export default function AdminDashboard() {
                                     <Eye size={24} />
                                 </div>
                             </div>
-                            <h3 className="text-slate-500 font-medium mb-1">Total Visits</h3>
+                            <h3 className="text-slate-500 font-medium mb-1">Visits (24h)</h3>
                             <div className="flex items-baseline gap-2">
                                 <div className="text-4xl font-bold text-slate-900 font-display">
                                     {stats.visits.toLocaleString()}
-                                </div>
-                                <div className="text-sm font-medium text-green-500 bg-green-50 px-2 py-1 rounded-lg">
-                                    +{stats.visitsToday || 0} today
                                 </div>
                             </div>
                         </div>
@@ -220,7 +259,7 @@ export default function AdminDashboard() {
                                     <Video size={24} />
                                 </div>
                             </div>
-                            <h3 className="text-slate-500 font-medium mb-1">Video Plays</h3>
+                            <h3 className="text-slate-500 font-medium mb-1">Video Plays (24h)</h3>
                             <div className="text-4xl font-bold text-slate-900 font-display">
                                 {stats.videoClicks.toLocaleString()}
                             </div>
@@ -236,7 +275,7 @@ export default function AdminDashboard() {
                                     <BarChart size={24} />
                                 </div>
                             </div>
-                            <h3 className="text-slate-500 font-medium mb-1">Program Views</h3>
+                            <h3 className="text-slate-500 font-medium mb-1">Program Views (24h)</h3>
                             <div className="text-4xl font-bold text-slate-900 font-display">
                                 {stats.programViews.toLocaleString()}
                             </div>
@@ -252,14 +291,17 @@ export default function AdminDashboard() {
                                     <MousePointer size={24} />
                                 </div>
                             </div>
-                            <h3 className="text-slate-500 font-medium mb-1">Contact Clicks</h3>
+                            <h3 className="text-slate-500 font-medium mb-1">Contact Clicks (24h)</h3>
                             <div className="text-4xl font-bold text-slate-900 font-display">
                                 {stats.contactClicks.toLocaleString()}
                             </div>
                         </div>
                     </div>
-                    {/* Stats Breakdown Row */}
-                    <div className="grid md:grid-cols-3 gap-6 mb-6">
+                </div>
+
+                <div className="flex flex-col gap-6">
+                    {/* Consolidated Specific Stats */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Device Stats */}
                         <div className="bg-white p-6 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100">
                             <h3 className="text-lg font-bold text-slate-900 mb-4">Device Breakdown</h3>
@@ -322,11 +364,8 @@ export default function AdminDashboard() {
                                 )}
                             </div>
                         </div>
-                    </div>
 
-                    {/* Additional Details Row */}
-                    <div className="grid md:grid-cols-2 gap-6 mb-6">
-                        {/* Popular Programs */}
+                        {/* Top Programs */}
                         <div className="bg-white p-6 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100">
                             <h3 className="text-lg font-bold text-slate-900 mb-4">Top Programs</h3>
                             <div className="space-y-4">
@@ -370,11 +409,11 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Trends Chart */}
-                    <div className="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100 mt-6">
+                    <div className="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100">
                         <div className="flex items-center justify-between mb-8">
                             <div>
                                 <h3 className="text-lg font-bold text-slate-900">Weekly Unique Visitors</h3>
-                                <p className="text-slate-500 text-sm">Last 7 days performance</p>
+                                <p className="text-slate-500 text-sm">Last 30 days performance (Hebrew vs English)</p>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold">
                                 <Info size={14} />
@@ -384,11 +423,15 @@ export default function AdminDashboard() {
 
                         <div className="h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={stats.trendData}>
+                                <AreaChart data={processedTrendData}>
                                     <defs>
                                         <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
                                             <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        </linearGradient>
+                                        <linearGradient id="colorEn" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.2} />
+                                            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -411,50 +454,139 @@ export default function AdminDashboard() {
                                     />
                                     <Area
                                         type="monotone"
-                                        dataKey="visits"
+                                        dataKey="he"
+                                        stackId="1"
+                                        name="Hebrew"
                                         stroke="#3b82f6"
                                         strokeWidth={3}
                                         fillOpacity={1}
                                         fill="url(#colorVisits)"
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="en"
+                                        stackId="1"
+                                        name="English"
+                                        stroke="#f59e0b"
+                                        strokeWidth={3}
+                                        fillOpacity={1}
+                                        fill="url(#colorEn)"
                                     />
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>
                     </div>
 
+                    {/* Engagement Trends Grid */}
+                    <div className="flex flex-col gap-6">
+                        {/* Video Trend */}
+                        <div className="bg-white p-6 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100">
+                            <h3 className="text-lg font-bold text-slate-900 mb-2">Video Engagement</h3>
+                            <p className="text-slate-500 text-sm mb-6">Daily video interactions</p>
+                            <div className="h-[250px] w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={engagementData}>
+                                        <defs>
+                                            <linearGradient id="colorVideos" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2} />
+                                                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} dy={10} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} dx={-10} />
+                                        <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                        <Area type="monotone" dataKey="video" name="Video Plays" stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#colorVideos)" />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Contact Trend */}
+                        <div className="bg-white p-6 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100">
+                            <h3 className="text-lg font-bold text-slate-900 mb-2">Contact Engagement</h3>
+                            <p className="text-slate-500 text-sm mb-6">Daily contact clicks</p>
+                            <div className="h-[250px] w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={engagementData}>
+                                        <defs>
+                                            <linearGradient id="colorContacts" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#22c55e" stopOpacity={0.2} />
+                                                <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} dy={10} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} dx={-10} />
+                                        <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                        <Area type="monotone" dataKey="contact" name="Contact Clicks" stroke="#22c55e" strokeWidth={3} fillOpacity={0.6} fill="url(#colorContacts)" />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Duration Trend */}
+                        <div className="bg-white p-6 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100">
+                            <h3 className="text-lg font-bold text-slate-900 mb-2">Avg. Session Duration</h3>
+                            <p className="text-slate-500 text-sm mb-6">Average time spent per day (Minutes)</p>
+                            <div className="h-[250px] w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={durationData}>
+                                        <defs>
+                                            <linearGradient id="colorDuration" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.2} />
+                                                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} dy={10} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} dx={-10} />
+                                        <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                        <Area type="monotone" dataKey="avg_duration_mins" name="Avg Minutes" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorDuration)" />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Recent Logs Table */}
-                    <div className="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100 mt-6">
-                        <h3 className="text-lg font-bold text-slate-900 mb-4">Live Activity Log</h3>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="text-sm text-slate-400 border-b border-slate-100">
-                                        <th className="py-2 font-medium">Type</th>
-                                        <th className="py-2 font-medium">Action/Page</th>
-                                        <th className="py-2 font-medium">Time (UTC)</th>
-                                        <th className="py-2 font-medium">Metadata</th>
+                    <div className="bg-white rounded-3xl shadow-[0_2px_20px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+                        <div className="p-6 md:p-8 border-b border-slate-50">
+                            <h3 className="text-lg font-bold text-slate-900">Live Activity Log</h3>
+                        </div>
+                        <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
+                            <table className="w-full text-left border-collapse min-w-[600px]">
+                                <thead className="bg-slate-50/50 sticky top-0 z-10 backdrop-blur-sm">
+                                    <tr className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                                        <th className="py-4 px-6">Type</th>
+                                        <th className="py-4 px-6">Action / Page</th>
+                                        <th className="py-4 px-6">Time</th>
+                                        <th className="py-4 px-6">Metadata</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="divide-y divide-slate-50">
                                     {stats.recentLogs?.map((log, i) => (
-                                        <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                            <td className="py-3">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-bold ${log.type === 'visit' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
+                                        <tr key={i} className="hover:bg-blue-50/30 transition-colors group">
+                                            <td className="py-4 px-6">
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shadow-sm ${log.type === 'visit' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
+                                                    {log.type === 'visit' ? <Globe size={10} className="mr-1.5" /> : <Activity size={10} className="mr-1.5" />}
                                                     {log.type.toUpperCase()}
                                                 </span>
                                             </td>
-                                            <td className="py-3 text-slate-700 font-medium">{log.name}</td>
-                                            <td className="py-3 text-slate-500 text-sm">
+                                            <td className="py-4 px-6">
+                                                <div className="font-semibold text-slate-700">{log.name}</div>
+                                            </td>
+                                            <td className="py-4 px-6 text-slate-500 text-sm whitespace-nowrap">
                                                 {new Date(log.timestamp).toLocaleString()}
                                             </td>
-                                            <td className="py-3 text-slate-400 text-xs font-mono">
-                                                {log.metadata ? JSON.stringify(log.metadata) : '-'}
+                                            <td className="py-4 px-6 text-slate-400 text-xs font-mono max-w-[200px] truncate group-hover:whitespace-normal group-hover:break-all transition-all">
+                                                {log.metadata || '-'}
                                             </td>
                                         </tr>
                                     ))}
                                     {(!stats.recentLogs || stats.recentLogs.length === 0) && (
                                         <tr>
-                                            <td colSpan="4" className="py-4 text-center text-slate-400">No recent activity found</td>
+                                            <td colSpan="4" className="py-12 text-center text-slate-400">No recent activity found</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -474,7 +606,7 @@ export default function AdminDashboard() {
                         </p>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

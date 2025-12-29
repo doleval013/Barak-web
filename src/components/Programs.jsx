@@ -107,7 +107,7 @@ export default function Programs() {
     };
 
     return (
-        <section id="programs" className="section-padding relative overflow-hidden">
+        <section id="programs" className="pt-12 pb-24 relative overflow-hidden">
             {/* Background decorative elements */}
             {/* Background functional mesh provided by body */}
 

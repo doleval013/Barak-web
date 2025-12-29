@@ -329,3 +329,31 @@ body.stop-animations {
   animation: walkAcross 30s linear infinite;
   /* Slow, steady walk across the entire screen */
 }
+
+/* Paw Animation */
+@keyframes floatUp {
+  from { transform: translateY(100px) rotate(var(--r)); }
+  to { transform: translateY(-120vh) rotate(var(--r)); }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 0.15; }
+  90% { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+
+.paw-img {
+  position: absolute;
+  width: 4rem;
+  filter: blur(0.5px);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: floatUp linear infinite, fadeInOut ease-in-out infinite;
+}
+
+@media (min-width: 768px) {
+  .paw-img {
+    width: 6rem;
+  }
+}

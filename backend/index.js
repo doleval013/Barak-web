@@ -2,6 +2,8 @@ const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 const crypto = require('crypto');
+const geoip = require('geoip-lite');
+const UAParser = require('ua-parser-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,26 +26,32 @@ const initDb = async () => {
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 page TEXT,
                 ip_hash TEXT,
-                device_type TEXT
+                device_type TEXT,
+                country VARCHAR(50),
+                city VARCHAR(100),
+                referrer TEXT,
+                browser VARCHAR(50),
+                os VARCHAR(50)
             )
         `);
 
-        // Migration: Add last_heartbeat if it doesn't exist
-        try {
-            await pool.query(`ALTER TABLE visits ADD COLUMN IF NOT EXISTS last_heartbeat TIMESTAMP DEFAULT CURRENT_TIMESTAMP`);
-        } catch (e) {
-            // Check if error is because column exists (older Postgres versions don't support IF NOT EXISTS in ALTER)
-            if (e.code === '42701') { // duplicate_column
-                console.log('Column last_heartbeat already exists');
-            } else {
-                console.log('Migration note:', e.message);
+        // Migration: Add columns if they don't exist (Idempotent)
+        const columns = [
+            'last_heartbeat TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+            "language VARCHAR(10) DEFAULT 'he'",
+            'country VARCHAR(50)',
+            'city VARCHAR(100)',
+            'referrer TEXT',
+            'browser VARCHAR(50)',
+            'os VARCHAR(50)'
+        ];
+
+        for (const col of columns) {
+            try {
+                await pool.query(`ALTER TABLE visits ADD COLUMN IF NOT EXISTS ${col}`);
+            } catch (e) {
+                // Ignore duplicate column errors or syntax errors in older PG
             }
-        }
-        // Migration: Add language if it doesn't exist
-        try {
-            await pool.query(`ALTER TABLE visits ADD COLUMN IF NOT EXISTS language VARCHAR(10) DEFAULT 'he'`);
-        } catch (e) {
-            // ignore
         }
 
         await pool.query(`
@@ -73,7 +81,7 @@ const authenticate = (req, res, next) => {
     const validHash = process.env.ADMIN_HASH;
 
     if (!validHash) {
-        console.warn('ADMIN_HASH not set in environment.');
+        // console.warn('ADMIN_HASH not set in environment.');
         return next();
     }
 
@@ -93,21 +101,43 @@ const hashIp = (req) => {
 
 // 1. Record Visit (Public)
 app.post('/api/visit', async (req, res) => {
-    const { page, language } = req.body;
+    const { page, language, referrer } = req.body;
+
+    // FILTER: Ignore 'admin' page visits to keep stats clean
+    if (page === 'admin' || page === '/admin') {
+        return res.json({ ignored: true });
+    }
+
+    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
     const ip_hash = hashIp(req);
+
+    // GeoIP Lookup
+    const geo = geoip.lookup(ip);
+    const country = geo ? geo.country : null;
+    const city = geo ? geo.city : null;
+
+    // UA Parser
+    const ua = UAParser(req.headers['user-agent']);
+    const browser = ua.browser.name;
+    const os = ua.os.name;
+    const deviceType = ua.device.type || 'desktop';
 
     try {
         const result = await pool.query(
-            'INSERT INTO visits (page, ip_hash, last_heartbeat, language) VALUES ($1, $2, CURRENT_TIMESTAMP, $3) RETURNING id',
-            [page || 'home', ip_hash, language || 'he']
+            `INSERT INTO visits 
+            (page, ip_hash, last_heartbeat, language, country, city, referrer, browser, os, device_type) 
+            VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7, $8, $9) 
+            RETURNING id`,
+            [page || 'home', ip_hash, language || 'he', country, city, referrer, browser, os, deviceType]
         );
         res.json({ id: result.rows[0].id });
     } catch (err) {
+        console.error('Visit error:', err);
         res.status(500).json({ error: err.message });
     }
 });
 
-// 2. Heartbeat (Public) - Update last_heartbeat for session tracking
+// 2. Heartbeat (Public)
 app.post('/api/visit/heartbeat', async (req, res) => {
     const { visitId } = req.body;
     if (!visitId) return res.status(400).json({ error: 'Missing visitId' });
@@ -152,31 +182,46 @@ app.get('/api/stats', authenticate, async (req, res) => {
             pool.query("SELECT COUNT(*) as count FROM events WHERE event_type = 'contact_click' AND timestamp >= NOW() - INTERVAL '24 hours'"),
             // 3. Program Views (24h)
             pool.query("SELECT COUNT(*) as count FROM events WHERE event_type = 'program_view' AND timestamp >= NOW() - INTERVAL '24 hours'"),
-            // 4. Web View Trend (Modified to return 'visits' alias)
+
+            // 4. Enhanced Trend (Visits & Unique Users) - 30 Days
+            // 4. Enhanced Trend (Visits & Unique Users) - 30 Days (Grouped by Date only)
             pool.query(`
-                SELECT to_char(timestamp, 'YYYY-MM-DD') as date, language, COUNT(*) as visits 
+                SELECT 
+                    to_char(timestamp, 'YYYY-MM-DD') as date, 
+                    COUNT(*) as total_visits,
+                    COUNT(DISTINCT ip_hash) as unique_visitors
                 FROM visits 
                 WHERE timestamp >= NOW() - INTERVAL '30 days'
-                GROUP BY date, language
+                GROUP BY date
                 ORDER BY date ASC
             `),
-            // 5. First Seen
-            pool.query('SELECT MIN(timestamp) as first_seen FROM visits'),
-            // 6. Device Breakdown
+
+            // 5. Live Users (Active in last 5 mins)
+            pool.query("SELECT COUNT(DISTINCT ip_hash) as count FROM visits WHERE last_heartbeat >= NOW() - INTERVAL '5 minutes'"),
+
+            // 6. Device/Browser Breakdown
             pool.query(`
-                SELECT device_type, COUNT(*) as count 
+                SELECT 
+                    COALESCE(device_type, 'desktop') as type, 
+                    COALESCE(browser, 'Unknown') as browser,
+                    COUNT(*) as count 
                 FROM visits 
-                GROUP BY device_type 
+                WHERE timestamp >= NOW() - INTERVAL '30 days'
+                GROUP BY type, browser
                 ORDER BY count DESC
+                LIMIT 10
             `),
+
             // 7. Top Pages
             pool.query(`
                 SELECT page, COUNT(*) as count 
                 FROM visits 
+                WHERE timestamp >= NOW() - INTERVAL '30 days'
                 GROUP BY page 
                 ORDER BY count DESC 
                 LIMIT 5
             `),
+
             // 8. Top Videos
             pool.query(`
                 SELECT event_name as name, COUNT(*) as count 
@@ -186,6 +231,7 @@ app.get('/api/stats', authenticate, async (req, res) => {
                 ORDER BY count DESC 
                 LIMIT 5
             `),
+
             // 9. Popular Programs
             pool.query(`
                 SELECT event_name as name, COUNT(*) as count 
@@ -195,6 +241,7 @@ app.get('/api/stats', authenticate, async (req, res) => {
                 ORDER BY count DESC 
                 LIMIT 5
             `),
+
             // 10. Contact Stats
             pool.query(`
                 SELECT event_name as name, COUNT(*) as count 
@@ -204,27 +251,27 @@ app.get('/api/stats', authenticate, async (req, res) => {
                 ORDER BY count DESC 
                 LIMIT 5
             `),
-            // 11. Visits Today
+
+            // 11. Geo Location Stats (Country)
             pool.query(`
-                SELECT COUNT(*) as count 
-                FROM visits 
-                WHERE CAST(timestamp AS DATE) = CURRENT_DATE
+                SELECT country, COUNT(*) as count, COUNT(DISTINCT ip_hash) as unique_users
+                FROM visits
+                WHERE timestamp >= NOW() - INTERVAL '30 days' AND country IS NOT NULL
+                GROUP BY country
+                ORDER BY count DESC
+                LIMIT 10
             `),
-            // 12. Events Today
+
+            // 12. Recent Logs
             pool.query(`
-                SELECT COUNT(*) as count 
-                FROM events 
-                WHERE CAST(timestamp AS DATE) = CURRENT_DATE
-            `),
-            // 13. Recent Logs
-            pool.query(`
-                SELECT 'visit' as type, page as name, timestamp, NULL as metadata FROM visits
+                SELECT 'visit' as type, page as name, timestamp, country, city, referrer, device_type FROM visits
                 UNION ALL
-                SELECT 'event' as type, event_name as name, timestamp, metadata FROM events
+                SELECT 'event' as type, event_name as name, timestamp, NULL as country, NULL as city, NULL as referrer, NULL as device_type FROM events
                 ORDER BY timestamp DESC
-                LIMIT 20
+                LIMIT 50
             `),
-            // 14. Video Trend (Daily)
+
+            // 13. Video Trend
             pool.query(`
                 SELECT to_char(timestamp, 'YYYY-MM-DD') as date, COUNT(*) as count
                 FROM events
@@ -232,7 +279,8 @@ app.get('/api/stats', authenticate, async (req, res) => {
                 GROUP BY date
                 ORDER BY date ASC
             `),
-            // 15. Contact Trend (Daily)
+
+            // 14. Contact Trend
             pool.query(`
                 SELECT to_char(timestamp, 'YYYY-MM-DD') as date, COUNT(*) as count
                 FROM events
@@ -240,7 +288,8 @@ app.get('/api/stats', authenticate, async (req, res) => {
                 GROUP BY date
                 ORDER BY date ASC
             `),
-            // 16. Average Session Duration Per Day (Seconds)
+
+            // 15. Average Session Duration
             pool.query(`
                 SELECT 
                     to_char(timestamp, 'YYYY-MM-DD') as date,
@@ -248,6 +297,28 @@ app.get('/api/stats', authenticate, async (req, res) => {
                 FROM visits
                 WHERE timestamp >= NOW() - INTERVAL '30 days'
                 GROUP BY date
+                ORDER BY date ASC
+            `),
+
+            // 16. Traffic Sources
+            pool.query(`
+                SELECT referrer, COUNT(*) as count
+                FROM visits
+                WHERE timestamp >= NOW() - INTERVAL '30 days'
+                GROUP BY referrer
+                ORDER BY count DESC
+                LIMIT 10
+            `),
+
+            // 17. Source Trends (Daily breakdown by referrer) - NEW
+            pool.query(`
+                SELECT 
+                    to_char(timestamp, 'YYYY-MM-DD') as date,
+                    referrer,
+                    COUNT(*) as count
+                FROM visits
+                WHERE timestamp >= NOW() - INTERVAL '30 days'
+                GROUP BY date, referrer
                 ORDER BY date ASC
             `)
         ]);
@@ -257,29 +328,30 @@ app.get('/api/stats', authenticate, async (req, res) => {
         stats.contactClicks = parseInt(results[2].rows[0].count);
         stats.programViews = parseInt(results[3].rows[0].count);
 
-        stats.trendData = results[4].rows; // Now has 'visits' key
-        stats.firstSeen = results[5].rows[0].first_seen;
-
+        stats.trendData = results[4].rows;
+        stats.liveUsers = parseInt(results[5].rows[0].count);
         stats.deviceStats = results[6].rows;
         stats.pageStats = results[7].rows;
         stats.videoStats = results[8].rows;
         stats.programStats = results[9].rows;
         stats.contactStats = results[10].rows;
+        stats.geoStats = results[11].rows;
+        stats.recentLogs = results[12].rows;
+        stats.videoTrend = results[13].rows;
+        stats.contactTrend = results[14].rows;
 
-        stats.visitsToday = parseInt(results[11].rows[0].count);
-        stats.totalEventsToday = parseInt(results[12].rows[0].count);
-        stats.recentLogs = results[13].rows;
-
-        // New Trends
-        stats.videoTrend = results[14].rows;
-        stats.contactTrend = results[15].rows;
-        stats.durationTrend = results[16].rows.map(row => ({
+        // Format duration
+        stats.durationTrend = results[15].rows.map(row => ({
             date: row.date,
             avg_duration: Math.round(row.avg_duration || 0)
         }));
 
+        stats.sourceStats = results[16].rows;
+        stats.sourceTrends = results[17].rows; // Map the new source trend query
+
+        // System info
         stats.uptime = process.uptime();
-        stats.version = process.env.APP_VERSION || 'Unknown';
+        stats.version = process.env.APP_VERSION || '1.1.0';
         stats.imageName = process.env.IMAGE_NAME || 'Unknown';
         stats.gitCommit = process.env.GIT_COMMIT || 'Unknown';
 

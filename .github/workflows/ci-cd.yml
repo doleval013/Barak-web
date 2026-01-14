@@ -69,8 +69,10 @@ jobs:
           sed -i "s|image: doleval013/barak-web-backend:.*|image: doleval013/barak-web-backend:$VERSION|g" k8s/app.yaml
           
           # Update Backend/Env versions
-          # Matches any version like "1.4.6", "1.5.0", "latest" inside the value: quotes
-          sed -i -E "s|name: APP_VERSION[[:space:]]*value: \".*\"|name: APP_VERSION\n          value: \"$VERSION\"|g" k8s/app.yaml
+          # Update APP_VERSION Env Var using Perl for multiline matching
+          # We export the variable so Perl can see it in %ENV
+          export VERSION_TAG="$VERSION"
+          perl -i -p0e 's/name: APP_VERSION\n\s+value: ".*"/name: APP_VERSION\n          value: "$ENV{VERSION_TAG}"/s' k8s/app.yaml
           
           # Update GIT_COMMIT
           sed -i "s|value: \".*\"   # Updated by CI/CD|value: \"${{ github.sha }}\"   # Updated by CI/CD|g" k8s/app.yaml

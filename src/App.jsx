@@ -47,6 +47,15 @@ function App() {
         // If the user opens the page again later, no new visit row, no tracking.
         // Compromise: Use sessionStorage. One visit per session.
 
+        if (
+          window.location.pathname.startsWith('/admin') ||
+          sessionStorage.getItem('barak_admin_token')
+        ) {
+          // Verify if we should flag this user permanently as admin-visitor?
+          // For now, just don't track this session.
+          return;
+        }
+
         let visitId = sessionStorage.getItem('current_visit_id');
 
         if (!visitId) {
@@ -54,10 +63,15 @@ function App() {
             const res = await fetch('/api/visit', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ page: 'home', language: localStorage.getItem('language') || 'he' })
+              body: JSON.stringify({
+                page: 'home',
+                language: localStorage.getItem('language') || 'he',
+                referrer: document.referrer || 'direct'
+              })
             });
             if (res.ok) {
               const data = await res.json();
+              if (data.ignored) return; // Backend ignored it
               visitId = data.id;
               sessionStorage.setItem('current_visit_id', visitId);
 

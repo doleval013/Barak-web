@@ -116,11 +116,15 @@ app.post('/api/visit', async (req, res) => {
     const country = geo ? geo.country : null;
     const city = geo ? geo.city : null;
 
-    // UA Parser
-    const ua = UAParser(req.headers['user-agent']);
+    // UA Parser - Fixed for v2 compatibility
+    const parser = new UAParser(req.headers['user-agent']);
+    const ua = parser.getResult();
     const browser = ua.browser.name;
     const os = ua.os.name;
     const deviceType = ua.device.type || 'desktop';
+
+    // Debug Log
+    console.log(`[Visit] IP: ${ip} | Country: ${country} | Browser: ${browser} | Device: ${deviceType}`);
 
     try {
         const result = await pool.query(

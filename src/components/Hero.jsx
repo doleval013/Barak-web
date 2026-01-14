@@ -113,7 +113,21 @@ export default function Hero() {
                         {/* Video Trigger Card */}
                         <div
                             className="relative rounded-[2rem] overflow-hidden shadow-card border-[6px] border-[var(--color-surface)] bg-[var(--color-surface)] z-10 cursor-pointer group animate-float"
-                            onClick={() => setIsVideoExpanded(true)}
+                            onClick={() => {
+                                setIsVideoExpanded(true);
+                                // Track Video Play
+                                if (process.env.NODE_ENV !== 'development') {
+                                    fetch('/api/event', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            type: 'video_click',
+                                            name: 'hero_main_video',
+                                            metadata: 'user_expanded'
+                                        })
+                                    }).catch(() => { });
+                                }
+                            }}
                         >
                             <div className="aspect-video relative">
                                 <img

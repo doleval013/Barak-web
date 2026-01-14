@@ -23,7 +23,11 @@ function App() {
   }, []);
 
   if (currentPath === '/admin') {
-    return <AdminDashboard />;
+    return (
+      <LanguageProvider>
+        <AdminDashboard />
+      </LanguageProvider>
+    );
   }
 
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);

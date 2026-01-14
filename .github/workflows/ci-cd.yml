@@ -45,30 +45,42 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/barak-web-backend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/barak-web-backend:${{ steps.meta.outputs.version }}
           
-      - name: Update Kubernetes Manifest
+      - name: Checkout Infra Repository
+        uses: actions/checkout@v4
+        with:
+          repository: doleval013/Barak-web-infra
+          token: ${{ secrets.GH_PAT }}
+          path: infra-repo
+
+      - name: Update Kubernetes Manifest in Infra Repo
         run: |
-          # Get the version from the tag (e.g., v1.0.0 -> 1.0.0 or just use the tag)
+          cd infra-repo
+          
+          # Get the version from the tag
           VERSION=${{ github.ref_name }}
-          # Remove 'v' prefix to match docker/metadata-action behavior
           VERSION=${VERSION#v}
           
-          # Update the image tag in app.yaml for Frontend
+          # Update FRONTEND image tag (doleval013/barak-web)
           sed -i "s|image: doleval013/barak-web:.*|image: doleval013/barak-web:$VERSION|g" k8s/app.yaml
           
-          # Inject Version and Commit Hash into app.yaml env vars
-          sed -i "s|value: \"latest\" # Updated by CI/CD|value: \"$VERSION\" # Updated by CI/CD|g" k8s/app.yaml
-          sed -i "s|value: \"HEAD\"   # Updated by CI/CD|value: \"${{ github.sha }}\"   # Updated by CI/CD|g" k8s/app.yaml
+          # Update BACKEND image tag (doleval013/barak-web-backend)
+          sed -i "s|image: doleval013/barak-web-backend:.*|image: doleval013/barak-web-backend:$VERSION|g" k8s/app.yaml
           
-          cat k8s/app.yaml # Debug: show content
+          # Update Backend/Env versions
+          # Matches any version like "1.4.6", "1.5.0", "latest" inside the value: quotes
+          sed -i -E "s|name: APP_VERSION[[:space:]]*value: \".*\"|name: APP_VERSION\n          value: \"$VERSION\"|g" k8s/app.yaml
           
+          # Update GIT_COMMIT
+          sed -i "s|value: \".*\"   # Updated by CI/CD|value: \"${{ github.sha }}\"   # Updated by CI/CD|g" k8s/app.yaml
+
           # Configure Git
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
           # Commit and Push
           git add k8s/app.yaml
-          git commit -m "Update Kubernetes manifest to version $VERSION [skip ci]"
-          git push origin HEAD:main
+          git commit -m "Update Kubernetes manifest to version $VERSION"
+          git push origin main
 

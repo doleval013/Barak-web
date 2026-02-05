@@ -94,19 +94,11 @@ function TeamWorkshopLanding() {
                         variants={staggerContainer}
                         className="text-center"
                     >
-                        {/* Badge */}
-                        <motion.div
-                            variants={fadeInUp}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sky-300 text-sm mb-8"
-                        >
-                            <Dog className="w-4 h-4" />
-                            <span>חוויה ציוותית ייחודית</span>
-                        </motion.div>
-
                         {/* Main Title */}
                         <motion.h1
                             variants={fadeInUp}
                             className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+                            style={{ opacity: 1 }}
                         >
                             סדנת כלבנות
                             <span className="block text-sky-300">לפיתוח צוותים</span>
@@ -116,6 +108,7 @@ function TeamWorkshopLanding() {
                         <motion.p
                             variants={fadeInUp}
                             className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-6 leading-relaxed"
+                            style={{ opacity: 1 }}
                         >
                             חוויה ציוותית שמחזקת תקשורת, אמון ושיתוף פעולה.
                         </motion.p>
@@ -129,16 +122,6 @@ function TeamWorkshopLanding() {
                             הסדנה מאפשרת לצוות -  לשבור את מהשגרה, להתחבר מחדש ולחוות תקשורת אפקטיבית -
                             דרך עשייה, למידה וחוויה משותפת.
                         </motion.p>
-
-                        {/* Highlight Box */}
-                        <motion.div
-                            variants={fadeInUp}
-                            className="inline-block bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-8 py-4 mb-10"
-                        >
-                            <p className="text-sky-300 font-medium text-lg">
-                                ✨ בלי מצגות. בלי הרצאות. חוויה שמדברת בגובה העיניים של עולם העבודה.
-                            </p>
-                        </motion.div>
 
                         {/* CTA Button */}
                         <motion.div variants={fadeInUp}>
@@ -163,81 +146,11 @@ function TeamWorkshopLanding() {
 
             {/* Why Cynology Section */}
             <section className="py-24 bg-slate-50">
-                <div className="max-w-6xl mx-auto px-6">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        variants={staggerContainer}
-                        className="text-center mb-16"
-                    >
-                        <motion.span
-                            variants={fadeInUp}
-                            className="inline-block text-blue-600 font-medium mb-4"
-                        >
-                            הגישה שלנו
-                        </motion.span>
-                        <motion.h2
-                            variants={fadeInUp}
-                            className="text-4xl md:text-5xl font-bold text-slate-800 mb-6"
-                        >
-                            למה כלבנות?
-                        </motion.h2>
-                        <motion.p
-                            variants={fadeInUp}
-                            className="text-lg text-slate-600 max-w-2xl mx-auto"
-                        >
-                            עקרונות האילוף המודרני משקפים את הכלים הנכונים להובלה אפקטיבית
-                        </motion.p>
-                    </motion.div>
-
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-50px" }}
-                        variants={staggerContainer}
-                        className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
-                    >
-                        {[
-                            { icon: MessageCircle, title: 'תקשורת ברורה', color: 'blue' },
-                            { icon: Heart, title: 'אמון', color: 'sky' },
-                            { icon: RefreshCw, title: 'עקביות', color: 'indigo' },
-                            { icon: Sparkles, title: 'חיזוק חיובי במקום כוח וסמכות', color: 'blue' }
-                        ].map((item, index) => (
-                            <motion.div
-                                key={index}
-                                variants={fadeInUp}
-                                whileHover={{ y: -8, scale: 1.02 }}
-                                className="bg-white rounded-2xl p-8 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-blue-200/50 transition-all duration-300 border border-slate-100"
-                            >
-                                <div className={`w-16 h-16 rounded-2xl bg-${item.color}-100 flex items-center justify-center mb-6`}
-                                    style={{ backgroundColor: item.color === 'blue' ? '#dbeafe' : item.color === 'sky' ? '#e0f2fe' : item.color === 'indigo' ? '#e0e7ff' : '#dbeafe' }}
-                                >
-                                    <item.icon
-                                        className="w-8 h-8"
-                                        style={{ color: item.color === 'blue' ? '#2563eb' : item.color === 'sky' ? '#0284c7' : item.color === 'indigo' ? '#4f46e5' : '#2563eb' }}
-                                    />
-                                </div>
-                                <h3 className="text-xl font-bold text-slate-800">{item.title}</h3>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-
-                    {/* Insight Box */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.4 }}
-                        className="mt-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-3xl p-8 md:p-12 text-center"
-                    >
-                        <Lightbulb className="w-12 h-12 text-sky-300 mx-auto mb-6" />
-                        <p className="text-xl md:text-2xl text-white font-medium leading-relaxed max-w-3xl mx-auto">
-                            דרך החוויה, המשתתפים מגלים איך שינוי קטן באופן התקשורת
-                            <span className="text-sky-300 font-bold"> מייצר שינוי גדול </span>
-                            בדינמיקה הצוותית.
-                        </p>
-                    </motion.div>
+                <div className="max-w-4xl mx-auto px-6">
+                    {/* VIDEO PLACEHOLDER - Replace with your teams video */}
+                    <div className="aspect-video bg-slate-200 rounded-2xl flex items-center justify-center">
+                        <p className="text-slate-500 text-lg">כאן יוצג הסרטון לצוותים</p>
+                    </div>
                 </div>
             </section>
 
@@ -251,12 +164,6 @@ function TeamWorkshopLanding() {
                         variants={staggerContainer}
                         className="text-center mb-16"
                     >
-                        <motion.span
-                            variants={fadeInUp}
-                            className="inline-block text-blue-600 font-medium mb-4"
-                        >
-                            התהליך
-                        </motion.span>
                         <motion.h2
                             variants={fadeInUp}
                             className="text-4xl md:text-5xl font-bold text-slate-800 mb-6"
@@ -296,14 +203,16 @@ function TeamWorkshopLanding() {
                     </motion.div>
 
                     {/* Context Note */}
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        className="text-center text-slate-600 mt-12 text-lg max-w-2xl mx-auto"
-                    >
-                        החוויה מלווה בשיח ממוקד שמחבר בין ההתנסות לבין המציאות הארגונית.
-                    </motion.p>
+                    <div className="flex justify-center w-full mt-12">
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            className="text-slate-600 text-lg text-center"
+                        >
+                            החוויה מלווה בשיח ממוקד שמחבר בין ההתנסות לבין המציאות הארגונית.
+                        </motion.p>
+                    </div>
                 </div>
             </section>
 
@@ -319,8 +228,7 @@ function TeamWorkshopLanding() {
                     >
                         {/* Content */}
                         <motion.div variants={fadeInUp}>
-                            <span className="inline-block text-blue-600 font-medium mb-4">התוצאות</span>
-                            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-8">
+                            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-12">
                                 מה הארגון מרוויח?
                             </h2>
 
@@ -390,12 +298,6 @@ function TeamWorkshopLanding() {
                         viewport={{ once: true }}
                         variants={staggerContainer}
                     >
-                        <motion.span
-                            variants={fadeInUp}
-                            className="inline-block text-blue-600 font-medium mb-4"
-                        >
-                            למי זה מתאים?
-                        </motion.span>
                         <motion.h2
                             variants={fadeInUp}
                             className="text-3xl md:text-4xl font-bold text-slate-800 mb-8"
@@ -522,7 +424,8 @@ function TeamWorkshopLanding() {
                             disabled={isSubmitting}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="w-full bg-white hover:bg-sky-50 disabled:bg-white/50 text-blue-900 font-bold text-lg py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3"
+                            style={{ backgroundColor: '#ffffff' }}
+                            className="w-full text-blue-900 font-bold text-lg py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl"
                         >
                             {isSubmitting ? (
                                 <span>שולח...</span>

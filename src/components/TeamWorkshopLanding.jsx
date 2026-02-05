@@ -69,8 +69,8 @@ function TeamWorkshopLanding() {
     return (
         <div className="min-h-screen bg-white" dir="rtl">
 
-            {/* Hero Section */}
-            <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+            {/* Hero Section with Video */}
+            <section className="relative py-16 lg:py-20 flex items-center overflow-hidden">
                 {/* Background Elements */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700" />
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40" />
@@ -87,52 +87,93 @@ function TeamWorkshopLanding() {
                     transition={{ duration: 10, repeat: Infinity }}
                 />
 
-                <div className="relative z-10 max-w-6xl mx-auto px-6 py-20">
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={staggerContainer}
-                        className="text-center"
-                    >
-                        {/* Main Title */}
-                        <motion.h1
-                            variants={fadeInUp}
-                            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
-                            style={{ opacity: 1 }}
+                <div className="relative z-10 max-w-7xl mx-auto px-6 py-8 w-full">
+                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                        {/* Text Content - Right Side (RTL) */}
+                        <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            variants={staggerContainer}
+                            className="text-center lg:text-right"
                         >
-                            סדנת כלבנות
-                            <span className="block text-sky-300">לפיתוח צוותים</span>
-                        </motion.h1>
-
-                        {/* Sub-headline */}
-                        <motion.p
-                            variants={fadeInUp}
-                            className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-6 leading-relaxed"
-                            style={{ opacity: 1 }}
-                        >
-                            חוויה ציוותית שמחזקת תקשורת, אמון ושיתוף פעולה.
-                        </motion.p>
-
-                        <motion.p
-                            variants={fadeInUp}
-                            className="text-lg text-blue-200/80 max-w-2xl mx-auto mb-8"
-                        >
-                            סדנת כלבנות לפיתוח הצוות היא חוויה לצוותי עובדים בחברות, ארגונים ומוסדות.
-                            <br />
-                            הסדנה מאפשרת לצוות -  לשבור את מהשגרה, להתחבר מחדש ולחוות תקשורת אפקטיבית -
-                            דרך עשייה, למידה וחוויה משותפת.
-                        </motion.p>
-
-                        {/* CTA Button */}
-                        <motion.div variants={fadeInUp}>
-                            <a
-                                href="#contact"
-                                className="inline-flex items-center gap-3 bg-white hover:bg-sky-50 text-blue-900 font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-white/25"
+                            {/* Main Title */}
+                            <motion.h1
+                                variants={fadeInUp}
+                                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+                                style={{ opacity: 1 }}
                             >
-                                <span>לבדיקת התאמה לצוות</span>
-                                <ArrowLeft className="w-5 h-5" />
-                            </a>
+                                סדנת כלבנות
+                                <span className="block text-sky-300">לפיתוח צוותים</span>
+                            </motion.h1>
+
+                            {/* Sub-headline */}
+                            <motion.p
+                                variants={fadeInUp}
+                                className="text-xl md:text-2xl text-blue-100 mb-4 leading-relaxed"
+                                style={{ opacity: 1 }}
+                            >
+                                חוויה ציוותית שמחזקת תקשורת, אמון ושיתוף פעולה.
+                            </motion.p>
+
+                            <motion.p
+                                variants={fadeInUp}
+                                className="text-lg text-blue-200/80 mb-8"
+                            >
+                                סדנת כלבנות לפיתוח הצוות היא חוויה לצוותי עובדים בחברות, ארגונים ומוסדות.
+                                <br />
+                                הסדנה מאפשרת לצוות -  לשבור את מהשגרה, להתחבר מחדש ולחוות תקשורת אפקטיבית -
+                                דרך עשייה, למידה וחוויה משותפת.
+                            </motion.p>
+
+                            {/* CTA Button - Desktop Only */}
+                            <motion.div variants={fadeInUp} className="hidden lg:block">
+                                <a
+                                    href="#contact"
+                                    className="inline-flex items-center gap-3 bg-white hover:bg-sky-50 text-blue-900 font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-white/25"
+                                >
+                                    <span>לבדיקת התאמה לצוות</span>
+                                    <ArrowLeft className="w-5 h-5" />
+                                </a>
+                            </motion.div>
                         </motion.div>
+
+                        {/* Video - Left Side (RTL) */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, delay: 0.3 }}
+                            className="relative"
+                        >
+                            {/* Video Glow Effect */}
+                            <div className="absolute -inset-4 bg-gradient-to-r from-sky-400/30 to-blue-600/30 rounded-3xl blur-2xl" />
+
+                            {/* Video Container */}
+                            <div className="relative aspect-video bg-black/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
+                                <iframe
+                                    src="https://www.youtube.com/embed/kZMeB9DZNAs?rel=0"
+                                    title="סדנת כלבנות לצוותים"
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                ></iframe>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* CTA Button - Mobile Only (Below Video) */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.5 }}
+                        className="lg:hidden mt-8 text-center"
+                    >
+                        <a
+                            href="#contact"
+                            className="inline-flex items-center gap-3 bg-white hover:bg-sky-50 text-blue-900 font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-white/25"
+                        >
+                            <span>לבדיקת התאמה לצוות</span>
+                            <ArrowLeft className="w-5 h-5" />
+                        </a>
                     </motion.div>
                 </div>
 
@@ -144,153 +185,8 @@ function TeamWorkshopLanding() {
                 </div>
             </section>
 
-            {/* Why Cynology Section */}
-            <section className="py-24 bg-slate-50">
-                <div className="max-w-4xl mx-auto px-6">
-                    {/* VIDEO PLACEHOLDER - Replace with your teams video */}
-                    <div className="aspect-video bg-slate-200 rounded-2xl flex items-center justify-center">
-                        <p className="text-slate-500 text-lg">כאן יוצג הסרטון לצוותים</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* What Happens Section */}
-            <section className="py-24 bg-white">
-                <div className="max-w-6xl mx-auto px-6">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        variants={staggerContainer}
-                        className="text-center mb-16"
-                    >
-                        <motion.h2
-                            variants={fadeInUp}
-                            className="text-4xl md:text-5xl font-bold text-slate-800 mb-6"
-                        >
-                            מה קורה בסדנה?
-                        </motion.h2>
-                    </motion.div>
-
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-50px" }}
-                        variants={staggerContainer}
-                        className="grid md:grid-cols-2 gap-8"
-                    >
-                        {[
-                            { icon: Volume2, title: 'יצירת שפה משותפת', description: 'בניית מילון תקשורת משותף לצוות' },
-                            { icon: Target, title: 'השפעה והובלה ללא כוחנות', description: 'למידה של דרכים להשפיע בלי לכפות' },
-                            { icon: Award, title: 'חיזוק חיובי ככלי עבודה', description: 'שימוש בתגמול והכרה לשיפור ביצועים' },
-                            { icon: Handshake, title: 'הקשבה ודיוק', description: 'פיתוח יכולת הקשבה והבנה מדויקת' }
-                        ].map((item, index) => (
-                            <motion.div
-                                key={index}
-                                variants={fadeInUp}
-                                whileHover={{ scale: 1.02 }}
-                                className="flex gap-6 p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all duration-300"
-                            >
-                                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center">
-                                    <item.icon className="w-7 h-7 text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-slate-800 mb-2">{item.title}</h3>
-                                    <p className="text-slate-600">{item.description}</p>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-
-                    {/* Context Note */}
-                    <div className="flex justify-center w-full mt-12">
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            viewport={{ once: true }}
-                            className="text-slate-600 text-lg text-center"
-                        >
-                            החוויה מלווה בשיח ממוקד שמחבר בין ההתנסות לבין המציאות הארגונית.
-                        </motion.p>
-                    </div>
-                </div>
-            </section>
-
-            {/* Benefits Section */}
-            <section className="py-24 bg-gradient-to-b from-slate-100 to-slate-50">
-                <div className="max-w-6xl mx-auto px-6">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        variants={staggerContainer}
-                        className="grid lg:grid-cols-2 gap-16 items-center"
-                    >
-                        {/* Content */}
-                        <motion.div variants={fadeInUp}>
-                            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-12">
-                                מה הארגון מרוויח?
-                            </h2>
-
-                            <div className="space-y-6">
-                                {[
-                                    'שבירת שגרה עם ערך',
-                                    'חיזוק חיבור ואמון',
-                                    'שיפור תקשורת ושיתוף פעולה'
-                                ].map((benefit, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: index * 0.15 }}
-                                        className="flex items-center gap-4"
-                                    >
-                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
-                                            <CheckCircle2 className="w-5 h-5 text-white" />
-                                        </div>
-                                        <span className="text-xl text-slate-700 font-medium">{benefit}</span>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
-
-                        {/* Visual */}
-                        <motion.div
-                            variants={fadeInUp}
-                            className="relative"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-sky-100 rounded-3xl transform rotate-3" />
-                            <div className="relative bg-white rounded-3xl p-10 shadow-xl">
-                                <div className="grid grid-cols-2 gap-6">
-                                    {[
-                                        { icon: Users, label: 'צוותיות', value: '+40%' },
-                                        { icon: MessageCircle, label: 'תקשורת', value: '+55%' },
-                                        { icon: Heart, label: 'אמון', value: '+35%' },
-                                        { icon: Sparkles, label: 'מוטיבציה', value: '+45%' }
-                                    ].map((stat, index) => (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            whileInView={{ opacity: 1, scale: 1 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: index * 0.1 }}
-                                            className="text-center p-4"
-                                        >
-                                            <stat.icon className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                                            <div className="text-3xl font-bold text-blue-600">{stat.value}</div>
-                                            <div className="text-slate-500 text-sm">{stat.label}</div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                </div>
-            </section>
-
             {/* Target Audience Section */}
-            <section className="py-20 bg-white">
+            <section className="py-24 bg-slate-50">
                 <div className="max-w-4xl mx-auto px-6 text-center">
                     <motion.div
                         initial="hidden"
@@ -300,7 +196,7 @@ function TeamWorkshopLanding() {
                     >
                         <motion.h2
                             variants={fadeInUp}
-                            className="text-3xl md:text-4xl font-bold text-slate-800 mb-8"
+                            className="text-3xl md:text-4xl font-bold text-slate-800 mb-24"
                         >
                             הסדנה מיועדת לצוותי עובדים
                         </motion.h2>
@@ -318,7 +214,7 @@ function TeamWorkshopLanding() {
                                 <motion.div
                                     key={index}
                                     whileHover={{ scale: 1.05 }}
-                                    className="flex items-center gap-3 bg-slate-100 hover:bg-blue-100 px-6 py-3 rounded-full transition-colors duration-300"
+                                    className="flex items-center gap-3 bg-white hover:bg-blue-100 px-6 py-3 rounded-full transition-colors duration-300 shadow-sm"
                                 >
                                     <audience.icon className="w-5 h-5 text-blue-600" />
                                     <span className="font-medium text-slate-700">{audience.label}</span>
@@ -328,6 +224,104 @@ function TeamWorkshopLanding() {
                     </motion.div>
                 </div>
             </section>
+
+            {/* Workshop Value Section */}
+            <section className="py-24 bg-white">
+                <div className="max-w-5xl mx-auto px-6">
+                    {/* Section Header */}
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={staggerContainer}
+                        className="text-center mb-16"
+                    >
+                        <motion.h2
+                            variants={fadeInUp}
+                            className="text-4xl md:text-5xl font-bold text-slate-800 mb-6"
+                        >
+                            מה בסדנה ומה הערך לארגון?
+                        </motion.h2>
+                        <motion.p
+                            variants={fadeInUp}
+                            className="text-xl text-slate-600 max-w-2xl mx-auto"
+                        >
+                            חוויה מעשית שמחברת בין עקרונות האילוף המודרני לעולם הניהול והעבודה בצוות
+                        </motion.p>
+                    </motion.div>
+
+                    {/* Value Cards */}
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-50px" }}
+                        variants={staggerContainer}
+                        className="grid md:grid-cols-2 gap-6 mb-12"
+                    >
+                        {[
+                            {
+                                icon: Volume2,
+                                title: 'יצירת שפה משותפת',
+                                description: 'בניית תקשורת ברורה ומדויקת בצוות',
+                                benefit: 'שיפור תקשורת ושיתוף פעולה'
+                            },
+                            {
+                                icon: Target,
+                                title: 'השפעה והובלה ללא כוחנות',
+                                description: 'למידה של דרכים להשפיע ולהניע בלי לכפות',
+                                benefit: 'ניהול אפקטיבי יותר'
+                            },
+                            {
+                                icon: Award,
+                                title: 'חיזוק חיובי ככלי עבודה',
+                                description: 'שימוש בתגמול והכרה להנעת אנשים',
+                                benefit: 'שבירת שגרה עם ערך'
+                            },
+                            {
+                                icon: Heart,
+                                title: 'הקשבה, אמון וחיבור',
+                                description: 'חיזוק היכולת להקשיב ולהבין את הצוות',
+                                benefit: 'חיזוק חיבור ואמון'
+                            }
+                        ].map((item, index) => (
+                            <motion.div
+                                key={index}
+                                variants={fadeInUp}
+                                whileHover={{ scale: 1.02 }}
+                                className="p-8 bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-lg transition-all duration-300"
+                            >
+                                <div className="flex items-start gap-5">
+                                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center">
+                                        <item.icon className="w-7 h-7 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-xl font-bold text-slate-800 mb-2">{item.title}</h3>
+                                        <p className="text-slate-600 mb-3">{item.description}</p>
+                                        <div className="flex items-center gap-2 text-blue-600 font-medium">
+                                            <CheckCircle2 className="w-4 h-4" />
+                                            <span>{item.benefit}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+
+                    {/* Bottom Note */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-center bg-blue-50 rounded-2xl p-8 border border-blue-100"
+                    >
+                        <p className="text-lg text-slate-700">
+                            החוויה מלווה בשיח ממוקד שמחבר בין ההתנסות לבין המציאות הארגונית -
+                            <span className="font-bold text-blue-600"> תובנות שנשארות גם אחרי הסדנה.</span>
+                        </p>
+                    </motion.div>
+                </div>
+            </section>
+
 
             {/* Contact Form Section */}
             <section id="contact" className="py-24 bg-gradient-to-b from-blue-900 to-blue-950">

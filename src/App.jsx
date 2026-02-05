@@ -11,6 +11,7 @@ import CookieBanner from './components/CookieBanner';
 import AccessibilityWidget from './components/AccessibilityWidget';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import AdminDashboard from './components/AdminDashboard';
+import TeamWorkshopLanding from './components/TeamWorkshopLanding';
 
 function App() {
   // Simple Routing
@@ -22,8 +23,14 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  // Route: Admin Dashboard
   if (currentPath === '/admin') {
     return <AdminDashboard />;
+  }
+
+  // Route: Team Workshop Landing Page
+  if (currentPath === '/teams' || currentPath === '/workshop') {
+    return <TeamWorkshopLanding />;
   }
 
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);

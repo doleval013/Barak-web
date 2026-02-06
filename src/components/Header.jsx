@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Globe } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import Logo from './Logo';
 
 const TikTok = ({ size = 24, className = "" }) => (
   <svg
@@ -34,6 +35,7 @@ export default function Header() {
 
   const navLinks = [
     { name: t('programs'), href: '#programs' },
+    { name: language === 'he' ? 'סדנאות לצוותים' : 'Team Workshops', href: '/workshop' },
   ];
 
   return (
@@ -43,21 +45,7 @@ export default function Header() {
     >
       <div className="container h-full flex items-center justify-between">
 
-        <div className="logo relative z-50">
-          <a href="#" className="block p-2">
-            <img
-              src={isScrolled ? "/assets/dog_final_v5.png?v=5" : "/assets/BARAK-ALONI-logo-1024x319.png"}
-              alt="Barak Aloni Logo"
-              className={`transition-all duration-500 object-contain ${isScrolled
-                ? 'h-14 w-auto'
-                : 'h-12 md:h-16 w-auto'
-                }`}
-              style={{
-                filter: 'brightness(0) saturate(100%) invert(43%) sepia(93%) saturate(1516%) hue-rotate(202deg) brightness(101%) contrast(96%) drop-shadow(0 4px 6px rgba(59, 130, 246, 0.5))'
-              }}
-            />
-          </a>
-        </div>
+        <Logo href="#" />
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-10">

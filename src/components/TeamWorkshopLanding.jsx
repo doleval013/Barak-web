@@ -36,23 +36,52 @@ function TeamWorkshopLanding() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+
+        // Reset error state on interaction
+        if (submitStatus === 'invalid_phone' && name === 'phone') {
+            setSubmitStatus(null);
+        }
+
+        // Enforce numbers only for phone field
+        if (name === 'phone') {
+            const numericValue = value.replace(/\D/g, ''); // Remove non-digits
+            setFormData(prev => ({ ...prev, [name]: numericValue }));
+            return;
+        }
+
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const validatePhone = (phone) => {
+        // Basic Israeli phone validation: 9-10 digits, starts with 0
+        const phoneRegex = /^0\d{8,9}$/;
+        return phoneRegex.test(phone);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate Phone
+        if (!validatePhone(formData.phone)) {
+            setSubmitStatus('invalid_phone');
+            return;
+        }
+
         setIsSubmitting(true);
+        setSubmitStatus(null);
 
         // Simulate form submission - replace with actual endpoint
         try {
-            // await fetch('/api/contact', { method: 'POST', body: JSON.stringify(formData) });
             await new Promise(resolve => setTimeout(resolve, 1000));
             setSubmitStatus('success');
             setFormData({ name: '', company: '', phone: '', email: '' });
         } catch (error) {
             setSubmitStatus('error');
+        } finally {
+            setIsSubmitting(false);
+            // Automatically clear status message after a few seconds
+            setTimeout(() => setSubmitStatus(null), 5000);
         }
-        setIsSubmitting(false);
     };
 
     const fadeInUp = {
@@ -372,7 +401,6 @@ function TeamWorkshopLanding() {
                                     value={formData.company}
                                     onChange={handleInputChange}
                                     placeholder="שם החברה/הארגון"
-                                    required
                                     className="workshop-input"
                                 />
                             </div>
@@ -385,9 +413,11 @@ function TeamWorkshopLanding() {
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleInputChange}
-                                    placeholder="טלפון"
+                                    placeholder="טלפון (מספרים בלבד)"
                                     required
-                                    className="workshop-input"
+                                    className={`workshop-input ${submitStatus === 'invalid_phone' ? 'workshop-input--error' : ''}`}
+                                    dir="ltr"
+                                    style={{ textAlign: 'right' }}
                                 />
                             </div>
 
@@ -400,11 +430,20 @@ function TeamWorkshopLanding() {
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     placeholder="אימייל"
-                                    required
                                     className="workshop-input"
                                 />
                             </div>
                         </div>
+
+                        {submitStatus === 'invalid_phone' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="workshop-form-message workshop-form-message--error"
+                            >
+                                מספר הטלפון אינו תקין. יש להזין 9-10 ספרות, למשל: 0501234567
+                            </motion.div>
+                        )}
 
                         {/* Submit Button */}
                         <motion.button
@@ -429,7 +468,7 @@ function TeamWorkshopLanding() {
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="workshop-message workshop-message--success"
+                                className="workshop-form-message workshop-form-message--success"
                             >
                                 ✓ הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.
                             </motion.div>
@@ -439,22 +478,22 @@ function TeamWorkshopLanding() {
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="workshop-message workshop-message--error"
+                                className="workshop-form-message workshop-form-message--error"
                             >
                                 אירעה שגיאה. אנא נסו שוב.
                             </motion.div>
                         )}
                     </motion.form>
                 </div>
-            </section>
+            </section >
 
             {/* Footer */}
-            <footer className="workshop-footer">
+            < footer className="workshop-footer" >
                 <p>
                     © {new Date().getFullYear()} ברק אלוני - סדנאות כלבנות לפיתוח צוותים
                 </p>
-            </footer>
-        </div>
+            </footer >
+        </div >
     );
 }
 

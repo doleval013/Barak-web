@@ -1041,13 +1041,21 @@
 }
 
 .workshop-form-message--success {
-    color: var(--tw-color-secondary);
-    background-color: rgba(56, 189, 248, 0.2);
+    color: #4ade80;
+    background-color: rgba(74, 222, 128, 0.15);
 }
 
 .workshop-form-message--error {
-    color: #fca5a5;
-    background-color: rgba(239, 68, 68, 0.2);
+    color: #ffffff;
+    background-color: rgba(239, 68, 68, 0.9);
+    font-weight: 500;
+    margin-bottom: 24px;
+    margin-top: 0;
+}
+
+.workshop-input--error {
+    border-color: #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 /* ============================

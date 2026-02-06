@@ -542,6 +542,41 @@
     margin-bottom: 60px;
 }
 
+/* Standard audience grid */
+.workshop-audience-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+/* Standard audience item pill */
+.workshop-audience-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--tw-color-white);
+    padding: 12px 24px;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.workshop-audience-item:hover {
+    background-color: var(--tw-color-blue-100);
+}
+
+.workshop-audience-item svg {
+    width: 20px;
+    height: 20px;
+    color: var(--tw-color-blue-600);
+}
+
+.workshop-audience-item span {
+    font-weight: 500;
+    color: var(--tw-color-slate-700);
+}
+
 @media (min-width: 768px) {
     .workshop-audience-grid-unique {
         grid-template-columns: repeat(4, 1fr);

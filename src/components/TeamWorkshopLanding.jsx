@@ -69,7 +69,7 @@ function TeamWorkshopLanding() {
     };
 
     return (
-        <div className="min-h-screen bg-white" dir="rtl">
+        <div className="workshop-page">
 
             {/* Navigation Bar */}
             <nav className="workshop-nav">
@@ -83,141 +83,145 @@ function TeamWorkshopLanding() {
             </nav>
 
             {/* Hero Section with Video */}
-            <section className="relative py-16 lg:py-20 flex items-center overflow-hidden">
-                {/* Background Elements */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700" />
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40" />
+            <section className="workshop-hero">
+                <div className="workshop-hero-bg" />
+                <div className="workshop-hero-pattern" />
 
                 {/* Decorative Circles */}
                 <motion.div
-                    className="absolute top-20 left-10 w-72 h-72 bg-sky-400/20 rounded-full blur-3xl"
+                    className="workshop-hero-circle-1"
                     animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
                     transition={{ duration: 8, repeat: Infinity }}
                 />
                 <motion.div
-                    className="absolute bottom-20 right-10 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl"
+                    className="workshop-hero-circle-2"
                     animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
                     transition={{ duration: 10, repeat: Infinity }}
                 />
 
-                <div className="relative z-10 max-w-7xl mx-auto px-6 py-8 w-full">
-                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-                        {/* Text Content - Right Side (RTL) */}
+                <div className="workshop-hero-content">
+                    <div className="workshop-hero-grid">
+                        {/* Text Content */}
                         <motion.div
                             initial="hidden"
                             animate="visible"
                             variants={staggerContainer}
-                            className="text-center lg:text-right"
+                            className="workshop-hero-text"
                         >
-                            {/* Main Title */}
-                            <motion.h1
-                                variants={fadeInUp}
-                                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
-                                style={{ opacity: 1 }}
-                            >
+                            <motion.h1 variants={fadeInUp} className="workshop-hero-title">
                                 סדנת כלבנות
-                                <span className="block text-sky-300">לפיתוח צוותים</span>
+                                <span className="workshop-hero-title-highlight">לפיתוח צוותים</span>
                             </motion.h1>
 
-                            {/* Sub-headline */}
-                            <motion.p
-                                variants={fadeInUp}
-                                className="text-xl md:text-2xl text-blue-100 mb-4 leading-relaxed"
-                                style={{ opacity: 1 }}
-                            >
+                            <motion.p variants={fadeInUp} className="workshop-hero-subtitle">
                                 חוויה ציוותית שמחזקת תקשורת, אמון ושיתוף פעולה.
                             </motion.p>
 
-                            <motion.p
-                                variants={fadeInUp}
-                                className="text-lg text-blue-200/80 mb-8"
-                            >
+                            <motion.p variants={fadeInUp} className="workshop-hero-description">
                                 סדנת כלבנות לפיתוח הצוות היא חוויה לצוותי עובדים בחברות, ארגונים ומוסדות.
                                 <br />
-                                הסדנה מאפשרת לצוות -  לשבור את מהשגרה, להתחבר מחדש ולחוות תקשורת אפקטיבית -
+                                הסדנה מאפשרת לצוות - לשבור את מהשגרה, להתחבר מחדש ולחוות תקשורת אפקטיבית -
                                 דרך עשייה, למידה וחוויה משותפת.
                             </motion.p>
 
                             {/* CTA Button - Desktop Only */}
-                            <motion.div variants={fadeInUp} className="hidden lg:block">
-                                <a
-                                    href="#contact"
-                                    className="inline-flex items-center gap-3 bg-white hover:bg-sky-50 text-blue-900 font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-white/25"
-                                >
+                            <motion.div variants={fadeInUp} className="workshop-cta-desktop">
+                                <a href="#contact" className="workshop-cta-btn">
                                     <span>לבדיקת התאמה לצוות</span>
-                                    <ArrowLeft className="w-5 h-5" />
+                                    <ArrowLeft />
                                 </a>
                             </motion.div>
                         </motion.div>
 
-                        {/* Video - Left Side (RTL) */}
+                        {/* Video */}
                         <motion.div
                             initial={{ opacity: 0, x: -50 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.8, delay: 0.3 }}
-                            className="relative"
+                            className="workshop-video-wrapper"
                         >
-                            {/* Video Glow Effect */}
-                            <div className="absolute -inset-4 bg-gradient-to-r from-sky-400/30 to-blue-600/30 rounded-3xl blur-2xl" />
+                            <div className="workshop-video-container">
+                                {/* Floating Icons */}
+                                <motion.div
+                                    className="workshop-floating-icon workshop-floating-icon--users"
+                                    animate={{ y: [0, -8, 0], rotate: [0, 5, 0] }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                >
+                                    <div className="workshop-floating-badge workshop-floating-badge--amber">
+                                        <Users />
+                                    </div>
+                                </motion.div>
 
-                            {/* Video Container */}
-                            <div className="relative aspect-video bg-black/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
-                                <iframe
-                                    src="https://www.youtube.com/embed/kZMeB9DZNAs?rel=0"
-                                    title="סדנת כלבנות לצוותים"
-                                    className="w-full h-full"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                ></iframe>
+                                <motion.div
+                                    className="workshop-floating-icon workshop-floating-icon--heart"
+                                    animate={{ y: [0, 6, 0], rotate: [0, -5, 0] }}
+                                    transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                                >
+                                    <div className="workshop-floating-badge workshop-floating-badge--rose">
+                                        <Heart />
+                                    </div>
+                                </motion.div>
+
+                                <motion.div
+                                    className="workshop-floating-icon workshop-floating-icon--handshake"
+                                    animate={{ x: [0, -5, 0], scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                                >
+                                    <div className="workshop-floating-badge workshop-floating-badge--sky">
+                                        <Handshake />
+                                    </div>
+                                </motion.div>
+
+                                {/* Video Frame */}
+                                <div className="workshop-video-frame">
+                                    <iframe
+                                        src="https://www.youtube.com/embed/kZMeB9DZNAs?rel=0"
+                                        title="סדנת כלבנות לצוותים"
+                                        className="workshop-video-iframe"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    ></iframe>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
 
-                    {/* CTA Button - Mobile Only (Below Video) */}
+                    {/* CTA Button - Mobile Only */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.5 }}
-                        className="lg:hidden mt-8 text-center"
+                        className="workshop-cta-mobile"
                     >
-                        <a
-                            href="#contact"
-                            className="inline-flex items-center gap-3 bg-white hover:bg-sky-50 text-blue-900 font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-white/25"
-                        >
+                        <a href="#contact" className="workshop-cta-btn">
                             <span>לבדיקת התאמה לצוות</span>
-                            <ArrowLeft className="w-5 h-5" />
+                            <ArrowLeft />
                         </a>
                     </motion.div>
                 </div>
 
-                {/* Bottom Wave */}
-                <div className="absolute -bottom-1 left-0 right-0">
-                    <svg viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" className="w-full h-[80px] block">
+                {/* Wave */}
+                <div className="workshop-hero-wave">
+                    <svg viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none">
                         <path d="M0 60L48 55C96 50 192 40 288 45C384 50 480 70 576 75C672 80 768 70 864 60C960 50 1056 40 1152 45C1248 50 1344 70 1392 80L1440 90V120H0V60Z" fill="#f8fafc" />
                     </svg>
                 </div>
             </section>
 
             {/* Target Audience Section */}
-            <section className="py-24 bg-slate-50">
-                <div className="max-w-4xl mx-auto px-6 text-center">
+            <section className="workshop-audience">
+                <div className="workshop-audience-container">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
                         variants={staggerContainer}
                     >
-                        <motion.h2
-                            variants={fadeInUp}
-                            className="text-3xl md:text-4xl font-bold text-slate-800 mb-24"
-                        >
+                        <motion.h2 variants={fadeInUp} className="workshop-audience-title">
                             הסדנה מיועדת לצוותי עובדים
                         </motion.h2>
 
-                        <motion.div
-                            variants={fadeInUp}
-                            className="flex flex-wrap justify-center gap-4"
-                        >
+                        <motion.div variants={fadeInUp} className="workshop-audience-grid">
                             {[
                                 { icon: Building2, label: 'חברות וארגונים' },
                                 { icon: GraduationCap, label: 'צוותי חינוך והדרכה' },
@@ -227,10 +231,10 @@ function TeamWorkshopLanding() {
                                 <motion.div
                                     key={index}
                                     whileHover={{ scale: 1.05 }}
-                                    className="flex items-center gap-3 bg-white hover:bg-blue-100 px-6 py-3 rounded-full transition-colors duration-300 shadow-sm"
+                                    className="workshop-audience-item"
                                 >
-                                    <audience.icon className="w-5 h-5 text-blue-600" />
-                                    <span className="font-medium text-slate-700">{audience.label}</span>
+                                    <audience.icon />
+                                    <span>{audience.label}</span>
                                 </motion.div>
                             ))}
                         </motion.div>
@@ -239,26 +243,20 @@ function TeamWorkshopLanding() {
             </section>
 
             {/* Workshop Value Section */}
-            <section className="py-24 bg-white">
-                <div className="max-w-5xl mx-auto px-6">
+            <section className="workshop-value">
+                <div className="workshop-value-container">
                     {/* Section Header */}
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, margin: "-100px" }}
                         variants={staggerContainer}
-                        className="text-center mb-16"
+                        className="workshop-value-header"
                     >
-                        <motion.h2
-                            variants={fadeInUp}
-                            className="text-4xl md:text-5xl font-bold text-slate-800 mb-6"
-                        >
+                        <motion.h2 variants={fadeInUp} className="workshop-value-title">
                             מה בסדנה ומה הערך לארגון?
                         </motion.h2>
-                        <motion.p
-                            variants={fadeInUp}
-                            className="text-xl text-slate-600 max-w-2xl mx-auto"
-                        >
+                        <motion.p variants={fadeInUp} className="workshop-value-subtitle">
                             חוויה מעשית שמחברת בין עקרונות האילוף המודרני לעולם הניהול והעבודה בצוות
                         </motion.p>
                     </motion.div>
@@ -269,7 +267,7 @@ function TeamWorkshopLanding() {
                         whileInView="visible"
                         viewport={{ once: true, margin: "-50px" }}
                         variants={staggerContainer}
-                        className="grid md:grid-cols-2 gap-6 mb-12"
+                        className="workshop-value-grid"
                     >
                         {[
                             {
@@ -301,17 +299,17 @@ function TeamWorkshopLanding() {
                                 key={index}
                                 variants={fadeInUp}
                                 whileHover={{ scale: 1.02 }}
-                                className="p-8 bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-lg transition-all duration-300"
+                                className="workshop-value-card"
                             >
-                                <div className="flex items-start gap-5">
-                                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center">
-                                        <item.icon className="w-7 h-7 text-white" />
+                                <div className="workshop-value-card-content">
+                                    <div className="workshop-value-card-icon">
+                                        <item.icon />
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-slate-800 mb-2">{item.title}</h3>
-                                        <p className="text-slate-600 mb-3">{item.description}</p>
-                                        <div className="flex items-center gap-2 text-blue-600 font-medium">
-                                            <CheckCircle2 className="w-4 h-4" />
+                                    <div className="workshop-value-card-text">
+                                        <h3>{item.title}</h3>
+                                        <p>{item.description}</p>
+                                        <div className="workshop-value-card-benefit">
+                                            <CheckCircle2 />
                                             <span>{item.benefit}</span>
                                         </div>
                                     </div>
@@ -325,11 +323,11 @@ function TeamWorkshopLanding() {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-center bg-blue-50 rounded-2xl p-8 border border-blue-100"
+                        className="workshop-value-note"
                     >
-                        <p className="text-lg text-slate-700">
+                        <p>
                             החוויה מלווה בשיח ממוקד שמחבר בין ההתנסות לבין המציאות הארגונית -
-                            <span className="font-bold text-blue-600"> תובנות שנשארות גם אחרי הסדנה.</span>
+                            <span> תובנות שנשארות גם אחרי הסדנה.</span>
                         </p>
                     </motion.div>
                 </div>
@@ -337,25 +335,19 @@ function TeamWorkshopLanding() {
 
 
             {/* Contact Form Section */}
-            <section id="contact" className="py-24 bg-gradient-to-b from-blue-900 to-blue-950">
-                <div className="max-w-4xl mx-auto px-6">
+            <section id="contact" className="workshop-contact">
+                <div className="workshop-contact-container">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
                         variants={staggerContainer}
-                        className="text-center mb-12"
+                        className="workshop-contact-header"
                     >
-                        <motion.h2
-                            variants={fadeInUp}
-                            className="text-3xl md:text-4xl font-bold text-white mb-4"
-                        >
+                        <motion.h2 variants={fadeInUp} className="workshop-contact-title">
                             רוצים לבדוק התאמה לצוות שלכם?
                         </motion.h2>
-                        <motion.p
-                            variants={fadeInUp}
-                            className="text-blue-200 text-lg"
-                        >
+                        <motion.p variants={fadeInUp} className="workshop-contact-subtitle">
                             השאירו פרטים ונחזור אליכם לשיחה קצרה
                         </motion.p>
                     </motion.div>
@@ -365,12 +357,12 @@ function TeamWorkshopLanding() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         onSubmit={handleSubmit}
-                        className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/20"
+                        className="workshop-form"
                     >
-                        <div className="grid md:grid-cols-2 gap-6 mb-8">
+                        <div className="workshop-form-grid">
                             {/* Name */}
-                            <div className="relative">
-                                <User className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-300" />
+                            <div className="workshop-input-group">
+                                <User className="workshop-input-icon" />
                                 <input
                                     type="text"
                                     name="name"
@@ -378,13 +370,13 @@ function TeamWorkshopLanding() {
                                     onChange={handleInputChange}
                                     placeholder="שם מלא"
                                     required
-                                    className="w-full bg-white/10 border border-white/20 rounded-xl py-4 pr-12 pl-4 text-white placeholder-blue-300/70 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+                                    className="workshop-input"
                                 />
                             </div>
 
                             {/* Company */}
-                            <div className="relative">
-                                <Building2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-300" />
+                            <div className="workshop-input-group">
+                                <Building2 className="workshop-input-icon" />
                                 <input
                                     type="text"
                                     name="company"
@@ -392,13 +384,13 @@ function TeamWorkshopLanding() {
                                     onChange={handleInputChange}
                                     placeholder="שם החברה/הארגון"
                                     required
-                                    className="w-full bg-white/10 border border-white/20 rounded-xl py-4 pr-12 pl-4 text-white placeholder-blue-300/70 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+                                    className="workshop-input"
                                 />
                             </div>
 
                             {/* Phone */}
-                            <div className="relative">
-                                <Phone className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-300" />
+                            <div className="workshop-input-group">
+                                <Phone className="workshop-input-icon" />
                                 <input
                                     type="tel"
                                     name="phone"
@@ -406,13 +398,13 @@ function TeamWorkshopLanding() {
                                     onChange={handleInputChange}
                                     placeholder="טלפון"
                                     required
-                                    className="w-full bg-white/10 border border-white/20 rounded-xl py-4 pr-12 pl-4 text-white placeholder-blue-300/70 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+                                    className="workshop-input"
                                 />
                             </div>
 
                             {/* Email */}
-                            <div className="relative">
-                                <Mail className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-300" />
+                            <div className="workshop-input-group">
+                                <Mail className="workshop-input-icon" />
                                 <input
                                     type="email"
                                     name="email"
@@ -420,7 +412,7 @@ function TeamWorkshopLanding() {
                                     onChange={handleInputChange}
                                     placeholder="אימייל"
                                     required
-                                    className="w-full bg-white/10 border border-white/20 rounded-xl py-4 pr-12 pl-4 text-white placeholder-blue-300/70 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+                                    className="workshop-input"
                                 />
                             </div>
                         </div>
@@ -431,15 +423,14 @@ function TeamWorkshopLanding() {
                             disabled={isSubmitting}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            style={{ backgroundColor: '#ffffff' }}
-                            className="w-full text-blue-900 font-bold text-lg py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl"
+                            className="workshop-submit-btn"
                         >
                             {isSubmitting ? (
                                 <span>שולח...</span>
                             ) : (
                                 <>
                                     <span>שליחה</span>
-                                    <Send className="w-5 h-5" />
+                                    <Send />
                                 </>
                             )}
                         </motion.button>
@@ -449,7 +440,7 @@ function TeamWorkshopLanding() {
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="mt-6 text-center text-sky-300 bg-sky-500/20 rounded-xl py-4"
+                                className="workshop-message workshop-message--success"
                             >
                                 ✓ הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.
                             </motion.div>
@@ -459,7 +450,7 @@ function TeamWorkshopLanding() {
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="mt-6 text-center text-red-300 bg-red-500/20 rounded-xl py-4"
+                                className="workshop-message workshop-message--error"
                             >
                                 אירעה שגיאה. אנא נסו שוב.
                             </motion.div>
@@ -469,8 +460,8 @@ function TeamWorkshopLanding() {
             </section>
 
             {/* Footer */}
-            <footer className="py-8 bg-blue-950 text-center">
-                <p className="text-blue-400/60 text-sm">
+            <footer className="workshop-footer">
+                <p>
                     © {new Date().getFullYear()} ברק אלוני - סדנאות כלבנות לפיתוח צוותים
                 </p>
             </footer>

@@ -87,7 +87,32 @@
 .workshop-back-link svg {
     width: 20px;
     height: 20px;
-    transform: rotate(180deg);
+}
+
+.workshop-nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.workshop-lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--tw-color-blue-50);
+    color: var(--tw-color-blue-900);
+    border: none;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.workshop-lang-btn:hover {
+    background-color: var(--tw-color-blue-100);
+    transform: translateY(-1px);
 }
 
 /* ============================
@@ -123,7 +148,7 @@
 .workshop-hero-circle-1 {
     position: absolute;
     top: 80px;
-    left: 40px;
+    inset-inline-start: 40px;
     width: 288px;
     height: 288px;
     background-color: rgba(56, 189, 248, 0.2);
@@ -134,7 +159,7 @@
 .workshop-hero-circle-2 {
     position: absolute;
     bottom: 80px;
-    right: 40px;
+    inset-inline-end: 40px;
     width: 384px;
     height: 384px;
     background-color: rgba(96, 165, 250, 0.2);
@@ -170,7 +195,7 @@
 
 @media (min-width: 1024px) {
     .workshop-hero-text {
-        text-align: right;
+        text-align: start;
     }
 }
 
@@ -284,17 +309,17 @@
 
 .workshop-floating-icon--users {
     top: -16px;
-    right: -16px;
+    inset-inline-end: -16px;
 }
 
 .workshop-floating-icon--heart {
     bottom: -12px;
-    left: -12px;
+    inset-inline-start: -12px;
 }
 
 .workshop-floating-icon--handshake {
     top: 50%;
-    left: -20px;
+    inset-inline-start: -20px;
     transform: translateY(-50%);
 }
 
@@ -387,17 +412,17 @@
 
 .workshop-floating-icon--users {
     top: -20px;
-    right: -20px;
+    inset-inline-end: -20px;
 }
 
 .workshop-floating-icon--heart {
     bottom: 20px;
-    left: -20px;
+    inset-inline-start: -20px;
 }
 
 .workshop-floating-icon--handshake {
     top: 40%;
-    right: -30px;
+    inset-inline-end: -30px;
 }
 
 .workshop-video-frame {
@@ -969,7 +994,7 @@
 
 .workshop-input-icon {
     position: absolute;
-    right: 16px;
+    inset-inline-end: 16px;
     top: 50%;
     transform: translateY(-50%);
     width: 20px;
@@ -982,12 +1007,12 @@
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
-    padding: 16px 48px 16px 16px;
+    padding: 16px;
+    padding-inline-end: 48px;
     color: var(--tw-color-white);
     font-size: 1rem;
     transition: all 0.3s ease;
-    text-align: right;
-    direction: rtl;
+    text-align: start;
 }
 
 .workshop-input::placeholder {

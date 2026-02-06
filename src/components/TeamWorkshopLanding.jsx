@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Logo from './Logo';
 import './TeamWorkshopLanding.css';
+import { useLanguage } from '../context/LanguageContext';
 import {
     MessageCircle,
     Heart,
@@ -21,10 +22,101 @@ import {
     Dog,
     Lightbulb,
     RefreshCw,
-    Volume2
+    Volume2,
+    Globe,
+    ArrowRight
 } from 'lucide-react';
 
+const translations = {
+    he: {
+        back: 'חזרה',
+        hero_title_1: 'סדנת כלבנות',
+        hero_title_highlight: 'לפיתוח צוותים',
+        hero_subtitle: 'חוויה ציוותית שמחזקת תקשורת, אמון ושיתוף פעולה.',
+        hero_description: `סדנת כלבנות לפיתוח הצוות היא חוויה לצוותי עובדים בחברות, ארגונים ומוסדות.
+הסדנה מאפשרת לצוות - לשבור את מהשגרה, להתחבר מחדש ולחוות תקשורת אפקטיבית -
+דרך עשייה, למידה וחוויה משותפת.`,
+        cta_check: 'לבדיקת התאמה לצוות',
+        audience_title: 'הסדנה מיועדת לצוותי עובדים',
+        audience_companies: 'חברות וארגונים',
+        audience_education: 'צוותי חינוך והדרכה',
+        audience_welfare: 'צוותי רווחה',
+        audience_management: 'צוותי ניהול',
+        value_title: 'מה בסדנה ומה הערך לארגון?',
+        value_subtitle: 'חוויה מעשית שמחברת בין עקרונות האילוף המודרני לעולם הניהול והעבודה בצוות',
+        value_1_title: 'יצירת שפה משותפת',
+        value_1_desc: 'בניית תקשורת ברורה ומדויקת בצוות',
+        value_1_benefit: 'שיפור תקשורת ושיתוף פעולה',
+        value_2_title: 'השפעה והובלה ללא כוחנות',
+        value_2_desc: 'למידה של דרכים להשפיע ולהניע בלי לכפות',
+        value_2_benefit: 'ניהול אפקטיבי יותר',
+        value_3_title: 'חיזוק חיובי ככלי עבודה',
+        value_3_desc: 'שימוש בתגמול והכרה להנעת אנשים',
+        value_3_benefit: 'שבירת שגרה עם ערך',
+        value_4_title: 'הקשבה, אמון וחיבור',
+        value_4_desc: 'חיזוק היכולת להקשיב ולהבין את הצוות',
+        value_4_benefit: 'חיזוק חיבור ואמון',
+        contact_title: 'רוצים לבדוק התאמה לצוות שלכם?',
+        contact_subtitle: 'השאירו פרטים ונחזור אליכם לשיחה קצרה',
+        form_name: 'שם מלא',
+        form_company: 'שם החברה/הארגון',
+        form_phone: 'טלפון (מספרים בלבד)',
+        form_email: 'אימייל',
+        form_submit: 'שליחה',
+        form_sending: 'שולח...',
+        error_phone: 'מספר הטלפון אינו תקין. יש להזין 9-10 ספרות, למשל: 0501234567',
+        success_msg: '✓ הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.',
+        error_msg: 'אירעה שגיאה. אנא נסו שוב.',
+        footer_text: '© 2024 ברק אלוני - סדנאות כלבנות לפיתוח צוותים'
+    },
+    en: {
+        back: 'Back',
+        hero_title_1: 'Dog Training Workshop',
+        hero_title_highlight: 'For Team Development',
+        hero_subtitle: 'A team experience that strengthens communication, trust through action.',
+        hero_description: `The Dog Training Workshop for Team Development is an experience for corporate teams, organizations, and institutions.
+The workshop allows the team to break the routine, reconnect, and experience effective communication through action, learning, and shared experience.`,
+        cta_check: 'Check Team Suitability',
+        audience_title: 'The Workshop is Designed for Teams',
+        audience_companies: 'Companies & Organizations',
+        audience_education: 'Education & Training Teams',
+        audience_welfare: 'Welfare Teams',
+        audience_management: 'Management Teams',
+        value_title: 'The Workshop & Organizational Value',
+        value_subtitle: 'A practical experience bridging modern dog training principles with management and teamwork.',
+        value_1_title: 'Creating a Common Language',
+        value_1_desc: 'Building clear and precise team communication',
+        value_1_benefit: 'Improved Communication',
+        value_2_title: 'Influence Without Force',
+        value_2_desc: 'Learning ways to influence and motivate without coercion',
+        value_2_benefit: 'More Effective Management',
+        value_3_title: 'Positive Reinforcement',
+        value_3_desc: 'Using reward and recognition to motivate people',
+        value_3_benefit: 'Meaningful Routine Break',
+        value_4_title: 'Listening, Trust & Connection',
+        value_4_desc: 'Strengthening the ability to listen and understand the team',
+        value_4_benefit: 'Strengthening Trust',
+        contact_title: 'Want to Check Suitability?',
+        contact_subtitle: 'Leave your details and we will get back to you shortly.',
+        form_name: 'Full Name',
+        form_company: 'Company/Organization Name',
+        form_phone: 'Phone (Numbers only)',
+        form_email: 'Email',
+        form_submit: 'Send',
+        form_sending: 'Sending...',
+        error_phone: 'Invalid phone number. Please enter 9-10 digits.',
+        success_msg: '✓ Details sent successfully! We will get back to you soon.',
+        error_msg: 'An error occurred. Please try again.',
+        footer_text: '© 2024 Barak Aloni - Dog Training Workshops for Team Development'
+    }
+};
+
 function TeamWorkshopLanding() {
+    const { language, toggleLanguage } = useLanguage();
+    const isRTL = language === 'he';
+    const ArrowBack = isRTL ? ArrowRight : ArrowLeft;
+    const ArrowNext = isRTL ? ArrowLeft : ArrowRight;
+
     const [formData, setFormData] = useState({
         name: '',
         company: '',
@@ -98,16 +190,25 @@ function TeamWorkshopLanding() {
     };
 
     return (
-        <div className="workshop-page">
+        <div className="workshop-page" dir={isRTL ? 'rtl' : 'ltr'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 
             {/* Navigation Bar */}
             <nav className="workshop-nav">
                 <div className="workshop-nav-container">
                     <Logo href="/" />
-                    <a href="/" className="workshop-back-link">
-                        <span>חזרה</span>
-                        <ArrowLeft />
-                    </a>
+                    <div className="workshop-nav-controls">
+                        <button
+                            onClick={toggleLanguage}
+                            className="workshop-lang-btn"
+                        >
+                            <Globe size={20} />
+                            <span>{language === 'he' ? 'EN' : 'עב'}</span>
+                        </button>
+                        <a href="/" className="workshop-back-link">
+                            <ArrowBack />
+                            <span>{translations[language].back}</span>
+                        </a>
+                    </div>
                 </div>
             </nav>
 
@@ -138,26 +239,23 @@ function TeamWorkshopLanding() {
                             className="workshop-hero-text"
                         >
                             <motion.h1 variants={fadeInUp} className="workshop-hero-title">
-                                סדנת כלבנות
-                                <span className="workshop-hero-title-highlight">לפיתוח צוותים</span>
+                                {translations[language].hero_title_1}
+                                <span className="workshop-hero-title-highlight">{translations[language].hero_title_highlight}</span>
                             </motion.h1>
 
                             <motion.p variants={fadeInUp} className="workshop-hero-subtitle">
-                                חוויה ציוותית שמחזקת תקשורת, אמון ושיתוף פעולה.
+                                {translations[language].hero_subtitle}
                             </motion.p>
 
                             <motion.p variants={fadeInUp} className="workshop-hero-description">
-                                סדנת כלבנות לפיתוח הצוות היא חוויה לצוותי עובדים בחברות, ארגונים ומוסדות.
-                                <br />
-                                הסדנה מאפשרת לצוות - לשבור את מהשגרה, להתחבר מחדש ולחוות תקשורת אפקטיבית -
-                                דרך עשייה, למידה וחוויה משותפת.
+                                {translations[language].hero_description}
                             </motion.p>
 
                             {/* CTA Button - Desktop Only */}
                             <motion.div variants={fadeInUp} className="workshop-cta-desktop">
                                 <a href="#contact" className="workshop-cta-btn">
-                                    <span>לבדיקת התאמה לצוות</span>
-                                    <ArrowLeft />
+                                    <span>{translations[language].cta_check}</span>
+                                    <ArrowNext />
                                 </a>
                             </motion.div>
                         </motion.div>
@@ -223,8 +321,8 @@ function TeamWorkshopLanding() {
                         className="workshop-cta-mobile"
                     >
                         <a href="#contact" className="workshop-cta-btn">
-                            <span>לבדיקת התאמה לצוות</span>
-                            <ArrowLeft />
+                            <span>{translations[language].cta_check}</span>
+                            <ArrowNext />
                         </a>
                     </motion.div>
                 </div>
@@ -247,15 +345,15 @@ function TeamWorkshopLanding() {
                         variants={staggerContainer}
                     >
                         <motion.h2 variants={fadeInUp} className="workshop-audience-title">
-                            הסדנה מיועדת לצוותי עובדים
+                            {translations[language].audience_title}
                         </motion.h2>
 
                         <motion.div variants={fadeInUp} className="workshop-audience-grid">
                             {[
-                                { icon: Building2, label: 'חברות וארגונים' },
-                                { icon: GraduationCap, label: 'צוותי חינוך והדרכה' },
-                                { icon: Heart, label: 'צוותי רווחה' },
-                                { icon: Users, label: 'צוותי ניהול' }
+                                { icon: Building2, label: translations[language].audience_companies },
+                                { icon: GraduationCap, label: translations[language].audience_education },
+                                { icon: Heart, label: translations[language].audience_welfare },
+                                { icon: Users, label: translations[language].audience_management }
                             ].map((audience, index) => (
                                 <motion.div
                                     key={index}
@@ -283,10 +381,10 @@ function TeamWorkshopLanding() {
                         className="workshop-value-header"
                     >
                         <motion.h2 variants={fadeInUp} className="workshop-value-title">
-                            מה בסדנה ומה הערך לארגון?
+                            {translations[language].value_title}
                         </motion.h2>
                         <motion.p variants={fadeInUp} className="workshop-value-subtitle">
-                            חוויה מעשית שמחברת בין עקרונות האילוף המודרני לעולם הניהול והעבודה בצוות
+                            {translations[language].value_subtitle}
                         </motion.p>
                     </motion.div>
 
@@ -301,27 +399,27 @@ function TeamWorkshopLanding() {
                         {[
                             {
                                 icon: Volume2,
-                                title: 'יצירת שפה משותפת',
-                                description: 'בניית תקשורת ברורה ומדויקת בצוות',
-                                benefit: 'שיפור תקשורת ושיתוף פעולה'
+                                title: translations[language].value_1_title,
+                                description: translations[language].value_1_desc,
+                                benefit: translations[language].value_1_benefit
                             },
                             {
                                 icon: Target,
-                                title: 'השפעה והובלה ללא כוחנות',
-                                description: 'למידה של דרכים להשפיע ולהניע בלי לכפות',
-                                benefit: 'ניהול אפקטיבי יותר'
+                                title: translations[language].value_2_title,
+                                description: translations[language].value_2_desc,
+                                benefit: translations[language].value_2_benefit
                             },
                             {
                                 icon: Award,
-                                title: 'חיזוק חיובי ככלי עבודה',
-                                description: 'שימוש בתגמול והכרה להנעת אנשים',
-                                benefit: 'שבירת שגרה עם ערך'
+                                title: translations[language].value_3_title,
+                                description: translations[language].value_3_desc,
+                                benefit: translations[language].value_3_benefit
                             },
                             {
                                 icon: Heart,
-                                title: 'הקשבה, אמון וחיבור',
-                                description: 'חיזוק היכולת להקשיב ולהבין את הצוות',
-                                benefit: 'חיזוק חיבור ואמון'
+                                title: translations[language].value_4_title,
+                                description: translations[language].value_4_desc,
+                                benefit: translations[language].value_4_benefit
                             }
                         ].map((item, index) => (
                             <motion.div
@@ -363,10 +461,10 @@ function TeamWorkshopLanding() {
                         className="workshop-contact-header"
                     >
                         <motion.h2 variants={fadeInUp} className="workshop-contact-title">
-                            רוצים לבדוק התאמה לצוות שלכם?
+                            {translations[language].contact_title}
                         </motion.h2>
                         <motion.p variants={fadeInUp} className="workshop-contact-subtitle">
-                            השאירו פרטים ונחזור אליכם לשיחה קצרה
+                            {translations[language].contact_subtitle}
                         </motion.p>
                     </motion.div>
 
@@ -386,7 +484,7 @@ function TeamWorkshopLanding() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    placeholder="שם מלא"
+                                    placeholder={translations[language].form_name}
                                     required
                                     className="workshop-input"
                                 />
@@ -400,7 +498,7 @@ function TeamWorkshopLanding() {
                                     name="company"
                                     value={formData.company}
                                     onChange={handleInputChange}
-                                    placeholder="שם החברה/הארגון"
+                                    placeholder={translations[language].form_company}
                                     className="workshop-input"
                                 />
                             </div>
@@ -413,11 +511,11 @@ function TeamWorkshopLanding() {
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleInputChange}
-                                    placeholder="טלפון (מספרים בלבד)"
+                                    placeholder={translations[language].form_phone}
                                     required
                                     className={`workshop-input ${submitStatus === 'invalid_phone' ? 'workshop-input--error' : ''}`}
                                     dir="ltr"
-                                    style={{ textAlign: 'right' }}
+                                    style={{ textAlign: isRTL ? 'right' : 'left' }}
                                 />
                             </div>
 
@@ -429,7 +527,7 @@ function TeamWorkshopLanding() {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleInputChange}
-                                    placeholder="אימייל"
+                                    placeholder={translations[language].form_email}
                                     className="workshop-input"
                                 />
                             </div>
@@ -441,7 +539,7 @@ function TeamWorkshopLanding() {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="workshop-form-message workshop-form-message--error"
                             >
-                                מספר הטלפון אינו תקין. יש להזין 9-10 ספרות, למשל: 0501234567
+                                {translations[language].error_phone}
                             </motion.div>
                         )}
 
@@ -454,10 +552,10 @@ function TeamWorkshopLanding() {
                             className="workshop-submit-btn"
                         >
                             {isSubmitting ? (
-                                <span>שולח...</span>
+                                <span>{translations[language].form_sending}</span>
                             ) : (
                                 <>
-                                    <span>שליחה</span>
+                                    <span>{translations[language].form_submit}</span>
                                     <Send />
                                 </>
                             )}
@@ -470,7 +568,7 @@ function TeamWorkshopLanding() {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="workshop-form-message workshop-form-message--success"
                             >
-                                ✓ הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.
+                                {translations[language].success_msg}
                             </motion.div>
                         )}
 
@@ -480,7 +578,7 @@ function TeamWorkshopLanding() {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="workshop-form-message workshop-form-message--error"
                             >
-                                אירעה שגיאה. אנא נסו שוב.
+                                {translations[language].error_msg}
                             </motion.div>
                         )}
                     </motion.form>
@@ -490,7 +588,7 @@ function TeamWorkshopLanding() {
             {/* Footer */}
             < footer className="workshop-footer" >
                 <p>
-                    © {new Date().getFullYear()} ברק אלוני - סדנאות כלבנות לפיתוח צוותים
+                    {translations[language].footer_text}
                 </p>
             </footer >
         </div >

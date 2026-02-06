@@ -30,7 +30,11 @@ function App() {
 
   // Route: Team Workshop Landing Page
   if (currentPath === '/teams' || currentPath === '/workshop') {
-    return <TeamWorkshopLanding />;
+    return (
+      <LanguageProvider>
+        <TeamWorkshopLanding />
+      </LanguageProvider>
+    );
   }
 
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);

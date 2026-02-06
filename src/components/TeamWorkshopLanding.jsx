@@ -318,18 +318,7 @@ function TeamWorkshopLanding() {
                         ))}
                     </motion.div>
 
-                    {/* Bottom Note */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="workshop-value-note"
-                    >
-                        <p>
-                            החוויה מלווה בשיח ממוקד שמחבר בין ההתנסות לבין המציאות הארגונית -
-                            <span> תובנות שנשארות גם אחרי הסדנה.</span>
-                        </p>
-                    </motion.div>
+
                 </div>
             </section>
 

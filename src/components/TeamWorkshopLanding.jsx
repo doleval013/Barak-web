@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import Logo from './Logo';
+import './TeamWorkshopLanding.css';
 import {
     MessageCircle,
     Heart,
@@ -68,6 +70,17 @@ function TeamWorkshopLanding() {
 
     return (
         <div className="min-h-screen bg-white" dir="rtl">
+
+            {/* Navigation Bar */}
+            <nav className="workshop-nav">
+                <div className="workshop-nav-container">
+                    <Logo href="/" />
+                    <a href="/" className="workshop-back-link">
+                        <span>חזרה</span>
+                        <ArrowLeft />
+                    </a>
+                </div>
+            </nav>
 
             {/* Hero Section with Video */}
             <section className="relative py-16 lg:py-20 flex items-center overflow-hidden">

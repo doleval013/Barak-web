@@ -23,20 +23,6 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Route: Admin Dashboard
-  if (currentPath === '/admin') {
-    return <AdminDashboard />;
-  }
-
-  // Route: Team Workshop Landing Page
-  if (currentPath === '/teams' || currentPath === '/workshop') {
-    return (
-      <LanguageProvider>
-        <TeamWorkshopLanding />
-      </LanguageProvider>
-    );
-  }
-
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState('accessibility');
   const [isCookieBannerOpen, setIsCookieBannerOpen] = useState(false);    // Track visits
@@ -130,6 +116,21 @@ function App() {
     setLegalTab(tab);
     setIsLegalModalOpen(true);
   };
+
+  // Route: Admin Dashboard
+  if (currentPath === '/admin') {
+    return <AdminDashboard />;
+  }
+
+  // Route: Team Workshop Landing Page
+  if (currentPath === '/teams' || currentPath === '/workshop') {
+    return (
+      <LanguageProvider>
+        <TeamWorkshopLanding />
+        <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
+      </LanguageProvider>
+    );
+  }
 
   return (
     <LanguageProvider>

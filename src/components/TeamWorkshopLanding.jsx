@@ -67,7 +67,7 @@ const translations = {
         error_phone: 'מספר הטלפון אינו תקין. יש להזין 9-10 ספרות, למשל: 0501234567',
         success_msg: '✓ הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.',
         error_msg: 'אירעה שגיאה. אנא נסו שוב.',
-        footer_text: '© 2024 ברק אלוני - סדנאות כלבנות לפיתוח צוותים'
+        footer_text: '© 2026 ברק אלוני - סדנאות כלבנות לפיתוח צוותים'
     },
     en: {
         back: 'Back',
@@ -107,7 +107,7 @@ The workshop allows the team to break the routine, reconnect, and experience eff
         error_phone: 'Invalid phone number. Please enter 9-10 digits.',
         success_msg: '✓ Details sent successfully! We will get back to you soon.',
         error_msg: 'An error occurred. Please try again.',
-        footer_text: '© 2024 Barak Aloni - Dog Training Workshops for Team Development'
+        footer_text: '© 2026 Barak Aloni - Dog Training Workshops for Team Development'
     }
 };
 
@@ -162,11 +162,30 @@ function TeamWorkshopLanding() {
         setIsSubmitting(true);
         setSubmitStatus(null);
 
-        // Simulate form submission - replace with actual endpoint
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            setSubmitStatus('success');
-            setFormData({ name: '', company: '', phone: '', email: '' });
+            const response = await fetch('https://formspree.io/f/mdkqdljn', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    _subject: 'מתעניין בסדנת כלבנות לפיתוח צוות',
+                    message: `מתעניין בסדנת כלבנות לפיתוח צוות.
+פרטים:
+שם: ${formData.name}
+חברה: ${formData.company}
+טלפון: ${formData.phone}
+אימייל: ${formData.email}`
+                })
+            });
+
+            if (response.ok) {
+                setSubmitStatus('success');
+                setFormData({ name: '', company: '', phone: '', email: '' });
+            } else {
+                setSubmitStatus('error');
+            }
         } catch (error) {
             setSubmitStatus('error');
         } finally {

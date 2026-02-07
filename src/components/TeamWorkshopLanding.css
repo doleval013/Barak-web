@@ -266,6 +266,7 @@
 }
 
 .workshop-cta-btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 12px;
@@ -277,18 +278,26 @@
     border-radius: 9999px;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 .workshop-cta-btn:hover {
-    background-color: #f0f9ff;
+    background-color: #ffffff;
     transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(255, 255, 255, 0.25);
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        0 0 30px rgba(255, 255, 255, 0.6),
+        0 0 60px rgba(56, 189, 248, 0.3);
 }
 
 .workshop-cta-btn svg {
     width: 20px;
     height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.workshop-cta-btn:hover svg {
+    transform: translateX(-4px);
 }
 
 /* ============================
@@ -1095,4 +1104,488 @@
 .workshop-footer p {
     color: rgba(96, 165, 250, 0.6);
     font-size: 0.875rem;
+}
+
+/* ============================
+   NETFLIX-STYLE PREMIUM ENHANCEMENTS
+   ============================ */
+
+/* Animated gradient background for hero */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.workshop-hero-bg {
+    background: linear-gradient(-45deg,
+            var(--tw-color-blue-950),
+            var(--tw-color-blue-900),
+            var(--tw-color-blue-800),
+            #1e3a5f);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+/* CTA Button Glow Animation - Clean subtle pulse */
+@keyframes ctaGlow {
+
+    0%,
+    100% {
+        box-shadow:
+            0 10px 25px rgba(0, 0, 0, 0.15),
+            0 0 0 0 rgba(56, 189, 248, 0);
+    }
+
+    50% {
+        box-shadow:
+            0 10px 25px rgba(0, 0, 0, 0.15),
+            0 0 20px rgba(56, 189, 248, 0.2);
+    }
+}
+
+.workshop-cta-btn {
+    animation: ctaGlow 3s ease-in-out infinite;
+}
+
+.workshop-cta-btn:hover {
+    animation: none;
+}
+
+/* Team Image Cards for Audience Section */
+.workshop-audience-card-image {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.workshop-audience-card-image:hover {
+    transform: scale(1.05) translateY(-8px);
+    box-shadow: 0 20px 50px rgba(30, 58, 138, 0.3);
+}
+
+.workshop-audience-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+}
+
+.workshop-audience-card-image:hover img {
+    transform: scale(1.1);
+}
+
+.workshop-audience-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top,
+            rgba(30, 58, 138, 0.95) 0%,
+            rgba(30, 58, 138, 0.6) 40%,
+            transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+    transition: all 0.4s ease;
+}
+
+.workshop-audience-card-image:hover .workshop-audience-card-overlay {
+    background: linear-gradient(to top,
+            rgba(30, 58, 138, 1) 0%,
+            rgba(30, 58, 138, 0.8) 50%,
+            rgba(30, 58, 138, 0.4) 100%);
+}
+
+.workshop-audience-card-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.workshop-audience-card-image:hover .workshop-audience-card-icon {
+    background: rgba(255, 255, 255, 0.95);
+    transform: scale(1.1);
+}
+
+.workshop-audience-card-icon svg {
+    width: 24px;
+    height: 24px;
+    color: white;
+    transition: color 0.3s ease;
+}
+
+.workshop-audience-card-image:hover .workshop-audience-card-icon svg {
+    color: var(--tw-color-blue-600);
+}
+
+.workshop-audience-card-label {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Audience Grid with Images */
+.workshop-audience-grid-images {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .workshop-audience-grid-images {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+}
+
+/* Glassmorphism Value Cards */
+.workshop-value-card-glass {
+    position: relative;
+    padding: 40px 32px;
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(248, 250, 252, 0.8) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.workshop-value-card-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.8),
+            transparent);
+}
+
+.workshop-value-card-glass:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 20px 60px rgba(30, 58, 138, 0.2),
+        0 0 40px rgba(59, 130, 246, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Glow effect on hover */
+.workshop-value-card-glass::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: radial-gradient(circle at 50% 0%,
+            rgba(59, 130, 246, 0.15) 0%,
+            transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.workshop-value-card-glass:hover::after {
+    opacity: 1;
+}
+
+/* Value card icon with gradient */
+.workshop-value-card-icon-premium {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: linear-gradient(135deg,
+            var(--tw-color-blue-600) 0%,
+            var(--tw-color-blue-400) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+}
+
+.workshop-value-card-glass:hover .workshop-value-card-icon-premium {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.4);
+}
+
+.workshop-value-card-icon-premium svg {
+    width: 32px;
+    height: 32px;
+    color: white;
+}
+
+/* Enhanced value card content */
+.workshop-value-card-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.workshop-value-card-text h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--tw-color-slate-800);
+    margin-bottom: 8px;
+}
+
+.workshop-value-card-text p {
+    color: var(--tw-color-slate-600);
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.workshop-value-card-benefit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg,
+            rgba(59, 130, 246, 0.1) 0%,
+            rgba(37, 99, 235, 0.05) 100%);
+    border-radius: 9999px;
+    color: var(--tw-color-blue-600);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.workshop-value-card-benefit svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Floating elements animation */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(3deg);
+    }
+}
+
+@keyframes floatReverse {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(15px) rotate(-3deg);
+    }
+}
+
+.workshop-floating-icon--users {
+    animation: float 6s ease-in-out infinite;
+}
+
+.workshop-floating-icon--heart {
+    animation: floatReverse 5s ease-in-out infinite;
+}
+
+.workshop-floating-icon--handshake {
+    animation: float 7s ease-in-out infinite;
+}
+
+/* Enhanced floating badges */
+.workshop-floating-badge {
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.15),
+        0 0 0 4px rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.workshop-floating-badge:hover {
+    transform: scale(1.15);
+}
+
+/* Section scroll reveal base styles */
+.workshop-section-reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.workshop-section-reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hero title animation */
+@keyframes titleReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+.workshop-hero-title {
+    animation: titleReveal 1s ease-out forwards;
+}
+
+.workshop-hero-title-highlight {
+    animation: titleReveal 1s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+/* Shimmer effect for premium elements */
+/* CTA button - No shimmer, clean look */
+
+/* Enhanced submit button */
+.workshop-submit-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.workshop-submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(59, 130, 246, 0.2),
+            transparent);
+    transition: left 0.5s ease;
+}
+
+.workshop-submit-btn:hover::before {
+    left: 100%;
+}
+
+/* Video frame glow */
+.workshop-video-frame {
+    position: relative;
+}
+
+.workshop-video-frame::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    background: linear-gradient(135deg,
+            var(--tw-color-sky-400) 0%,
+            var(--tw-color-blue-600) 50%,
+            var(--tw-color-sky-400) 100%);
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.workshop-video-wrapper:hover .workshop-video-frame::before {
+    opacity: 0.6;
+}
+
+/* Smooth page transitions */
+.workshop-page {
+    animation: pageLoad 0.6s ease-out;
+}
+
+@keyframes pageLoad {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Premium section divider */
+.workshop-section-divider {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg,
+            var(--tw-color-blue-600),
+            var(--tw-color-sky-400));
+    border-radius: 2px;
+    margin: 0 auto 24px;
+}
+
+/* Audience section enhanced background */
+.workshop-audience {
+    background: linear-gradient(180deg,
+            var(--tw-color-slate-50) 0%,
+            #ffffff 50%,
+            var(--tw-color-slate-50) 100%);
+    position: relative;
+}
+
+.workshop-audience::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%,
+            rgba(59, 130, 246, 0.05) 0%,
+            transparent 70%);
+    pointer-events: none;
+}
+
+/* Value section enhanced */
+.workshop-value {
+    background: linear-gradient(180deg,
+            #ffffff 0%,
+            var(--tw-color-slate-50) 100%);
+    position: relative;
+}
+
+.workshop-value::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to top,
+            rgba(30, 58, 138, 0.02) 0%,
+            transparent 100%);
+    pointer-events: none;
 }

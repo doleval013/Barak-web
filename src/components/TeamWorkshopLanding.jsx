@@ -196,15 +196,50 @@ function TeamWorkshopLanding() {
     };
 
     const fadeInUp = {
-        hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0 }
+        hidden: { opacity: 0, y: 40, filter: 'blur(10px)' },
+        visible: {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            transition: {
+                duration: 0.6,
+                ease: [0.25, 0.46, 0.45, 0.94]
+            }
+        }
+    };
+
+    const fadeInScale = {
+        hidden: { opacity: 0, scale: 0.9 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            transition: {
+                duration: 0.5,
+                ease: [0.25, 0.46, 0.45, 0.94]
+            }
+        }
     };
 
     const staggerContainer = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
-            transition: { staggerChildren: 0.15 }
+            transition: {
+                staggerChildren: 0.12,
+                delayChildren: 0.1
+            }
+        }
+    };
+
+    const slideInFromRight = {
+        hidden: { opacity: 0, x: 60 },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: 0.7,
+                ease: [0.25, 0.46, 0.45, 0.94]
+            }
         }
     };
 
@@ -354,33 +389,66 @@ function TeamWorkshopLanding() {
                 </div>
             </section>
 
-            {/* Target Audience Section */}
+            {/* Target Audience Section - Netflix Style Image Cards */}
             <section className="workshop-audience">
                 <div className="workshop-audience-container">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
-                        viewport={{ once: true }}
+                        viewport={{ once: true, margin: "-100px" }}
                         variants={staggerContainer}
                     >
+                        <motion.div variants={fadeInUp} className="workshop-section-divider" />
                         <motion.h2 variants={fadeInUp} className="workshop-audience-title">
                             {translations[language].audience_title}
                         </motion.h2>
 
-                        <motion.div variants={fadeInUp} className="workshop-audience-grid">
+                        <motion.div
+                            variants={staggerContainer}
+                            className="workshop-audience-grid-images"
+                        >
                             {[
-                                { icon: Building2, label: translations[language].audience_companies },
-                                { icon: GraduationCap, label: translations[language].audience_education },
-                                { icon: Heart, label: translations[language].audience_welfare },
-                                { icon: Users, label: translations[language].audience_management }
+                                {
+                                    icon: Building2,
+                                    label: translations[language].audience_companies,
+                                    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop&q=80'
+                                },
+                                {
+                                    icon: GraduationCap,
+                                    label: translations[language].audience_education,
+                                    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&h=400&fit=crop&q=80'
+                                },
+                                {
+                                    icon: Heart,
+                                    label: translations[language].audience_welfare,
+                                    image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=400&h=400&fit=crop&q=80'
+                                },
+                                {
+                                    icon: Users,
+                                    label: translations[language].audience_management,
+                                    image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=400&fit=crop&q=80'
+                                }
                             ].map((audience, index) => (
                                 <motion.div
                                     key={index}
-                                    whileHover={{ scale: 1.05 }}
-                                    className="workshop-audience-item"
+                                    variants={fadeInUp}
+                                    whileHover={{ scale: 1.05, y: -8 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="workshop-audience-card-image"
                                 >
-                                    <audience.icon />
-                                    <span>{audience.label}</span>
+                                    <img
+                                        src={audience.image}
+                                        alt={audience.label}
+                                        loading="lazy"
+                                    />
+                                    <div className="workshop-audience-card-overlay">
+                                        <div className="workshop-audience-card-icon">
+                                            <audience.icon />
+                                        </div>
+                                        <h3 className="workshop-audience-card-label">
+                                            {audience.label}
+                                        </h3>
+                                    </div>
                                 </motion.div>
                             ))}
                         </motion.div>
@@ -388,7 +456,7 @@ function TeamWorkshopLanding() {
                 </div>
             </section>
 
-            {/* Workshop Value Section */}
+            {/* Workshop Value Section - Glassmorphism Cards */}
             <section className="workshop-value">
                 <div className="workshop-value-container">
                     {/* Section Header */}
@@ -399,6 +467,7 @@ function TeamWorkshopLanding() {
                         variants={staggerContainer}
                         className="workshop-value-header"
                     >
+                        <motion.div variants={fadeInUp} className="workshop-section-divider" />
                         <motion.h2 variants={fadeInUp} className="workshop-value-title">
                             {translations[language].value_title}
                         </motion.h2>
@@ -407,7 +476,7 @@ function TeamWorkshopLanding() {
                         </motion.p>
                     </motion.div>
 
-                    {/* Value Cards */}
+                    {/* Value Cards with Glassmorphism */}
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
@@ -444,11 +513,15 @@ function TeamWorkshopLanding() {
                             <motion.div
                                 key={index}
                                 variants={fadeInUp}
-                                whileHover={{ scale: 1.02 }}
-                                className="workshop-value-card"
+                                whileHover={{
+                                    scale: 1.02,
+                                    y: -8,
+                                    transition: { duration: 0.3 }
+                                }}
+                                className="workshop-value-card workshop-value-card-glass"
                             >
                                 <div className="workshop-value-card-content">
-                                    <div className="workshop-value-card-icon">
+                                    <div className="workshop-value-card-icon-premium">
                                         <item.icon />
                                     </div>
                                     <div className="workshop-value-card-text">

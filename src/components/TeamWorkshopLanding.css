@@ -141,8 +141,9 @@
 .workshop-hero-pattern {
     position: absolute;
     inset: 0;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+');
-    opacity: 0.4;
+    /* Paw print pattern */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M30 35c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5zm-8-6c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm16 0c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm-12-8c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm8 0c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7z'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 1;
 }
 
 .workshop-hero-circle-1 {
@@ -184,8 +185,8 @@
 
 @media (min-width: 1024px) {
     .workshop-hero-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 48px;
+        grid-template-columns: 45% 55%;
+        gap: 60px;
     }
 }
 
@@ -200,28 +201,30 @@
 }
 
 .workshop-hero-title {
-    font-size: 2.25rem;
-    font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 800;
     color: var(--tw-color-white);
     margin-bottom: 24px;
-    line-height: 1.2;
+    line-height: 1.1;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 @media (min-width: 768px) {
     .workshop-hero-title {
-        font-size: 3rem;
+        font-size: 3.5rem;
     }
 }
 
 @media (min-width: 1024px) {
     .workshop-hero-title {
-        font-size: 3.75rem;
+        font-size: 4rem;
     }
 }
 
 .workshop-hero-title-highlight {
     display: block;
     color: var(--tw-color-secondary);
+    text-shadow: 0 4px 30px rgba(125, 211, 252, 0.5);
 }
 
 .workshop-hero-subtitle {
@@ -229,18 +232,20 @@
     color: var(--tw-color-blue-100);
     margin-bottom: 16px;
     line-height: 1.6;
+    font-weight: 500;
 }
 
 @media (min-width: 768px) {
     .workshop-hero-subtitle {
-        font-size: 1.5rem;
+        font-size: 1.625rem;
     }
 }
 
 .workshop-hero-description {
     font-size: 1.125rem;
-    color: rgba(191, 219, 254, 0.8);
+    color: rgba(191, 219, 254, 0.9);
     margin-bottom: 32px;
+    line-height: 1.7;
 }
 
 .workshop-cta-desktop {
@@ -1245,13 +1250,28 @@
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Audience Grid with Images */
+/* Audience Grid with Images - Full width on mobile */
 .workshop-audience-grid-images {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 16px;
     max-width: 900px;
     margin: 0 auto;
+}
+
+.workshop-audience-grid-images .workshop-audience-card-image {
+    aspect-ratio: 16 / 10;
+}
+
+@media (min-width: 480px) {
+    .workshop-audience-grid-images {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .workshop-audience-grid-images .workshop-audience-card-image {
+        aspect-ratio: 1 / 1;
+    }
 }
 
 @media (min-width: 768px) {
@@ -1588,4 +1608,233 @@
             rgba(30, 58, 138, 0.02) 0%,
             transparent 100%);
     pointer-events: none;
+}
+
+/* ============================
+   PARALLAX & DOG DECORATIONS
+   ============================ */
+
+/* Parallax Background Effect */
+.workshop-hero-bg {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Floating Paw Decorations */
+.workshop-paw-decoration {
+    position: absolute;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.workshop-paw-decoration--1 {
+    top: 20%;
+    left: 5%;
+    width: 80px;
+    height: 80px;
+    animation: floatPaw 8s ease-in-out infinite;
+}
+
+.workshop-paw-decoration--2 {
+    bottom: 30%;
+    right: 8%;
+    width: 60px;
+    height: 60px;
+    animation: floatPaw 10s ease-in-out infinite reverse;
+    animation-delay: 2s;
+}
+
+.workshop-paw-decoration--3 {
+    top: 60%;
+    left: 15%;
+    width: 50px;
+    height: 50px;
+    animation: floatPaw 12s ease-in-out infinite;
+    animation-delay: 4s;
+}
+
+@keyframes floatPaw {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(-5deg);
+    }
+
+    75% {
+        transform: translateY(-25px) rotate(3deg);
+    }
+}
+
+/* Dog-themed section divider with paw print */
+.workshop-section-divider {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg,
+            var(--tw-color-blue-600) 0%,
+            var(--tw-color-blue-400) 50%,
+            var(--tw-color-secondary) 100%);
+    border-radius: 2px;
+    margin: 0 auto 24px;
+    position: relative;
+}
+
+.workshop-section-divider::before {
+    content: '🐾';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    filter: grayscale(100%) brightness(0.3);
+    opacity: 0.3;
+}
+
+/* Audience section paw accents */
+.workshop-audience {
+    position: relative;
+    overflow: hidden;
+}
+
+.workshop-audience::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cg fill='%231e3a8a' fill-opacity='0.03'%3E%3Cpath d='M30 35c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5zm-8-6c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm16 0c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm-12-8c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm8 0c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: contain;
+    transform: rotate(15deg);
+    pointer-events: none;
+}
+
+/* Contact section with paw trail */
+.workshop-contact {
+    position: relative;
+}
+
+.workshop-contact::after {
+    content: '';
+    position: absolute;
+    bottom: 20%;
+    left: -30px;
+    width: 150px;
+    height: 150px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M30 35c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5zm-8-6c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm16 0c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm-12-8c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm8 0c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: contain;
+    transform: rotate(-25deg);
+    pointer-events: none;
+}
+
+/* Custom Dog-Training Icons for Value Cards */
+.workshop-value-card-icon-premium {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+    background: linear-gradient(135deg,
+            #2563eb 0%,
+            #3b82f6 50%,
+            #60a5fa 100%) !important;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.workshop-value-card-icon-premium::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg,
+            transparent 40%,
+            rgba(255, 255, 255, 0.15) 50%,
+            transparent 60%);
+    animation: iconShine 4s ease-in-out infinite;
+}
+
+@keyframes iconShine {
+
+    0%,
+    100% {
+        transform: translateX(-100%) rotate(45deg);
+    }
+
+    50% {
+        transform: translateX(100%) rotate(45deg);
+    }
+}
+
+.workshop-value-card-icon-premium svg {
+    width: 36px;
+    height: 36px;
+    color: white !important;
+    position: relative;
+    z-index: 1;
+}
+
+/* Enhanced scroll reveal for sections */
+.workshop-audience,
+.workshop-value,
+.workshop-contact {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Video emphasis - larger and more prominent */
+.workshop-video-frame {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+}
+
+.workshop-video-frame:hover {
+    transform: scale(1.02);
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(56, 189, 248, 0.3);
+}
+
+.workshop-video-iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: block;
+    border: none;
+}
+
+/* Footer paw trail */
+.workshop-footer {
+    position: relative;
+    overflow: hidden;
+}
+
+.workshop-footer::before {
+    content: '🐾';
+    position: absolute;
+    top: 20px;
+    right: 10%;
+    font-size: 40px;
+    opacity: 0.1;
+    transform: rotate(15deg);
 }

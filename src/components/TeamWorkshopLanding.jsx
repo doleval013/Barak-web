@@ -72,10 +72,9 @@ const translations = {
 
         audience_title: 'למי זה מתאים?',
         audience_1: 'צוותי עובדים בחברות וארגונים',
-        audience_2: 'הנהלות ומנהלים',
-        audience_3: 'צוותי חינוך והדרכה',
-        audience_4: 'צוותי רווחה וניהול',
-        audience_note: 'מתאים לימי צוות, ימי היערכות, חיזוק תקשורת פנימית או כחלק מתהליך פיתוח ארגוני.',
+        audience_2: 'צוותי חינוך והדרכה',
+        audience_3: 'צוותי ניהול',
+        audience_4: 'עסקים משפחתיים',
 
         contact_title: 'רוצים לבדוק התאמה לצוות שלכם?',
         contact_subtitle: 'השאירו פרטים ונחזור אליכם לשיחה קצרה',
@@ -142,10 +141,9 @@ const translations = {
 
         audience_title: 'Who is this for?',
         audience_1: 'Employee teams in companies and organizations',
-        audience_2: 'Executives and managers',
-        audience_3: 'Education and training teams',
-        audience_4: 'Welfare and management teams',
-        audience_note: 'Suitable for team days, preparation days, internal communication strengthening, or as part of organizational development.',
+        audience_2: 'Education and training teams',
+        audience_3: 'Management teams',
+        audience_4: 'Family businesses',
 
         contact_title: 'Want to Check Suitability?',
         contact_subtitle: 'Leave your details and we will get back to you shortly.',
@@ -517,9 +515,6 @@ function TeamWorkshopLanding() {
                             ))}
                         </motion.div>
 
-                        <motion.p variants={fadeUp} className="workshop-audience-new-note">
-                            {t.audience_note}
-                        </motion.p>
                     </motion.div>
                 </div>
             </section>

@@ -346,76 +346,52 @@ function TeamWorkshopLanding() {
             </nav>
 
             {/* ===== HERO SECTION ===== */}
-            <section className="workshop-hero">
-                <div className="workshop-hero-bg" />
-                <div className="workshop-hero-pattern" />
-
-                <motion.div
-                    className="workshop-hero-circle-1"
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-                    transition={{ duration: 8, repeat: Infinity }}
-                />
-                <motion.div
-                    className="workshop-hero-circle-2"
-                    animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
-                    transition={{ duration: 10, repeat: Infinity }}
-                />
-
-                <div className="workshop-hero-content">
-                    <div className="workshop-hero-grid">
-                        {/* Text */}
-                        <motion.div initial="hidden" animate="visible" variants={stagger} className="workshop-hero-text">
-                            <motion.h1 variants={fadeUp} className="workshop-hero-title">
-                                {t.hero_title_1}
-                                <span className="workshop-hero-title-highlight">{t.hero_title_highlight}</span>
-                            </motion.h1>
-                            <motion.p variants={fadeUp} className="workshop-hero-subtitle">
-                                {t.hero_subtitle}
-                            </motion.p>
-                            <motion.p variants={fadeUp} className="workshop-hero-description">
-                                {t.hero_description}
-                            </motion.p>
-                            <motion.div variants={fadeUp} className="workshop-cta-desktop">
-                                <a href="#contact" className="workshop-cta-btn">
-                                    <span>{t.cta_check}</span>
-                                    <ArrowNext />
-                                </a>
-                            </motion.div>
+            <section className="workshop-hero workshop-hero--image-bg">
+                <div className="workshop-hero-overlay" />
+                <div className="workshop-hero-content workshop-hero-content--centered">
+                    <motion.div initial="hidden" animate="visible" variants={stagger} className="workshop-hero-text">
+                        <motion.h1 variants={fadeUp} className="workshop-hero-title">
+                            {t.hero_title_1}
+                            <span className="workshop-hero-title-highlight">{t.hero_title_highlight}</span>
+                        </motion.h1>
+                        <motion.p variants={fadeUp} className="workshop-hero-subtitle">
+                            {t.hero_subtitle}
+                        </motion.p>
+                        <motion.p variants={fadeUp} className="workshop-hero-description">
+                            {t.hero_description}
+                        </motion.p>
+                        <motion.div variants={fadeUp} className="workshop-cta-desktop" style={{ justifyContent: 'center' }}>
+                            <a href="#contact" className="workshop-cta-btn">
+                                <span>{t.cta_check}</span>
+                                <ArrowNext />
+                            </a>
                         </motion.div>
-
-                        {/* Video */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8, delay: 0.3 }}
-                            className="workshop-video-wrapper"
-                        >
-                            <div className="workshop-video-container">
-                                <div className="workshop-video-frame">
-                                    <iframe
-                                        src="https://www.youtube.com/embed/kZMeB9DZNAs?rel=0"
-                                        title="סדנת כלבנות לצוותים"
-                                        className="workshop-video-iframe"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                    ></iframe>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-
-                    {/* Mobile CTA */}
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.5 }} className="workshop-cta-mobile"
-                    >
-                        <a href="#contact" className="workshop-cta-btn">
-                            <span>{t.cta_check}</span>
-                            <ArrowNext />
-                        </a>
                     </motion.div>
                 </div>
+            </section>
 
-
+            {/* ===== VIDEO SECTION ===== */}
+            <section className="workshop-video-section">
+                <div className="workshop-split-container">
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                        className="workshop-standalone-video"
+                    >
+                        <div className="workshop-video-container">
+                            <div className="workshop-video-frame">
+                                <iframe
+                                    src="https://www.youtube.com/embed/kZMeB9DZNAs?rel=0"
+                                    title="סדנת כלבנות לצוותים"
+                                    className="workshop-video-iframe"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                ></iframe>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
             </section>
 
             {/* ===== INTRO SECTION (Image on Left in RTL, Right in LTR) ===== */}
@@ -557,11 +533,11 @@ function TeamWorkshopLanding() {
                                     onClick={() => setSelectedImage(imgFeed)}
                                 />
                                 <img
-                                    src={imgGate}
-                                    alt="Workshop practice"
+                                    src={imgRelax2}
+                                    alt="Workshop interaction"
                                     className="workshop-split-image workshop-split-image--clickable"
                                     loading="lazy"
-                                    onClick={() => setSelectedImage(imgGate)}
+                                    onClick={() => setSelectedImage(imgRelax2)}
                                 />
                             </MobileSlider>
                             <div className="workshop-split-image-decoration workshop-split-image-decoration--secondary"></div>
@@ -648,13 +624,6 @@ function TeamWorkshopLanding() {
                                     className="workshop-split-image workshop-split-image--clickable"
                                     loading="lazy"
                                     onClick={() => setSelectedImage(imgRelax)}
-                                />
-                                <img
-                                    src={imgRelax2}
-                                    alt="Workshop interaction"
-                                    className="workshop-split-image workshop-split-image--clickable"
-                                    loading="lazy"
-                                    onClick={() => handleSetSelectedImage(imgRelax2)}
                                 />
                             </MobileSlider>
                             <div className="workshop-split-image-decoration workshop-split-image-decoration--teal"></div>

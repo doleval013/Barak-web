@@ -573,14 +573,17 @@
 
 
 .workshop-practice-card-title {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
+    font-family: var(--font-list-title);
     font-weight: 700;
     color: var(--tw-color-slate-800);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .workshop-practice-card-desc {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
+    font-family: var(--font-list-body);
+    font-weight: 400;
     color: var(--tw-color-slate-600);
     line-height: 1.65;
 }
@@ -656,7 +659,8 @@
 }
 
 .workshop-principles-title {
-    font-size: 1.2rem;
+    font-size: 1.35rem;
+    font-family: var(--font-list-title);
     font-weight: 700;
     color: var(--tw-color-slate-800);
     margin-bottom: 24px;
@@ -702,7 +706,8 @@
 }
 
 .workshop-principle-item span {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
+    font-family: var(--font-list-body);
     font-weight: 500;
     color: var(--tw-color-slate-700);
     line-height: 1.5;
@@ -827,10 +832,11 @@
 }
 
 .workshop-benefit-block span {
-    font-size: 1.1rem;
-    font-weight: 500;
+    font-size: 1.15rem;
+    font-family: var(--font-list-body);
+    font-weight: 400;
     color: var(--tw-color-slate-700);
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 /* ============================
@@ -904,7 +910,8 @@
 
 
 .workshop-audience-new-card span {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    font-family: var(--font-list-title);
     font-weight: 600;
     color: var(--tw-color-slate-700);
     line-height: 1.4;

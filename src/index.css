@@ -1,10 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Outfit:wght@300;400;500;600;700;800&family=Rubik:ital,wght@0,300..900;1,300..900&family=Assistant:wght@200..800&display=swap');
 @import "tailwindcss";
 
 :root {
   /* Typography */
   --font-hebrew: 'Heebo', system-ui, -apple-system, sans-serif;
   --font-display: 'Outfit', var(--font-hebrew);
+  --font-list-title: 'Rubik', var(--font-hebrew);
+  --font-list-body: 'Assistant', var(--font-hebrew);
+
   font-family: var(--font-hebrew);
   line-height: 1.6;
   font-weight: 400;
@@ -332,15 +335,31 @@ body.stop-animations {
 
 /* Paw Animation */
 @keyframes floatUp {
-  from { transform: translateY(100px) rotate(var(--r)); }
-  to { transform: translateY(-120vh) rotate(var(--r)); }
+  from {
+    transform: translateY(100px) rotate(var(--r));
+  }
+
+  to {
+    transform: translateY(-120vh) rotate(var(--r));
+  }
 }
 
 @keyframes fadeInOut {
-  0% { opacity: 0; }
-  10% { opacity: 0.15; }
-  90% { opacity: 0.15; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.15;
+  }
+
+  90% {
+    opacity: 0.15;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 .paw-img {

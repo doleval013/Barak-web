@@ -24,17 +24,17 @@ const translations = {
         back: 'חזרה',
         hero_title_1: 'סדנת כלבנות',
         hero_title_highlight: 'לפיתוח צוותים',
-        hero_subtitle: 'תקשורת היא מנוע הביצועים של כל צוות.',
-        hero_description: 'כאשר המסר ברור, עקבי ומותאם – העבודה זורמת.\nכאשר הוא סותר או מעורפל – נוצרים חיכוך, שחיקה ופערי ביצוע.',
+        hero_subtitle: 'חווייה ציוותית שמחזקת תקשורת, אמון ושיתוף פעולה',
+        hero_description: 'תקשורת היא מנוע הביצועים של כל צוות.\nכאשר המסר ברור, עקבי ומותאם – העבודה זורמת.\nכאשר הוא סותר או מעורפל – נוצרים חיכוך, שחיקה ופערי ביצוע.',
         cta_check: 'לבדיקת התאמה לצוות',
 
-        intro_text_1: 'הסדנה מציעה תהליך למידה יישומי וחווייתי לפיתוח תקשורת אפקטיבית בצוות – תוך שילוב כלים פרקטיים שניתן ליישם באופן מיידי בשגרה הארגונית.',
-        intro_highlight: 'זו אינה הרצאה.',
+        intro_text_1: 'הסדנה מציעה תהליך למידה יישומי וחווייתי לפיתוח תקשורת אפקטיבית בצוות – תוך שילוב כלים פרקטיים שניתן ליישם באופן מיידי בשגרת העבודה.',
+        intro_highlight: 'זו אינה הרצאה -',
         intro_text_2: 'זהו מרחב תרגול בזמן אמת, שבו המשתתפים מתנסים, מקבלים משוב מיידי ומדייקים את אופן העברת המסר שלהם.',
         intro_text_3: 'השילוב בין חוויה שוברת שגרה לבין למידה מקצועית עמוקה מייצר מעורבות גבוהה והטמעה מהירה.',
 
         practice_title: 'מה מתרגלים בפועל?',
-        practice_1_title: 'חיזוק חיובי כמנגנון ניהולי',
+        practice_1_title: 'שימוש בחיזוקים חיוביים',
         practice_1_desc: 'מהו חיזוק חיובי, כיצד הוא מייצר מחויבות ושיתוף פעולה – ואיך להשתמש בו באופן מודע במקום ביקורת שמייצרת התנגדות.',
         practice_2_title: 'זיהוי מסרים סותרים',
         practice_2_desc: 'הפער בין מילים, טון ושפת גוף – ואיך למנוע בלבול שמחליש סמכות ופוגע בביצועים.',
@@ -43,16 +43,13 @@ const translations = {
         practice_4_title: 'עקביות והתמדה',
         practice_4_desc: 'כיצד בונים דפוס תקשורת שמייצר תוצאות לאורך זמן ולא רק מוטיבציה רגעית.',
         practice_5_title: 'התאמת מסר לסגנונות למידה (VARK)',
-        practice_5_desc: 'ויזואלי | שמיעתי | קריאה/כתיבה | קינסתטי – ואיך לוודא שהמסר נקלט באמת אצל כל חבר צוות.',
-        practice_6_title: 'יצירת ראפור',
-        practice_6_desc: 'בניית אמון, הקשבה פעילה וחיבור שמאפשרים שיתוף פעולה יעיל.',
+        practice_5_desc: 'ויזואלי | שמיעתי | קריאה/כתיבה | קינסתטי –\nואיך לוודא שהמסר נקלט באמת אצל כל חבר צוות.',
 
         why_dogs_title: 'למה השילוב עם כלב?',
-        why_dogs_text_1: 'השילוב עם כלב אינו אלמנט בידורי – אלא מנגנון למידה שמייצר תוצאה ברורה.',
-        why_dogs_text_2: 'כלב מגיב באופן מיידי לבהירות, עקביות ואיכות המסר.',
-        why_dogs_text_3: 'כאשר ההנחיה ברורה – מתקבלת תגובה.\nכאשר יש מסר סותר או חוסר דיוק – התוצאה מתעכבת או נכשלת.',
-        why_dogs_text_4: 'המשוב המיידי הזה מאפשר לצוות לראות בזמן אמת את ההשפעה הישירה של תקשורת על ביצוע.',
-        why_dogs_principles_title: 'העקרונות זהים לארגון:',
+        why_dogs_text_1: 'השילוב עם כלב אינו אלמנט בידורי – אלא מנגנון למידה שמייצר תוצאה ברורה. כלב מגיב באופן מיידי לבהירות, עקביות ואיכות המסר.',
+        why_dogs_text_2: 'כאשר ההנחיה ברורה – מתקבלת תגובה. כאשר יש מסר סותר או חוסר דיוק – התוצאה מתעכבת או נכשלת.',
+        why_dogs_text_3: 'המשוב המיידי הזה מאפשר לצוות לראות בזמן אמת את ההשפעה הישירה של תקשורת על ביצוע.',
+        why_dogs_principles_title: 'העקרונות זהים לתקשורת צוותית:',
         why_dogs_principle_1: 'חיזוק חיובי מייצר מחויבות ולא התנגדות.',
         why_dogs_principle_2: 'בהירות מצמצמת טעויות וחוסכת זמן.',
         why_dogs_principle_3: 'עקביות מייצרת אמון.',
@@ -71,6 +68,7 @@ const translations = {
         benefit_3: 'חיזוק שיתוף פעולה בין מחלקות',
         benefit_4: 'הפחתת קונפליקטים הנובעים מאי-הבנה',
         benefit_5: 'חיזוק מנהיגות ניהולית ויכולת הובלת צוות',
+        benefit_6: 'חיזוק החיבור והאמון בין חברי הצוות – המהווים בסיס לשיתוף פעולה יציב לאורך זמן.',
 
         audience_title: 'למי זה מתאים?',
         audience_1: 'צוותי עובדים בחברות וארגונים',
@@ -96,17 +94,17 @@ const translations = {
         back: 'Back',
         hero_title_1: 'Dog Training Workshop',
         hero_title_highlight: 'For Team Development',
-        hero_subtitle: 'Communication is the performance engine of every team.',
-        hero_description: 'When the message is clear, consistent, and adapted – work flows.\nWhen it\'s contradictory or vague – friction, burnout, and performance gaps emerge.',
+        hero_subtitle: 'A team experience that strengthens communication, trust, and collaboration',
+        hero_description: 'Communication is the performance engine of every team.\nWhen the message is clear, consistent, and adapted – work flows.\nWhen it\'s contradictory or vague – friction, burnout, and performance gaps emerge.',
         cta_check: 'Check Team Suitability',
 
-        intro_text_1: 'The workshop offers an applied, experiential learning process for developing effective team communication – integrating practical tools that can be applied immediately in organizational routines.',
-        intro_highlight: 'This is not a lecture.',
+        intro_text_1: 'The workshop offers an applied, experiential learning process for developing effective team communication – integrating practical tools that can be applied immediately in your work routine.',
+        intro_highlight: 'This is not a lecture -',
         intro_text_2: 'It\'s a real-time practice space where participants experiment, receive immediate feedback, and refine how they deliver their message.',
         intro_text_3: 'The combination of a routine-breaking experience with deep professional learning creates high engagement and rapid integration.',
 
         practice_title: 'What do we practice?',
-        practice_1_title: 'Positive Reinforcement as a Management Tool',
+        practice_1_title: 'Using Positive Reinforcement',
         practice_1_desc: 'What is positive reinforcement, how it creates commitment and cooperation – and how to use it consciously instead of criticism that generates resistance.',
         practice_2_title: 'Identifying Contradictory Messages',
         practice_2_desc: 'The gap between words, tone, and body language – and how to prevent confusion that weakens authority and affects performance.',
@@ -115,16 +113,13 @@ const translations = {
         practice_4_title: 'Consistency & Persistence',
         practice_4_desc: 'How to build a communication pattern that generates results over time, not just momentary motivation.',
         practice_5_title: 'Adapting Messages to Learning Styles (VARK)',
-        practice_5_desc: 'Visual | Auditory | Reading/Writing | Kinesthetic – and how to ensure your message truly resonates with every team member.',
-        practice_6_title: 'Creating Rapport',
-        practice_6_desc: 'Building trust, active listening, and connection that enable effective collaboration.',
+        practice_5_desc: 'Visual | Auditory | Reading/Writing | Kinesthetic –\nAnd how to ensure the message truly resonates with every team member.',
 
         why_dogs_title: 'Why the combination with a dog?',
-        why_dogs_text_1: 'The combination with a dog is not an entertainment element – it\'s a learning mechanism that produces clear results.',
-        why_dogs_text_2: 'A dog responds immediately to clarity, consistency, and message quality.',
-        why_dogs_text_3: 'When the instruction is clear – a response follows.\nWhen there\'s a contradictory message or imprecision – the result is delayed or fails.',
-        why_dogs_text_4: 'This immediate feedback allows the team to see in real-time the direct impact of communication on performance.',
-        why_dogs_principles_title: 'The principles are identical to organizations:',
+        why_dogs_text_1: 'The combination with a dog is not an entertainment element – it\'s a learning mechanism that produces clear results. A dog responds immediately to clarity, consistency, and message quality.',
+        why_dogs_text_2: 'When the instruction is clear – a response follows. When there\'s a contradictory message or imprecision – the result is delayed or fails.',
+        why_dogs_text_3: 'This immediate feedback allows the team to see in real-time the direct impact of communication on performance.',
+        why_dogs_principles_title: 'The principles are identical to team communication:',
         why_dogs_principle_1: 'Positive reinforcement creates commitment, not resistance.',
         why_dogs_principle_2: 'Clarity reduces errors and saves time.',
         why_dogs_principle_3: 'Consistency builds trust.',
@@ -143,6 +138,7 @@ const translations = {
         benefit_3: 'Strengthened cross-department collaboration',
         benefit_4: 'Reduced conflicts arising from misunderstandings',
         benefit_5: 'Strengthened managerial leadership and team guidance',
+        benefit_6: 'Strengthened connection and trust among team members – forming a foundation for stable, long-term collaboration.',
 
         audience_title: 'Who is this for?',
         audience_1: 'Employee teams in companies and organizations',
@@ -228,11 +224,10 @@ function TeamWorkshopLanding() {
         { title: t.practice_2_title, desc: t.practice_2_desc },
         { title: t.practice_3_title, desc: t.practice_3_desc },
         { title: t.practice_4_title, desc: t.practice_4_desc },
-        { title: t.practice_5_title, desc: t.practice_5_desc },
-        { title: t.practice_6_title, desc: t.practice_6_desc }
+        { title: t.practice_5_title, desc: t.practice_5_desc }
     ];
 
-    const benefits = [t.benefit_1, t.benefit_2, t.benefit_3, t.benefit_4, t.benefit_5];
+    const benefits = [t.benefit_1, t.benefit_2, t.benefit_3, t.benefit_4, t.benefit_5, t.benefit_6];
 
     const audiences = [t.audience_1, t.audience_2, t.audience_3, t.audience_4];
 
@@ -347,10 +342,8 @@ function TeamWorkshopLanding() {
                         </motion.p>
                         <motion.h2 variants={fadeUp} className="workshop-intro-highlight">
                             {t.intro_highlight}
+                            <span style={{ fontWeight: 400, color: 'var(--tw-color-slate-600)', fontSize: '1.25rem' }}> {t.intro_text_2}</span>
                         </motion.h2>
-                        <motion.p variants={fadeUp} className="workshop-intro-text">
-                            {t.intro_text_2}
-                        </motion.p>
                         <motion.p variants={fadeUp} className="workshop-intro-text workshop-intro-text--accent">
                             {t.intro_text_3}
                         </motion.p>
@@ -415,11 +408,8 @@ function TeamWorkshopLanding() {
                         <motion.p variants={fadeUp} className="workshop-why-dogs-text">
                             {t.why_dogs_text_2}
                         </motion.p>
-                        <motion.p variants={fadeUp} className="workshop-why-dogs-text">
-                            {t.why_dogs_text_3}
-                        </motion.p>
                         <motion.p variants={fadeUp} className="workshop-why-dogs-text workshop-why-dogs-text--strong">
-                            {t.why_dogs_text_4}
+                            {t.why_dogs_text_3}
                         </motion.p>
 
                         {/* Principles */}

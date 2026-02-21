@@ -215,13 +215,7 @@
 }
 
 .workshop-hero-text {
-    text-align: center;
-}
-
-@media (min-width: 1024px) {
-    .workshop-hero-text {
-        text-align: start;
-    }
+    text-align: start;
 }
 
 .workshop-hero-title {
@@ -286,7 +280,7 @@
 .workshop-cta-mobile {
     display: block;
     margin-top: 32px;
-    text-align: center;
+    text-align: start;
 }
 
 @media (min-width: 1024px) {
@@ -417,7 +411,7 @@
     height: 4px;
     background: linear-gradient(90deg, var(--tw-color-blue-600), var(--tw-color-sky-400));
     border-radius: 2px;
-    margin: 0 auto 24px;
+    margin: 0 0 24px;
 }
 
 /* ============================
@@ -439,7 +433,7 @@
 }
 
 .workshop-intro-content {
-    text-align: center;
+    text-align: start;
 }
 
 .workshop-intro-text {
@@ -494,7 +488,7 @@
 }
 
 .workshop-practice-header {
-    text-align: center;
+    text-align: start;
     margin-bottom: 56px;
 }
 
@@ -542,7 +536,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
-    text-align: center;
+    text-align: start;
 }
 
 .workshop-practice-card::before {
@@ -615,7 +609,7 @@
     font-size: 2.25rem;
     font-weight: 700;
     color: var(--tw-color-slate-800);
-    text-align: center;
+    text-align: start;
     margin-bottom: 32px;
 }
 
@@ -629,7 +623,7 @@
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--tw-color-blue-800);
-    text-align: center;
+    text-align: start;
     margin-bottom: 32px;
     line-height: 1.7;
 }
@@ -668,7 +662,7 @@
     font-weight: 700;
     color: var(--tw-color-slate-800);
     margin-bottom: 24px;
-    text-align: center;
+    text-align: start;
 }
 
 .workshop-principles-grid {
@@ -773,7 +767,7 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 0 24px;
-    text-align: center;
+    text-align: start;
 }
 
 .workshop-benefits-title {
@@ -847,7 +841,7 @@
     max-width: 900px;
     margin: 0 auto;
     padding: 0 24px;
-    text-align: center;
+    text-align: start;
 }
 
 .workshop-audience-new-title {
@@ -885,7 +879,7 @@
 .workshop-audience-new-card {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     padding: 28px 16px;
     background: var(--tw-color-white);
@@ -939,7 +933,7 @@
 }
 
 .workshop-contact-header {
-    text-align: center;
+    text-align: start;
     margin-bottom: 48px;
 }
 
@@ -1076,7 +1070,7 @@
 
 .workshop-form-message {
     margin-top: 24px;
-    text-align: center;
+    text-align: start;
     padding: 16px;
     border-radius: 12px;
 }

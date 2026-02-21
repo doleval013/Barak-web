@@ -321,11 +321,7 @@ function TeamWorkshopLanding() {
                     </motion.div>
                 </div>
 
-                <div className="workshop-hero-wave">
-                    <svg viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none">
-                        <path d="M0 60L48 55C96 50 192 40 288 45C384 50 480 70 576 75C672 80 768 70 864 60C960 50 1056 40 1152 45C1248 50 1344 70 1392 80L1440 90V120H0V60Z" fill="#f8fafc" />
-                    </svg>
-                </div>
+
             </section>
 
             {/* ===== INTRO SECTION ===== */}

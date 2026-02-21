@@ -152,13 +152,7 @@
 .workshop-hero-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(-45deg,
-            var(--tw-color-blue-950),
-            var(--tw-color-blue-900),
-            var(--tw-color-blue-800),
-            #1e3a5f);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+    background: radial-gradient(circle at top right, var(--tw-color-blue-900) 0%, var(--tw-color-blue-950) 60%, #0f172a 100%);
     transform: translateZ(0);
     will-change: transform;
 }
@@ -167,7 +161,7 @@
     position: absolute;
     inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M30 35c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5zm-8-6c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm16 0c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm-12-8c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7zm8 0c-1.5 0-2.7-1.2-2.7-2.7s1.2-2.7 2.7-2.7 2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7z'/%3E%3C/g%3E%3C/svg%3E");
-    opacity: 1;
+    opacity: 0.3;
 }
 
 .workshop-hero-circle-1 {
@@ -219,11 +213,12 @@
 }
 
 .workshop-hero-title {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
     font-weight: 800;
+    letter-spacing: -0.02em;
     color: var(--tw-color-white);
     margin-bottom: 24px;
-    line-height: 1.1;
+    line-height: 1.05;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -246,10 +241,10 @@
 }
 
 .workshop-hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     color: var(--tw-color-blue-100);
     margin-bottom: 16px;
-    line-height: 1.6;
+    line-height: 1.5;
     font-weight: 500;
 }
 
@@ -520,21 +515,25 @@
     .workshop-practice-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
+    .workshop-practice-card:nth-child(1) {
+        grid-column: span 2;
+    }
+
+    .workshop-practice-card:nth-child(1) .workshop-practice-card-title {
+        font-size: 1.35rem;
+    }
 }
 
 .workshop-practice-card {
     position: relative;
-    padding: 32px 24px;
-    background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(248, 250, 252, 0.85) 100%);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 40px 32px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     overflow: hidden;
     text-align: start;
 }
@@ -565,11 +564,10 @@
 }
 
 .workshop-practice-card:hover {
-    box-shadow:
-        0 20px 60px rgba(30, 58, 138, 0.15),
-        0 0 40px rgba(59, 130, 246, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    border-color: rgba(59, 130, 246, 0.2);
+    box-shadow: 0 16px 40px rgba(30, 58, 138, 0.08);
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(255, 255, 255, 1);
 }
 
 
@@ -792,41 +790,47 @@
 .workshop-benefit-block {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 20px 24px;
+    gap: 20px;
+    padding: 24px 32px;
     background: var(--tw-color-white);
-    border-radius: 16px;
-    border: 1px solid var(--tw-color-blue-100);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-    transition: all 0.3s ease;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     text-align: start;
     cursor: default;
 }
 
+@media (min-width: 768px) {
+    .workshop-benefit-block:nth-child(even) {
+        margin-inline-start: 48px;
+    }
+}
+
 .workshop-benefit-block:hover {
-    box-shadow: 0 8px 30px rgba(30, 58, 138, 0.12);
-    border-color: var(--tw-color-blue-200);
+    box-shadow: 0 16px 40px rgba(30, 58, 138, 0.08);
+    transform: translateY(-4px);
 }
 
 .workshop-benefit-block-num {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--tw-color-blue-600), var(--tw-color-sky-400));
-    border-radius: 50%;
-    color: white;
-    font-weight: 700;
-    font-size: 0.9rem;
+    background: var(--tw-color-slate-50);
+    color: var(--tw-color-blue-900);
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.25rem;
 }
 
 .workshop-benefit-block span {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 500;
     color: var(--tw-color-slate-700);
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 /* ============================
@@ -881,18 +885,20 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    padding: 28px 16px;
-    background: var(--tw-color-white);
+    padding: 32px 24px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
     border-radius: 20px;
-    border: 1px solid var(--tw-color-blue-100);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     cursor: default;
 }
 
 .workshop-audience-new-card:hover {
-    box-shadow: 0 12px 40px rgba(30, 58, 138, 0.12);
-    border-color: var(--tw-color-blue-200);
+    box-shadow: 0 16px 40px rgba(30, 58, 138, 0.08);
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 1);
 }
 
 

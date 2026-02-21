@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
 import './TeamWorkshopLanding.css';
 import { useLanguage } from '../context/LanguageContext';
@@ -11,10 +11,105 @@ import {
     Building2,
     Globe,
     ArrowLeft,
-    ArrowRight
+    ArrowRight,
+    X
 } from 'lucide-react';
+import imgFeed from '../assets/workshop/feed.jpg';
+import imgGate from '../assets/workshop/gate.jpg';
+import imgHighfive from '../assets/workshop/highfive.jpg';
+import imgRelax from '../assets/workshop/relax.jpg';
+import imgRelax2 from '../assets/workshop/relax2.jpg';
 
+/* ============================================================
+   MOBILE SLIDER COMPONENT
+   ============================================================ */
+const MobileSlider = ({ children }) => {
+    const scrollRef = useRef(null);
+    const [isHovered, setIsHovered] = useState(false);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const isMobile = window.innerWidth <= 899;
+            if (isMobile && scrollRef.current && !isHovered) {
+                const scroller = scrollRef.current;
+                const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+                if (maxScroll <= 0) return;
+
+                const currentScroll = Math.abs(scroller.scrollLeft);
+                if (currentScroll >= maxScroll - 10) {
+                    scroller.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    const isRTL = document.documentElement.dir === 'rtl';
+                    scroller.scrollBy({ left: isRTL ? -scroller.clientWidth : scroller.clientWidth, behavior: 'smooth' });
+                }
+            }
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [isHovered]);
+
+    const scrollPrev = () => {
+        if (scrollRef.current) {
+            const scroller = scrollRef.current;
+            const isRTL = document.documentElement.dir === 'rtl';
+            const currentScroll = Math.abs(scroller.scrollLeft);
+            const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+
+            if (currentScroll < 10) {
+                // At the start, jump to the end
+                scroller.scrollTo({ left: isRTL ? -maxScroll : maxScroll, behavior: 'smooth' });
+            } else {
+                const offset = isRTL ? scroller.clientWidth : -scroller.clientWidth;
+                scroller.scrollBy({ left: offset, behavior: 'smooth' });
+            }
+        }
+    };
+
+    const scrollNext = () => {
+        if (scrollRef.current) {
+            const scroller = scrollRef.current;
+            const isRTL = document.documentElement.dir === 'rtl';
+            const currentScroll = Math.abs(scroller.scrollLeft);
+            const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+
+            if (currentScroll >= maxScroll - 10) {
+                // At the end, jump to the beginning
+                scroller.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                const offset = isRTL ? -scroller.clientWidth : scroller.clientWidth;
+                scroller.scrollBy({ left: offset, behavior: 'smooth' });
+            }
+        }
+    };
+
+    return (
+        <div className="workshop-slider-wrapper">
+            <button
+                className="workshop-slider-arrow workshop-slider-arrow--prev"
+                onClick={scrollPrev}
+                aria-label="Previous image"
+            >
+                <ArrowLeft size={24} />
+            </button>
+            <div
+                className="workshop-stack-scroller"
+                ref={scrollRef}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onTouchStart={() => setIsHovered(true)}
+                onTouchEnd={() => setTimeout(() => setIsHovered(false), 3000)}
+            >
+                {children}
+            </div>
+            <button
+                className="workshop-slider-arrow workshop-slider-arrow--next"
+                onClick={scrollNext}
+                aria-label="Next image"
+            >
+                <ArrowRight size={24} />
+            </button>
+        </div>
+    );
+};
 
 /* ============================================================
    TRANSLATIONS
@@ -173,6 +268,7 @@ function TeamWorkshopLanding() {
     const [formData, setFormData] = useState({ name: '', company: '', phone: '', email: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -322,26 +418,44 @@ function TeamWorkshopLanding() {
 
             </section>
 
-            {/* ===== INTRO SECTION ===== */}
+            {/* ===== INTRO SECTION (Image on Left in RTL, Right in LTR) ===== */}
             <section className="workshop-intro">
-                <div className="workshop-intro-container">
-                    <motion.div
-                        initial="hidden" whileInView="visible"
-                        viewport={{ once: true, margin: '-80px' }}
-                        variants={stagger}
-                        className="workshop-intro-content"
-                    >
-                        <motion.p variants={fadeUp} className="workshop-intro-text">
-                            {t.intro_text_1}
-                        </motion.p>
-                        <motion.h2 variants={fadeUp} className="workshop-intro-highlight">
-                            {t.intro_highlight}
-                            <span style={{ fontWeight: 400, color: 'var(--tw-color-slate-600)', fontSize: '1.25rem' }}> {t.intro_text_2}</span>
-                        </motion.h2>
-                        <motion.p variants={fadeUp} className="workshop-intro-text workshop-intro-text--accent">
-                            {t.intro_text_3}
-                        </motion.p>
-                    </motion.div>
+                <div className="workshop-split-container">
+                    <div className="workshop-split-grid">
+                        <motion.div
+                            initial="hidden" whileInView="visible"
+                            viewport={{ once: true, margin: '-80px' }}
+                            variants={stagger}
+                            className="workshop-intro-content"
+                        >
+                            <motion.p variants={fadeUp} className="workshop-intro-text">
+                                {t.intro_text_1}
+                            </motion.p>
+                            <motion.h2 variants={fadeUp} className="workshop-intro-highlight">
+                                {t.intro_highlight}
+                                <span style={{ fontWeight: 400, color: 'var(--tw-color-slate-600)', fontSize: '1.25rem' }}> {t.intro_text_2}</span>
+                            </motion.h2>
+                            <motion.p variants={fadeUp} className="workshop-intro-text workshop-intro-text--accent">
+                                {t.intro_text_3}
+                            </motion.p>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.8 }}
+                            className="workshop-split-image-wrapper"
+                        >
+                            <img
+                                src={imgHighfive}
+                                alt="High five connection"
+                                className="workshop-split-image workshop-split-image--clickable"
+                                loading="lazy"
+                                onClick={() => setSelectedImage(imgHighfive)}
+                            />
+                            <div className="workshop-split-image-decoration"></div>
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -383,61 +497,93 @@ function TeamWorkshopLanding() {
 
             {/* ===== WHY DOGS SECTION ===== */}
             <section className="workshop-why-dogs">
-                <div className="workshop-why-dogs-container">
-                    <motion.div
-                        initial="hidden" whileInView="visible"
-                        viewport={{ once: true, margin: '-80px' }}
-                        variants={stagger}
-                    >
-                        <motion.div variants={fadeUp} className="workshop-section-divider" />
-                        <motion.h2 variants={fadeUp} className="workshop-why-dogs-title">
-                            {t.why_dogs_title}
-                        </motion.h2>
-                        <motion.p variants={fadeUp} className="workshop-why-dogs-lead">
-                            {t.why_dogs_text_1}
-                        </motion.p>
+                <div className="workshop-split-container">
+                    <div className="workshop-split-grid">
+                        <motion.div
+                            initial="hidden" whileInView="visible"
+                            viewport={{ once: true, margin: '-80px' }}
+                            variants={stagger}
+                        >
+                            <motion.div variants={fadeUp} className="workshop-section-divider" />
+                            <motion.h2 variants={fadeUp} className="workshop-why-dogs-title">
+                                {t.why_dogs_title}
+                            </motion.h2>
+                            <motion.p variants={fadeUp} className="workshop-why-dogs-lead">
+                                {t.why_dogs_text_1}
+                            </motion.p>
 
+                            <motion.p variants={fadeUp} className="workshop-why-dogs-text">
+                                {t.why_dogs_text_2}
+                            </motion.p>
+                            <motion.p variants={fadeUp} className="workshop-why-dogs-text workshop-why-dogs-text--strong">
+                                {t.why_dogs_text_3}
+                            </motion.p>
 
-
-                        <motion.p variants={fadeUp} className="workshop-why-dogs-text">
-                            {t.why_dogs_text_2}
-                        </motion.p>
-                        <motion.p variants={fadeUp} className="workshop-why-dogs-text workshop-why-dogs-text--strong">
-                            {t.why_dogs_text_3}
-                        </motion.p>
-
-                        {/* Principles */}
-                        <motion.div variants={fadeUp} className="workshop-principles">
-                            <h3 className="workshop-principles-title">{t.why_dogs_principles_title}</h3>
-                            <div className="workshop-principles-grid">
-                                {[t.why_dogs_principle_1, t.why_dogs_principle_2, t.why_dogs_principle_3, t.why_dogs_principle_4].map((p, i) => (
-                                    <motion.div
-                                        key={i}
-                                        className="workshop-principle-item"
-                                        initial={{ opacity: 0, x: isRTL ? 30 : -30 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.15, duration: 0.5 }}
-                                    >
-                                        <div className="workshop-principle-marker" />
-                                        <span>{p}</span>
-                                    </motion.div>
-                                ))}
-                            </div>
+                            {/* Principles */}
+                            <motion.div variants={fadeUp} className="workshop-principles">
+                                <h3 className="workshop-principles-title">{t.why_dogs_principles_title}</h3>
+                                <div className="workshop-principles-grid">
+                                    {[t.why_dogs_principle_1, t.why_dogs_principle_2, t.why_dogs_principle_3, t.why_dogs_principle_4].map((p, i) => (
+                                        <motion.div
+                                            key={i}
+                                            className="workshop-principle-item"
+                                            initial={{ opacity: 0, x: isRTL ? 30 : -30 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.15, duration: 0.5 }}
+                                        >
+                                            <div className="workshop-principle-marker" />
+                                            <span>{p}</span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </motion.div>
                         </motion.div>
 
-                        {/* Experiential */}
-                        <motion.p variants={fadeUp} className="workshop-why-dogs-text">
+                        {/* Why Dogs Image Stack */}
+                        <motion.div
+                            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.8 }}
+                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack"
+                        >
+                            <MobileSlider>
+                                <img
+                                    src={imgFeed}
+                                    alt="Training with treats"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => setSelectedImage(imgFeed)}
+                                />
+                                <img
+                                    src={imgGate}
+                                    alt="Workshop practice"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => setSelectedImage(imgGate)}
+                                />
+                            </MobileSlider>
+                            <div className="workshop-split-image-decoration workshop-split-image-decoration--secondary"></div>
+                        </motion.div>
+                    </div>
+
+                    {/* Experiential Text and Result Box (Full Width) */}
+                    <motion.div
+                        initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}
+                        variants={stagger} className="workshop-fullwidth-content mt-16"
+                        style={{ marginTop: '64px' }}
+                    >
+                        <motion.p variants={fadeUp} className="workshop-why-dogs-text" style={{ maxWidth: '800px', margin: '0 auto 20px', textAlign: 'center' }}>
                             {t.why_dogs_experiential_1}
                         </motion.p>
-                        <motion.p variants={fadeUp} className="workshop-why-dogs-text">
+                        <motion.p variants={fadeUp} className="workshop-why-dogs-text" style={{ maxWidth: '800px', margin: '0 auto 40px', textAlign: 'center' }}>
                             {t.why_dogs_experiential_2}
                         </motion.p>
 
-                        {/* Result */}
-                        <motion.div variants={fadeUp} className="workshop-result-box">
-                            <h3>{t.why_dogs_result_title}</h3>
-                            <ul>
+                        <motion.div variants={fadeUp} className="workshop-result-box" style={{ maxWidth: '900px', margin: '0 auto' }}>
+                            <h3 style={{ textAlign: isRTL ? 'right' : 'left' }}>{t.why_dogs_result_title}</h3>
+                            <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
                                 {[t.why_dogs_result_1, t.why_dogs_result_2, t.why_dogs_result_3, t.why_dogs_result_4].map((r, i) => (
                                     <motion.li
                                         key={i}
@@ -455,36 +601,65 @@ function TeamWorkshopLanding() {
                 </div>
             </section>
 
-            {/* ===== BUSINESS BENEFITS ===== */}
+            {/* ===== BUSINESS BENEFITS (Image on Left in RTL, Right in LTR) ===== */}
             <section className="workshop-benefits">
-                <div className="workshop-benefits-container">
-                    <motion.div
-                        initial="hidden" whileInView="visible"
-                        viewport={{ once: true, margin: '-80px' }}
-                        variants={stagger}
-                    >
-                        <motion.div variants={fadeUp} className="workshop-section-divider" />
-                        <motion.h2 variants={fadeUp} className="workshop-benefits-title">
-                            {t.benefits_title}
-                        </motion.h2>
+                <div className="workshop-split-container">
+                    <div className="workshop-split-grid">
+                        <motion.div
+                            initial="hidden" whileInView="visible"
+                            viewport={{ once: true, margin: '-80px' }}
+                            variants={stagger}
+                        >
+                            <motion.div variants={fadeUp} className="workshop-section-divider" />
+                            <motion.h2 variants={fadeUp} className="workshop-benefits-title">
+                                {t.benefits_title}
+                            </motion.h2>
 
-                        <div className="workshop-benefits-stack">
-                            {benefits.map((b, i) => (
-                                <motion.div
-                                    key={i}
-                                    className="workshop-benefit-block"
-                                    initial={{ opacity: 0, x: isRTL ? 60 : -60, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, x: 0, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.12, duration: 0.5, type: 'spring', stiffness: 100 }}
-                                    whileHover={{ scale: 1.02, x: isRTL ? -8 : 8 }}
-                                >
-                                    <div className="workshop-benefit-block-num">{i + 1}</div>
-                                    <span>{b}</span>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.div>
+                            <div className="workshop-benefits-stack">
+                                {benefits.map((b, i) => (
+                                    <motion.div
+                                        key={i}
+                                        className="workshop-benefit-block"
+                                        initial={{ opacity: 0, x: isRTL ? 60 : -60, scale: 0.9 }}
+                                        whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: i * 0.12, duration: 0.5, type: 'spring', stiffness: 100 }}
+                                        whileHover={{ scale: 1.02, x: isRTL ? -8 : 8 }}
+                                    >
+                                        <div className="workshop-benefit-block-num">{i + 1}</div>
+                                        <span>{b}</span>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+
+                        {/* Benefits Image Stack */}
+                        <motion.div
+                            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.8 }}
+                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack"
+                        >
+                            <MobileSlider>
+                                <img
+                                    src={imgRelax}
+                                    alt="Relaxed engagement"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => setSelectedImage(imgRelax)}
+                                />
+                                <img
+                                    src={imgRelax2}
+                                    alt="Workshop interaction"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => handleSetSelectedImage(imgRelax2)}
+                                />
+                            </MobileSlider>
+                            <div className="workshop-split-image-decoration workshop-split-image-decoration--teal"></div>
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -599,6 +774,33 @@ function TeamWorkshopLanding() {
             <footer className="workshop-footer">
                 <p>{t.footer_text}</p>
             </footer>
+
+            {/* ===== IMAGE LIGHTBOX MODAL ===== */}
+            <AnimatePresence>
+                {selectedImage && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="workshop-lightbox"
+                        onClick={() => setSelectedImage(null)}
+                    >
+                        <button className="workshop-lightbox-close" onClick={() => setSelectedImage(null)}>
+                            <X size={32} />
+                        </button>
+                        <motion.img
+                            src={selectedImage}
+                            alt="Enlarged view"
+                            className="workshop-lightbox-image"
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                            onClick={(e) => e.stopPropagation()} /* Prevent closing when clicking the image itself */
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

@@ -759,6 +759,267 @@
 }
 
 /* ============================
+   F-PATTERN SPLIT LAYOUT
+   ============================ */
+.workshop-split-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+}
+
+.workshop-split-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    align-items: center;
+}
+
+@media (min-width: 900px) {
+    .workshop-split-grid {
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 80px;
+        align-items: start;
+    }
+
+    /* Reverse order on desktop for alternating layout */
+    .workshop-split-grid--reverse {
+        grid-template-columns: 0.75fr 1.25fr;
+        direction: ltr;
+        /* Temporarily flip grid direction */
+    }
+
+    .workshop-split-grid--reverse>* {
+        direction: rtl;
+        /* Reset content direction */
+    }
+}
+
+/* Base RTL reversing */
+[dir="ltr"] .workshop-split-grid--reverse {
+    direction: rtl;
+}
+
+[dir="ltr"] .workshop-split-grid--reverse>* {
+    direction: ltr;
+}
+
+.workshop-split-image-wrapper {
+    position: relative;
+    border-radius: 24px;
+    overflow: visible;
+    /* Allow decoration to peek out */
+}
+
+/* Modifier for stacked vertical images on Desktop, horizontal slider on Mobile */
+.workshop-slider-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.workshop-slider-arrow {
+    display: none;
+}
+
+.workshop-stack-scroller {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+@media (max-width: 899px) {
+    .workshop-slider-arrow {
+        display: flex;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        color: var(--tw-color-slate-800);
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .workshop-slider-arrow:hover {
+        background: white;
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    .workshop-slider-arrow--prev {
+        left: 12px;
+    }
+
+    .workshop-slider-arrow--next {
+        right: 12px;
+    }
+
+    [dir="rtl"] .workshop-slider-arrow--prev {
+        left: auto;
+        right: 12px;
+        transform: translateY(-50%) scaleX(-1);
+    }
+
+    [dir="rtl"] .workshop-slider-arrow--next {
+        right: auto;
+        left: 12px;
+        transform: translateY(-50%) scaleX(-1);
+    }
+
+    [dir="rtl"] .workshop-slider-arrow--prev:hover,
+    [dir="rtl"] .workshop-slider-arrow--next:hover {
+        transform: translateY(-50%) scaleX(-1) scale(1.05);
+    }
+
+    .workshop-stack-scroller {
+        flex-direction: row;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        gap: 0;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        z-index: 2;
+        padding-bottom: 8px;
+        /* space for snap scrolling bounce */
+    }
+
+    .workshop-stack-scroller::-webkit-scrollbar {
+        display: none;
+    }
+
+    .workshop-stack-scroller>.workshop-split-image {
+        flex: 0 0 100%;
+        width: 100%;
+        scroll-snap-align: center;
+        margin: 0;
+    }
+}
+
+.workshop-split-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+
+
+.workshop-split-image--clickable:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+}
+
+.workshop-split-image--tall {
+    aspect-ratio: 4/5;
+}
+
+/* ============================
+   LIGHTBOX MODAL
+   ============================ */
+.workshop-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.95);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: zoom-out;
+}
+
+.workshop-lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    z-index: 10000;
+}
+
+.workshop-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.workshop-lightbox-image {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 12px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+    object-fit: contain;
+    cursor: default;
+}
+
+.workshop-split-image-wrapper:hover .workshop-split-image {
+    transform: translateY(-8px) scale(1.02);
+}
+
+.workshop-split-image-decoration {
+    position: absolute;
+    bottom: -20px;
+    left: -20px;
+    width: 80%;
+    height: 80%;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--tw-color-blue-100), var(--tw-color-blue-200));
+    z-index: 1;
+    transition: transform 0.5s ease;
+}
+
+.workshop-split-image-wrapper:hover .workshop-split-image-decoration {
+    transform: translate(10px, -10px);
+}
+
+.workshop-split-image-decoration--secondary {
+    bottom: auto;
+    top: -20px;
+    right: -20px;
+    left: auto;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(125, 211, 252, 0.3));
+}
+
+.workshop-split-image-decoration--teal {
+    bottom: -20px;
+    right: -20px;
+    left: auto;
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(15, 118, 110, 0.2));
+}
+
+.workshop-split-image-wrapper:hover .workshop-split-image-decoration--secondary {
+    transform: translate(-10px, 10px);
+}
+
+.workshop-split-image-wrapper:hover .workshop-split-image-decoration--teal {
+    transform: translate(-10px, -10px);
+}
+
+/* ============================
    BUSINESS BENEFITS
    ============================ */
 .workshop-benefits {

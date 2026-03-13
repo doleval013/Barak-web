@@ -2,6 +2,9 @@ name: Docker Image CI/CD
 
 on:
   push:
+    branches:
+      - dev
+      - staging
     tags:
       - 'v*'
 
@@ -30,6 +33,8 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=ref,event=branch
+            type=raw,value=${{ github.sha }}
             type=raw,value=latest
 
       - name: Build and push Frontend
@@ -45,7 +50,8 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/barak-web-backend:${{ steps.meta.outputs.version }}
+          # Note: We must also push the unique SHA tag for the backend so Kustomize can point to it
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/barak-web-backend:${{ github.sha }},${{ secrets.DOCKERHUB_USERNAME }}/barak-web-backend:latest
           
       - name: Checkout Infra Repository
         uses: actions/checkout@v4
@@ -54,35 +60,46 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           path: infra-repo
 
+      - name: Determine Environment and Version
+        id: env-details
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "ENV=prod" >> $GITHUB_ENV
+            VERSION=${{ github.ref_name }}
+            echo "VERSION=${VERSION#v}" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == refs/heads/dev ]]; then
+            echo "ENV=dev" >> $GITHUB_ENV
+            echo "VERSION=dev-${{ github.sha }}" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == refs/heads/staging ]]; then
+            echo "ENV=staging" >> $GITHUB_ENV
+            echo "VERSION=staging-${{ github.sha }}" >> $GITHUB_ENV
+          fi
+
       - name: Update Kubernetes Manifest in Infra Repo
         run: |
           cd infra-repo
           
-          # Get the version from the tag
-          VERSION=${{ github.ref_name }}
-          VERSION=${VERSION#v}
-          
-          # Update FRONTEND image tag (doleval013/barak-web)
-          sed -i "s|image: doleval013/barak-web:.*|image: doleval013/barak-web:$VERSION|g" k8s/app.yaml
-          
-          # Update BACKEND image tag (doleval013/barak-web-backend)
-          sed -i "s|image: doleval013/barak-web-backend:.*|image: doleval013/barak-web-backend:$VERSION|g" k8s/app.yaml
-          
-          # Update Backend/Env versions
-          # Update APP_VERSION Env Var using Perl for multiline matching
-          # We export the variable so Perl can see it in %ENV
-          export VERSION_TAG="$VERSION"
-          perl -i -p0e 's/name: APP_VERSION\n\s+value: ".*"/name: APP_VERSION\n          value: "$ENV{VERSION_TAG}"/s' k8s/app.yaml
-          
-          # Update GIT_COMMIT
-          sed -i "s|value: \".*\"   # Updated by CI/CD|value: \"${{ github.sha }}\"   # Updated by CI/CD|g" k8s/app.yaml
-
-          # Configure Git
+          # Setup basic git config
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
+          # Use Kustomize to update the specific environment overlay
+          cd k8s/overlays/$ENV
+          
+          # Download kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          
+          # Set the new image tags (using the immutable git SHA)
+          ./kustomize edit set image doleval013/barak-web=doleval013/barak-web:${{ github.sha }}
+          ./kustomize edit set image doleval013/barak-web-backend=doleval013/barak-web-backend:${{ github.sha }}
+          
+          # Update the GIT_COMMIT in the environment patch explicitly
+          sed -i "s|value: \".*\"$|value: \"${{ github.sha }}\"|g" env-patch.yaml
+          
+          cd ../../../
+          
           # Commit and Push
-          git add k8s/app.yaml
-          git commit -m "Update Kubernetes manifest to version $VERSION"
+          git add k8s/overlays/$ENV
+          git commit -m "Deploy to $ENV: Update image tags and commit hash to ${{ github.sha }}"
           git push origin main
 

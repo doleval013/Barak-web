@@ -475,19 +475,7 @@
     }
 }
 
-@media (min-width: 900px) {
-    .workshop-practice-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
 
-    .workshop-practice-card:nth-child(1) {
-        grid-column: span 2;
-    }
-
-    .workshop-practice-card:nth-child(1) .workshop-practice-card-title {
-        font-size: 1.35rem;
-    }
-}
 
 .workshop-practice-card {
     position: relative;
@@ -940,9 +928,6 @@
     cursor: default;
 }
 
-.workshop-split-image-wrapper:hover .workshop-split-image {
-    transform: translateY(-8px) scale(1.02);
-}
 
 .workshop-split-image-decoration {
     position: absolute;

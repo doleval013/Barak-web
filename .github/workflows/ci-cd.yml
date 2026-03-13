@@ -86,7 +86,8 @@ jobs:
           # Use Kustomize to update the specific environment overlay
           cd k8s/overlays/$ENV
           
-          # Download kustomize
+          # Download kustomize (remove existing first)
+          rm -f kustomize
           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
           
           # Set the new image tags (using the immutable git SHA)

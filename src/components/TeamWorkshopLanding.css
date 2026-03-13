@@ -366,9 +366,9 @@
    SECTION DIVIDER
    ============================ */
 .workshop-section-divider {
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--tw-color-blue-600), var(--tw-color-sky-400));
+    width: 48px;
+    height: 3px;
+    background: var(--tw-color-blue-600);
     border-radius: 2px;
     margin: 0 0 24px;
 }
@@ -435,7 +435,7 @@
    PRACTICE SECTION
    ============================ */
 .workshop-practice {
-    padding: 96px 0;
+    padding: 80px 0;
     background: linear-gradient(180deg, #ffffff 0%, var(--tw-color-slate-50) 100%);
     position: relative;
 }
@@ -545,7 +545,7 @@
    ============================ */
 .workshop-why-dogs {
     position: relative;
-    padding: 96px 0;
+    padding: 80px 0;
     background: linear-gradient(180deg, var(--tw-color-slate-50) 0%, var(--tw-color-white) 50%, var(--tw-color-slate-50) 100%);
     overflow: hidden;
 }
@@ -930,19 +930,11 @@
 
 
 .workshop-split-image-decoration {
-    position: absolute;
-    bottom: -20px;
-    left: -20px;
-    width: 80%;
-    height: 80%;
-    border-radius: 24px;
-    background: linear-gradient(135deg, var(--tw-color-blue-100), var(--tw-color-blue-200));
-    z-index: 1;
-    transition: transform 0.5s ease;
+    display: none;
 }
 
 .workshop-split-image-wrapper:hover .workshop-split-image-decoration {
-    transform: translate(10px, -10px);
+    /* hidden */
 }
 
 .workshop-split-image-decoration--secondary {
@@ -1024,7 +1016,7 @@
    BUSINESS BENEFITS
    ============================ */
 .workshop-benefits {
-    padding: 96px 0;
+    padding: 80px 0;
     background: linear-gradient(180deg, var(--tw-color-slate-50), var(--tw-color-white));
 }
 
@@ -1194,7 +1186,7 @@
    ============================ */
 .workshop-contact {
     position: relative;
-    padding: 96px 0;
+    padding: 80px 0;
     background: linear-gradient(to bottom, var(--tw-color-blue-900), var(--tw-color-blue-950));
     overflow: hidden;
 }

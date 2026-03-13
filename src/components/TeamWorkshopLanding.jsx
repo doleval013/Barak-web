@@ -572,16 +572,17 @@ function TeamWorkshopLanding() {
                 </div>
             </section>
 
-            {/* ===== BUSINESS BENEFITS (Image on Left in RTL, Right in LTR) ===== */}
+            {/* ===== BUSINESS BENEFITS ===== */}
             <section className="workshop-benefits">
-                <div className="workshop-split-container">
-                    <div className="workshop-split-grid">
+                <div className="workshop-benefits-container">
+                    <div className="workshop-benefits-grid">
+                        {/* Cards side */}
                         <motion.div
                             initial="hidden" whileInView="visible"
                             viewport={{ once: true, margin: '-80px' }}
                             variants={stagger}
                         >
-                            <motion.div variants={fadeUp} className="workshop-section-divider" />
+                            <motion.div variants={fadeUp} className="workshop-section-divider workshop-section-divider--light" />
                             <motion.h2 variants={fadeUp} className="workshop-benefits-title">
                                 {t.benefits_title}
                             </motion.h2>
@@ -591,10 +592,10 @@ function TeamWorkshopLanding() {
                                     <motion.div
                                         key={i}
                                         className="workshop-benefit-block"
-                                        initial={{ opacity: 0, x: isRTL ? 60 : -60, scale: 0.9 }}
-                                        whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
-                                        transition={{ delay: i * 0.12, duration: 0.5, type: 'spring', stiffness: 100 }}
+                                        transition={{ delay: i * 0.1, duration: 0.4 }}
                                         whileHover={{ y: -3 }}
                                     >
                                         <div className="workshop-benefit-block-num">{i + 1}</div>
@@ -604,24 +605,21 @@ function TeamWorkshopLanding() {
                             </div>
                         </motion.div>
 
-                        {/* Benefits Image Stack */}
+                        {/* Image side */}
                         <motion.div
-                            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true, margin: '-80px' }}
                             transition={{ duration: 0.8 }}
-                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack"
+                            className="workshop-benefits-image-wrapper"
                         >
-                            <MobileSlider>
-                                <img
-                                    src={imgRelax}
-                                    alt="Relaxed engagement"
-                                    className="workshop-split-image workshop-split-image--clickable"
-                                    loading="lazy"
-                                    onClick={() => setSelectedImage(imgRelax)}
-                                />
-                            </MobileSlider>
-                            <div className="workshop-split-image-decoration workshop-split-image-decoration--teal"></div>
+                            <img
+                                src={imgRelax}
+                                alt="Relaxed engagement"
+                                className="workshop-benefits-image"
+                                loading="lazy"
+                                onClick={() => setSelectedImage(imgRelax)}
+                            />
                         </motion.div>
                     </div>
                 </div>

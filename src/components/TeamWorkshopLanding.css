@@ -1017,21 +1017,59 @@
    ============================ */
 .workshop-benefits {
     padding: 80px 0;
-    background: linear-gradient(180deg, var(--tw-color-slate-50), var(--tw-color-white));
+    position: relative;
+    background: linear-gradient(135deg, var(--tw-color-blue-950), var(--tw-color-blue-900));
+    overflow: hidden;
 }
 
 .workshop-benefits-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
-    text-align: start;
+}
+
+.workshop-benefits-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+@media (min-width: 900px) {
+    .workshop-benefits-grid {
+        grid-template-columns: 1fr 0.5fr;
+        gap: 48px;
+    }
+}
+
+.workshop-benefits-image-wrapper {
+    position: sticky;
+    top: 100px;
+}
+
+.workshop-benefits-image {
+    width: 100%;
+    border-radius: 16px;
+    object-fit: cover;
+    aspect-ratio: 3/4;
+    cursor: pointer;
+    transition: transform 0.4s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.workshop-benefits-image:hover {
+    transform: scale(1.02);
+}
+
+.workshop-section-divider--light {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .workshop-benefits-title {
     font-size: 2.25rem;
     font-weight: 700;
-    color: var(--tw-color-slate-800);
-    margin-bottom: 48px;
+    color: var(--tw-color-white);
+    margin-bottom: 36px;
 }
 
 @media (min-width: 768px) {
@@ -1043,53 +1081,54 @@
 .workshop-benefits-stack {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
 .workshop-benefit-block {
     display: flex;
     align-items: center;
     gap: 20px;
-    padding: 24px 32px;
-    background: var(--tw-color-white);
-    border-radius: 20px;
-    border: none;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
-    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    padding: 20px 28px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition: all 0.3s ease;
     text-align: start;
     cursor: default;
 }
 
-@media (min-width: 768px) {
-    .workshop-benefit-block:nth-child(even) {
-        margin-inline-start: 48px;
-    }
-}
-
 .workshop-benefit-block:hover {
-    box-shadow: 0 16px 40px rgba(30, 58, 138, 0.08);
-    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .workshop-benefit-block-num {
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--tw-color-slate-50);
-    color: var(--tw-color-blue-900);
-    border-radius: 12px;
+    background: var(--tw-color-blue-600);
+    color: white;
+    border-radius: 10px;
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
 }
 
+.workshop-benefit-block:nth-child(1) .workshop-benefit-block-num { background: #3b82f6; }
+.workshop-benefit-block:nth-child(2) .workshop-benefit-block-num { background: #3574e8; }
+.workshop-benefit-block:nth-child(3) .workshop-benefit-block-num { background: #2f66da; }
+.workshop-benefit-block:nth-child(4) .workshop-benefit-block-num { background: #2a5bce; }
+.workshop-benefit-block:nth-child(5) .workshop-benefit-block-num { background: #2550c2; }
+.workshop-benefit-block:nth-child(6) .workshop-benefit-block-num { background: #2046b8; }
+
 .workshop-benefit-block span {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-family: var(--font-list-body);
     font-weight: 400;
-    color: var(--tw-color-slate-700);
+    color: rgba(255, 255, 255, 0.9);
     line-height: 1.5;
 }
 

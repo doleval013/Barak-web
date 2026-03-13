@@ -137,8 +137,6 @@ const translations = {
         practice_3_desc: 'מעבר מ"מה לא" ל"מה כן" – ליצירת בהירות, אחריות והתנהגות רצויה.',
         practice_4_title: 'עקביות והתמדה',
         practice_4_desc: 'כיצד בונים דפוס תקשורת שמייצר תוצאות לאורך זמן ולא רק מוטיבציה רגעית.',
-        practice_5_title: 'התאמת מסר לסגנונות למידה (VARK)',
-        practice_5_desc: 'ויזואלי | שמיעתי | קריאה/כתיבה | קינסתטי –\nואיך לוודא שהמסר נקלט באמת אצל כל חבר צוות.',
 
         why_dogs_title: 'למה השילוב עם כלב?',
         why_dogs_text_1: 'השילוב עם כלב אינו אלמנט בידורי – אלא מנגנון למידה שמייצר תוצאה ברורה. כלב מגיב באופן מיידי לבהירות, עקביות ואיכות המסר.',
@@ -206,8 +204,6 @@ const translations = {
         practice_3_desc: 'Moving from "what not to do" to "what to do" – for creating clarity, accountability, and desired behavior.',
         practice_4_title: 'Consistency & Persistence',
         practice_4_desc: 'How to build a communication pattern that generates results over time, not just momentary motivation.',
-        practice_5_title: 'Adapting Messages to Learning Styles (VARK)',
-        practice_5_desc: 'Visual | Auditory | Reading/Writing | Kinesthetic –\nAnd how to ensure the message truly resonates with every team member.',
 
         why_dogs_title: 'Why the combination with a dog?',
         why_dogs_text_1: 'The combination with a dog is not an entertainment element – it\'s a learning mechanism that produces clear results. A dog responds immediately to clarity, consistency, and message quality.',
@@ -317,8 +313,7 @@ function TeamWorkshopLanding() {
         { title: t.practice_1_title, desc: t.practice_1_desc },
         { title: t.practice_2_title, desc: t.practice_2_desc },
         { title: t.practice_3_title, desc: t.practice_3_desc },
-        { title: t.practice_4_title, desc: t.practice_4_desc },
-        { title: t.practice_5_title, desc: t.practice_5_desc }
+        { title: t.practice_4_title, desc: t.practice_4_desc }
     ];
 
     const benefits = [t.benefit_1, t.benefit_2, t.benefit_3, t.benefit_4, t.benefit_5, t.benefit_6];

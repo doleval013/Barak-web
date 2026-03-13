@@ -455,7 +455,7 @@ function TeamWorkshopLanding() {
                             <motion.div
                                 key={i}
                                 variants={fadeUp}
-                                whileHover={{ scale: 1.03, y: -6, transition: { duration: 0.3 } }}
+                                whileHover={{ y: -3, transition: { duration: 0.25 } }}
                                 className="workshop-practice-card"
                             >
                                 <h3 className="workshop-practice-card-title">{item.title}</h3>
@@ -595,7 +595,7 @@ function TeamWorkshopLanding() {
                                         whileInView={{ opacity: 1, x: 0, scale: 1 }}
                                         viewport={{ once: true }}
                                         transition={{ delay: i * 0.12, duration: 0.5, type: 'spring', stiffness: 100 }}
-                                        whileHover={{ scale: 1.02, x: isRTL ? -8 : 8 }}
+                                        whileHover={{ y: -3 }}
                                     >
                                         <div className="workshop-benefit-block-num">{i + 1}</div>
                                         <span>{b}</span>
@@ -645,7 +645,7 @@ function TeamWorkshopLanding() {
                                 <motion.div
                                     key={i}
                                     variants={fadeUp}
-                                    whileHover={{ y: -6, scale: 1.03 }}
+                                    whileHover={{ y: -3 }}
                                     className="workshop-audience-new-card"
                                 >
 

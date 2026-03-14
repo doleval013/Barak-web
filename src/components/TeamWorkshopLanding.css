@@ -273,8 +273,8 @@
 @media (max-width: 767px) {
     .workshop-toc {
         position: fixed;
-        top: 60px;
-        inset-inline-start: 8px;
+        top: 90px;
+        inset-inline-start: 0;
         width: 200px;
         height: auto;
         max-height: calc(100vh - 80px);
@@ -310,20 +310,24 @@
 
     .workshop-toc-show-btn {
         display: flex;
-        top: 64px;
-        inset-inline-start: 8px;
-        height: 36px;
-        width: 36px;
-        border-radius: 50%;
+        top: 100px;
+        inset-inline-start: 0;
+        height: 48px;
+        width: 32px;
+        border-radius: 0 8px 8px 0;
         border: 1px solid var(--tw-color-blue-200);
-        border-inline-start: 1px solid var(--tw-color-blue-200);
+        border-inline-start: none;
         z-index: 89;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.08);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
     }
 
     [dir='rtl'] .workshop-toc-show-btn {
-        border-radius: 50%;
+        border-radius: 8px 0 0 8px;
         border: 1px solid var(--tw-color-blue-200);
+        border-inline-end: none;
     }
 
     .workshop-toc-list {
@@ -1956,5 +1960,67 @@
 @media (max-width: 899px) {
     .workshop-slider-clone {
         display: block;
+    }
+}
+
+/* ============================
+   MOBILE SPACING OVERRIDES
+   ============================ */
+@media (max-width: 767px) {
+    .workshop-hero {
+        padding: 100px 0 80px;
+    }
+
+    .workshop-video-section {
+        padding: 20px 12px 40px;
+    }
+
+    .workshop-standalone-video {
+        width: 100%;
+    }
+
+    .workshop-intro {
+        padding: 40px 0;
+    }
+
+    .workshop-intro-text {
+        margin-bottom: 14px;
+        line-height: 1.7;
+    }
+
+    .workshop-intro-highlight {
+        margin: 16px 0;
+    }
+
+    .workshop-intro-text--accent {
+        padding: 14px 18px;
+    }
+
+    .workshop-practice {
+        padding: 40px 0;
+    }
+
+    .workshop-why-dogs {
+        padding: 40px 0;
+    }
+
+    .workshop-benefits {
+        padding: 40px 0;
+    }
+
+    .workshop-audience-new {
+        padding: 40px 0;
+    }
+
+    .workshop-contact {
+        padding: 40px 0;
+    }
+
+    .workshop-section-divider {
+        margin: 0 0 16px;
+    }
+
+    .workshop-mobile-gallery {
+        padding: 20px 0 12px;
     }
 }

@@ -169,8 +169,7 @@
    ============================ */
 .workshop-hero {
     position: relative;
-    padding: 160px 0 200px;
-    /* Big bottom padding to fit the overlapping video */
+    padding: 140px 0 160px;
     overflow: hidden;
     color: var(--tw-color-white);
 }
@@ -964,29 +963,26 @@
    VIDEO SECTION
    ============================ */
 .workshop-video-section {
-    padding: 0 24px 80px;
+    padding: 0 24px 60px;
     background: var(--tw-color-slate-50);
     position: relative;
 }
 
 @media (min-width: 768px) {
     .workshop-video-section {
-        padding: 0 40px 100px;
+        padding: 0 40px 80px;
     }
 }
 
 .workshop-standalone-video {
-    max-width: 1000px;
-    margin: -120px auto 0;
-    /* Pulls the video UP to overlap the hero banner */
-    border-radius: 24px;
+    max-width: 880px;
+    margin: -80px auto 0;
+    border-radius: 16px;
     overflow: hidden;
     position: relative;
     z-index: 10;
-    box-shadow: 0 40px 80px -20px rgba(15, 23, 42, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
-    background: var(--tw-color-slate-800);
-    border: 12px solid rgba(255, 255, 255, 0.95);
-    /* Thick stylish white frame */
+    box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.2);
+    background: #000;
 }
 
 /* 16:9 Aspect Ratio Wrapper */
@@ -1000,6 +996,17 @@
     /* 16:9 ratio */
     height: 0;
     overflow: hidden;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    aspect-ratio: auto;
+    z-index: auto;
+    transition: none;
+}
+
+.workshop-video-frame:hover {
+    transform: none;
+    box-shadow: none;
 }
 
 .workshop-video-iframe {
@@ -1430,4 +1437,93 @@
 
 .workshop-page {
     animation: pageLoad 0.6s ease-out;
+}
+
+/* ============================
+   LIGHTBOX ARROWS
+   ============================ */
+.workshop-lightbox-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: white;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    z-index: 10001;
+}
+
+.workshop-lightbox-arrow:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-50%) scale(1.1);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.workshop-lightbox-arrow--prev {
+    left: 24px;
+}
+
+.workshop-lightbox-arrow--next {
+    right: 24px;
+}
+
+.workshop-lightbox-counter {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    z-index: 10001;
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .workshop-lightbox-arrow {
+        width: 44px;
+        height: 44px;
+    }
+
+    .workshop-lightbox-arrow--prev {
+        left: 12px;
+    }
+
+    .workshop-lightbox-arrow--next {
+        right: 12px;
+    }
+}
+
+/* ============================
+   MOBILE GALLERY
+   ============================ */
+.workshop-mobile-gallery {
+    display: none;
+    padding: 32px 0 16px;
+    background: var(--tw-color-slate-50);
+}
+
+.workshop-mobile-gallery-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+@media (max-width: 899px) {
+    .workshop-mobile-gallery {
+        display: block;
+    }
+
+    .workshop-hide-mobile {
+        display: none !important;
+    }
 }

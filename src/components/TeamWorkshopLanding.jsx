@@ -20,6 +20,13 @@ import imgHighfive from '../assets/workshop/highfive.jpg';
 import imgRelax from '../assets/workshop/relax.jpg';
 import imgRelax2 from '../assets/workshop/relax2.jpg';
 
+const GALLERY_IMAGES = [
+    { src: imgHighfive, alt: 'High five connection' },
+    { src: imgFeed, alt: 'Training with treats' },
+    { src: imgRelax2, alt: 'Workshop interaction' },
+    { src: imgRelax, alt: 'Relaxed engagement' },
+];
+
 /* ============================================================
    MOBILE SLIDER COMPONENT
    ============================================================ */
@@ -264,7 +271,19 @@ function TeamWorkshopLanding() {
     const [formData, setFormData] = useState({ name: '', company: '', phone: '', email: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+    const lightboxTouchStart = useRef(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (selectedImageIndex === null) return;
+            if (e.key === 'Escape') setSelectedImageIndex(null);
+            if (e.key === 'ArrowLeft') setSelectedImageIndex(prev => (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
+            if (e.key === 'ArrowRight') setSelectedImageIndex(prev => (prev + 1) % GALLERY_IMAGES.length);
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [selectedImageIndex]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -389,6 +408,24 @@ function TeamWorkshopLanding() {
                 </div>
             </section>
 
+            {/* ===== MOBILE GALLERY (visible only on mobile) ===== */}
+            <section className="workshop-mobile-gallery">
+                <div className="workshop-mobile-gallery-container">
+                    <MobileSlider>
+                        {GALLERY_IMAGES.map((img, i) => (
+                            <img
+                                key={i}
+                                src={img.src}
+                                alt={img.alt}
+                                className="workshop-split-image workshop-split-image--clickable"
+                                loading="lazy"
+                                onClick={() => setSelectedImageIndex(i)}
+                            />
+                        ))}
+                    </MobileSlider>
+                </div>
+            </section>
+
             {/* ===== INTRO SECTION (Image on Left in RTL, Right in LTR) ===== */}
             <section className="workshop-intro">
                 <div className="workshop-split-container">
@@ -415,14 +452,14 @@ function TeamWorkshopLanding() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true, margin: '-80px' }}
                             transition={{ duration: 0.8 }}
-                            className="workshop-split-image-wrapper"
+                            className="workshop-split-image-wrapper workshop-hide-mobile"
                         >
                             <img
                                 src={imgHighfive}
                                 alt="High five connection"
                                 className="workshop-split-image workshop-split-image--clickable"
                                 loading="lazy"
-                                onClick={() => setSelectedImage(imgHighfive)}
+                                onClick={() => setSelectedImageIndex(0)}
                             />
                             <div className="workshop-split-image-decoration"></div>
                         </motion.div>
@@ -517,7 +554,7 @@ function TeamWorkshopLanding() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true, margin: '-80px' }}
                             transition={{ duration: 0.8 }}
-                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack"
+                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack workshop-hide-mobile"
                         >
                             <MobileSlider>
                                 <img
@@ -525,14 +562,14 @@ function TeamWorkshopLanding() {
                                     alt="Training with treats"
                                     className="workshop-split-image workshop-split-image--clickable"
                                     loading="lazy"
-                                    onClick={() => setSelectedImage(imgFeed)}
+                                    onClick={() => setSelectedImageIndex(1)}
                                 />
                                 <img
                                     src={imgRelax2}
                                     alt="Workshop interaction"
                                     className="workshop-split-image workshop-split-image--clickable"
                                     loading="lazy"
-                                    onClick={() => setSelectedImage(imgRelax2)}
+                                    onClick={() => setSelectedImageIndex(2)}
                                 />
                             </MobileSlider>
                             <div className="workshop-split-image-decoration workshop-split-image-decoration--secondary"></div>
@@ -611,14 +648,14 @@ function TeamWorkshopLanding() {
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true, margin: '-80px' }}
                             transition={{ duration: 0.8 }}
-                            className="workshop-benefits-image-wrapper"
+                            className="workshop-benefits-image-wrapper workshop-hide-mobile"
                         >
                             <img
                                 src={imgRelax}
                                 alt="Relaxed engagement"
                                 className="workshop-benefits-image"
                                 loading="lazy"
-                                onClick={() => setSelectedImage(imgRelax)}
+                                onClick={() => setSelectedImageIndex(3)}
                             />
                         </motion.div>
                     </div>
@@ -739,27 +776,58 @@ function TeamWorkshopLanding() {
 
             {/* ===== IMAGE LIGHTBOX MODAL ===== */}
             <AnimatePresence>
-                {selectedImage && (
+                {selectedImageIndex !== null && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="workshop-lightbox"
-                        onClick={() => setSelectedImage(null)}
+                        onClick={() => setSelectedImageIndex(null)}
                     >
-                        <button className="workshop-lightbox-close" onClick={() => setSelectedImage(null)}>
+                        <button className="workshop-lightbox-close" onClick={() => setSelectedImageIndex(null)}>
                             <X size={32} />
                         </button>
+                        <button
+                            className="workshop-lightbox-arrow workshop-lightbox-arrow--prev"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImageIndex(prev => (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
+                            }}
+                        >
+                            <ArrowLeft size={28} />
+                        </button>
                         <motion.img
-                            src={selectedImage}
-                            alt="Enlarged view"
+                            key={selectedImageIndex}
+                            src={GALLERY_IMAGES[selectedImageIndex].src}
+                            alt={GALLERY_IMAGES[selectedImageIndex].alt}
                             className="workshop-lightbox-image"
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                            onClick={(e) => e.stopPropagation()} /* Prevent closing when clicking the image itself */
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.25 }}
+                            onClick={(e) => e.stopPropagation()}
+                            onTouchStart={(e) => { lightboxTouchStart.current = e.touches[0].clientX; }}
+                            onTouchEnd={(e) => {
+                                if (lightboxTouchStart.current === null) return;
+                                const diff = lightboxTouchStart.current - e.changedTouches[0].clientX;
+                                if (Math.abs(diff) > 50) {
+                                    if (diff > 0) setSelectedImageIndex(prev => (prev + 1) % GALLERY_IMAGES.length);
+                                    else setSelectedImageIndex(prev => (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
+                                }
+                                lightboxTouchStart.current = null;
+                            }}
                         />
+                        <button
+                            className="workshop-lightbox-arrow workshop-lightbox-arrow--next"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImageIndex(prev => (prev + 1) % GALLERY_IMAGES.length);
+                            }}
+                        >
+                            <ArrowRight size={28} />
+                        </button>
+                        <div className="workshop-lightbox-counter" onClick={(e) => e.stopPropagation()}>
+                            {selectedImageIndex + 1} / {GALLERY_IMAGES.length}
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

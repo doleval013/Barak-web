@@ -14,6 +14,7 @@ import {
     ArrowRight,
     ChevronLeft,
     ChevronRight,
+    ChevronDown,
     X,
     Play
 } from 'lucide-react';
@@ -247,10 +248,10 @@ const translations = {
         why_dogs_text_2: 'כאשר ההנחיה ברורה – מתקבלת תגובה. כאשר יש מסר סותר או חוסר דיוק – התוצאה מתעכבת או נכשלת.',
         why_dogs_text_3: 'המשוב המיידי הזה מאפשר לצוות לראות בזמן אמת את ההשפעה הישירה של תקשורת על ביצוע.',
         why_dogs_principles_title: 'העקרונות זהים לתקשורת צוותית:',
-        why_dogs_principle_1: 'חיזוק חיובי מייצר מחויבות ולא התנגדות.',
-        why_dogs_principle_2: 'בהירות מצמצמת טעויות וחוסכת זמן.',
-        why_dogs_principle_3: 'עקביות מייצרת אמון.',
-        why_dogs_principle_4: 'מסר מדויק משפר תפוקה.',
+        why_dogs_principle_1: 'חיזוק חיובי מייצר מחויבות ולא התנגדות',
+        why_dogs_principle_2: 'בהירות מצמצמת טעויות וחוסכת זמן',
+        why_dogs_principle_3: 'עקביות מייצרת אמון',
+        why_dogs_principle_4: 'מסר מדויק משפר תפוקה',
         why_dogs_experiential_1: 'בנוסף, הלמידה החווייתית רותמת את כלל המשתתפים, מעלה מעורבות ומייצרת פתיחות.',
         why_dogs_experiential_2: 'האינטראקציה הלא-שיפוטית מאפשרת לתרגל תקשורת בצורה ישירה, בטוחה וממוקדת תוצאה.',
         why_dogs_result_title: 'התוצאה:',
@@ -395,7 +396,7 @@ function TeamWorkshopLanding() {
     // Scroll progress & active section tracking
     const [scrollProgress, setScrollProgress] = useState(0);
     const [activeSection, setActiveSection] = useState('hero');
-    const [tocOpen, setTocOpen] = useState(true);
+    const [tocOpen, setTocOpen] = useState(window.innerWidth >= 1750);
     const tocRef = useRef(null);
 
     const tocSections = [
@@ -523,7 +524,13 @@ function TeamWorkshopLanding() {
         <div className="workshop-page" dir={isRTL ? 'rtl' : 'ltr'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 
             {/* ===== SCROLL PROGRESS BAR ===== */}
-            <div className="workshop-scroll-progress" style={{ width: `${scrollProgress}%` }} />
+            <div className="workshop-scroll-progress" style={{ width: `${scrollProgress}%`, '--scroll-progress': `${scrollProgress}%` }} />
+
+            {/* ===== MOBILE TOC BACKDROP ===== */}
+            <div
+                className={`workshop-toc-backdrop${tocOpen ? '' : ' workshop-toc-backdrop--hidden'}`}
+                onClick={() => setTocOpen(false)}
+            />
 
             {/* ===== TABLE OF CONTENTS SIDEBAR ===== */}
             <nav
@@ -547,7 +554,12 @@ function TeamWorkshopLanding() {
                                 className={`workshop-toc-link${activeSection === section.id ? ' workshop-toc-link--active' : ''}`}
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' });
+                                    const el = document.getElementById(section.id);
+                                    if (el) {
+                                        const y = el.getBoundingClientRect().top + window.scrollY - 90;
+                                        window.scrollTo({ top: y, behavior: 'smooth' });
+                                    }
+                                    if (window.innerWidth < 768) setTocOpen(false);
                                 }}
                             >
                                 {section.label}
@@ -564,7 +576,8 @@ function TeamWorkshopLanding() {
                     onClick={() => setTocOpen(true)}
                     aria-label="Show menu"
                 >
-                    {isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+                    <span className="workshop-toc-show-icon-desktop">{isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
+                    <span className="workshop-toc-show-icon-mobile">{isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
                 </button>
             )}
 
@@ -679,9 +692,9 @@ function TeamWorkshopLanding() {
                             <motion.p variants={fadeUp} className="workshop-intro-text">
                                 {t.intro_text_1}
                             </motion.p>
-                            <motion.h2 variants={fadeUp} className="workshop-intro-highlight">
+                            <motion.h2 variants={fadeUp} className="workshop-intro-highlight" style={{ fontSize: '1.25rem' }}>
                                 {t.intro_highlight}
-                                <span style={{ fontWeight: 400, color: 'var(--tw-color-slate-600)', fontSize: '1.25rem' }}> {t.intro_text_2}</span>
+                                <span style={{ fontWeight: 400, color: 'var(--tw-color-slate-600)' }}> {t.intro_text_2}</span>
                             </motion.h2>
                             <motion.p variants={fadeUp} className="workshop-intro-text workshop-intro-text--accent">
                                 {t.intro_text_3}

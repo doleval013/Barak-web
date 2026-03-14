@@ -577,7 +577,7 @@ function TeamWorkshopLanding() {
                     aria-label="Show menu"
                 >
                     <span className="workshop-toc-show-icon-desktop">{isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
-                    <span className="workshop-toc-show-icon-mobile">{isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
+                    <span className="workshop-toc-show-icon-mobile"><ChevronRight size={18} /></span>
                 </button>
             )}
 

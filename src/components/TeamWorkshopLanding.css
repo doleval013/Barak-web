@@ -85,7 +85,8 @@
 .workshop-toc {
     position: fixed;
     top: 120px;
-    inset-inline-start: 24px;
+    left: 24px;
+    right: auto;
     width: var(--toc-width);
     z-index: 40;
     background: rgba(255, 255, 255, 0.75);
@@ -152,12 +153,13 @@
 .workshop-toc-show-btn {
     position: fixed;
     top: 140px;
-    inset-inline-start: 0;
+    left: 0;
+    right: auto;
     z-index: 40;
     width: 32px;
     height: 48px;
     border: 1px solid var(--tw-color-blue-200);
-    border-inline-start: none;
+    border-left: none;
     border-radius: 0 8px 8px 0;
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(8px);
@@ -172,9 +174,11 @@
 }
 
 [dir='rtl'] .workshop-toc-show-btn {
+    left: auto;
+    right: 0;
     border-radius: 8px 0 0 8px;
     border: 1px solid var(--tw-color-blue-200);
-    border-inline-end: none;
+    border-right: none;
 }
 
 .workshop-toc-show-btn:hover {
@@ -274,7 +278,8 @@
     .workshop-toc {
         position: fixed;
         top: 90px;
-        inset-inline-start: 0;
+        left: 0;
+        right: auto;
         width: 200px;
         height: auto;
         max-height: calc(100vh - 80px);
@@ -291,43 +296,38 @@
         overflow-y: auto;
     }
 
-    .workshop-toc--hidden {
+    .workshop-toc--hidden,
+    [dir='rtl'] .workshop-toc--hidden {
         transform: translateX(calc(-100% - 20px));
         opacity: 0;
         pointer-events: none;
     }
 
-    [dir='rtl'] .workshop-toc--hidden {
-        transform: translateX(calc(100% + 20px));
-    }
-
     .workshop-toc-toggle {
         top: 10px;
-        inset-inline-end: 10px;
+        left: 10px;
+        right: auto;
         width: 28px;
         height: 28px;
     }
 
-    .workshop-toc-show-btn {
+    .workshop-toc-show-btn,
+    [dir='rtl'] .workshop-toc-show-btn {
         display: flex;
         top: 100px;
-        inset-inline-start: 0;
+        left: 0;
+        right: auto;
         height: 48px;
         width: 32px;
         border-radius: 0 8px 8px 0;
         border: 1px solid var(--tw-color-blue-200);
-        border-inline-start: none;
+        border-left: none;
+        border-right: 1px solid var(--tw-color-blue-200);
         z-index: 89;
         box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.08);
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-    }
-
-    [dir='rtl'] .workshop-toc-show-btn {
-        border-radius: 8px 0 0 8px;
-        border: 1px solid var(--tw-color-blue-200);
-        border-inline-end: none;
     }
 
     .workshop-toc-list {

@@ -12,9 +12,12 @@ import {
     Globe,
     ArrowLeft,
     ArrowRight,
+    ChevronLeft,
+    ChevronRight,
     X,
     Play
 } from 'lucide-react';
+import FloatingWhatsApp from './FloatingWhatsApp';
 import imgFeed from '../assets/workshop/feed.jpg';
 import imgGate from '../assets/workshop/gate.jpg';
 import imgHighfive from '../assets/workshop/highfive.jpg';
@@ -392,6 +395,8 @@ function TeamWorkshopLanding() {
     // Scroll progress & active section tracking
     const [scrollProgress, setScrollProgress] = useState(0);
     const [activeSection, setActiveSection] = useState('hero');
+    const [tocOpen, setTocOpen] = useState(true);
+    const tocRef = useRef(null);
 
     const tocSections = [
         { id: 'hero', label: t.toc_hero },
@@ -425,6 +430,24 @@ function TeamWorkshopLanding() {
                 }
             }
             setActiveSection(current);
+
+            // Smoothly unpin TOC before the contact section
+            const contactEl = document.getElementById('contact');
+            const tocEl = tocRef.current;
+            if (contactEl && tocEl && window.innerWidth >= 1280) {
+                const tocHeight = tocEl.offsetHeight;
+                // The point (in scroll px) where fixed TOC bottom would touch contact top
+                const contactOffsetTop = contactEl.getBoundingClientRect().top + scrollTop;
+                const stopScroll = contactOffsetTop - 120 - tocHeight - 24;
+
+                if (scrollTop > stopScroll) {
+                    tocEl.style.position = 'absolute';
+                    tocEl.style.top = `${stopScroll + 120}px`;
+                } else {
+                    tocEl.style.position = '';
+                    tocEl.style.top = '';
+                }
+            }
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll();
@@ -503,7 +526,17 @@ function TeamWorkshopLanding() {
             <div className="workshop-scroll-progress" style={{ width: `${scrollProgress}%` }} />
 
             {/* ===== TABLE OF CONTENTS SIDEBAR ===== */}
-            <nav className="workshop-toc">
+            <nav
+                ref={tocRef}
+                className={`workshop-toc${tocOpen ? '' : ' workshop-toc--hidden'}`}
+            >
+                <button
+                    className="workshop-toc-toggle"
+                    onClick={() => setTocOpen(false)}
+                    aria-label="Hide menu"
+                >
+                    {isRTL ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+                </button>
                 <div className="workshop-toc-title">{t.toc_title}</div>
                 <div className="workshop-toc-divider" />
                 <ul className="workshop-toc-list">
@@ -523,6 +556,17 @@ function TeamWorkshopLanding() {
                     ))}
                 </ul>
             </nav>
+
+            {/* ===== TOC BRING-BACK TAB ===== */}
+            {!tocOpen && (
+                <button
+                    className="workshop-toc-show-btn"
+                    onClick={() => setTocOpen(true)}
+                    aria-label="Show menu"
+                >
+                    {isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+                </button>
+            )}
 
             {/* ===== NAVIGATION ===== */}
             <nav className="workshop-nav">
@@ -987,6 +1031,9 @@ function TeamWorkshopLanding() {
             <footer className="workshop-footer">
                 <p>{t.footer_text}</p>
             </footer>
+
+            {/* ===== WHATSAPP BUTTON ===== */}
+            <FloatingWhatsApp isBannerOpen={false} />
 
             {/* ===== IMAGE LIGHTBOX MODAL ===== */}
             <AnimatePresence>

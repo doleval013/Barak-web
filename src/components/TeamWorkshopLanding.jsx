@@ -12,7 +12,8 @@ import {
     Globe,
     ArrowLeft,
     ArrowRight,
-    X
+    X,
+    Play
 } from 'lucide-react';
 import imgFeed from '../assets/workshop/feed.jpg';
 import imgGate from '../assets/workshop/gate.jpg';
@@ -365,6 +366,7 @@ function TeamWorkshopLanding() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+    const [videoPlaying, setVideoPlaying] = useState(false);
     const lightboxTouchStart = useRef(null);
 
     useEffect(() => {
@@ -479,22 +481,54 @@ function TeamWorkshopLanding() {
 
             {/* ===== VIDEO SECTION ===== */}
             <section className="workshop-video-section">
+                {/* Decorative background elements */}
+                <div className="workshop-video-bg-glow workshop-video-bg-glow--1" />
+                <div className="workshop-video-bg-glow workshop-video-bg-glow--2" />
+
                 <div className="workshop-split-container">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-50px' }}
+                        transition={{ duration: 0.8, delay: 0.15 }}
                         className="workshop-standalone-video"
                     >
                         <div className="workshop-video-container">
                             <div className="workshop-video-frame">
-                                <iframe
-                                    src="https://www.youtube.com/embed/kZMeB9DZNAs?rel=0"
-                                    title="סדנת כלבנות לצוותים"
-                                    className="workshop-video-iframe"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                ></iframe>
+                                {!videoPlaying ? (
+                                    <div
+                                        className="workshop-video-thumbnail"
+                                        onClick={() => setVideoPlaying(true)}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label={isRTL ? 'הפעל סרטון' : 'Play video'}
+                                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setVideoPlaying(true); }}
+                                    >
+                                        <img
+                                            src="https://img.youtube.com/vi/kZMeB9DZNAs/maxresdefault.jpg"
+                                            alt={isRTL ? 'סדנת כלבנות לצוותים' : 'Dog training workshop for teams'}
+                                            className="workshop-video-thumb-img"
+                                            loading="eager"
+                                        />
+                                        <div className="workshop-video-overlay" />
+                                        <motion.button
+                                            className="workshop-video-play-btn"
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            aria-label={isRTL ? 'הפעל סרטון' : 'Play video'}
+                                        >
+                                            <Play size={32} fill="white" strokeWidth={0} />
+                                        </motion.button>
+                                    </div>
+                                ) : (
+                                    <iframe
+                                        src="https://www.youtube.com/embed/kZMeB9DZNAs?rel=0&autoplay=1&modestbranding=1"
+                                        title={isRTL ? 'סדנת כלבנות לצוותים' : 'Dog training workshop for teams'}
+                                        className="workshop-video-iframe"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+                                )}
                             </div>
                         </div>
                     </motion.div>

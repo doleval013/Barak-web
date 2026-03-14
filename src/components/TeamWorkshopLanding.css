@@ -132,6 +132,11 @@
     border-color: var(--tw-color-blue-400);
 }
 
+/* Backdrop — hidden by default on desktop */
+.workshop-toc-backdrop {
+    display: none;
+}
+
 /* Hidden state — slide off-screen */
 .workshop-toc--hidden {
     transform: translateX(calc(-100% - 40px));
@@ -175,6 +180,27 @@
 .workshop-toc-show-btn:hover {
     background: var(--tw-color-blue-50);
     width: 40px;
+}
+
+.workshop-toc-show-icon-mobile {
+    display: none;
+}
+
+.workshop-toc-show-icon-desktop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 767px) {
+    .workshop-toc-show-icon-desktop {
+        display: none;
+    }
+    .workshop-toc-show-icon-mobile {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 .workshop-toc--unpinned {
@@ -233,12 +259,104 @@
     font-weight: 600;
 }
 
-/* Hide TOC when viewport isn't wide enough to fit both menu and content */
-@media (max-width: 1749px) {
+/* Hide TOC on mid-size screens (not wide enough for sidebar, not phone) */
+@media (min-width: 768px) and (max-width: 1749px) {
     .workshop-toc {
         display: none;
     }
     .workshop-toc-show-btn {
+        display: none;
+    }
+}
+
+/* Mobile TOC: compact side dropdown */
+@media (max-width: 767px) {
+    .workshop-toc {
+        position: fixed;
+        top: 60px;
+        inset-inline-start: 8px;
+        width: 200px;
+        height: auto;
+        max-height: calc(100vh - 80px);
+        border-radius: 14px;
+        padding: 14px 12px 12px;
+        z-index: 90;
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        transform: translateX(0);
+        opacity: 1;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .workshop-toc--hidden {
+        transform: translateX(calc(-100% - 20px));
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    [dir='rtl'] .workshop-toc--hidden {
+        transform: translateX(calc(100% + 20px));
+    }
+
+    .workshop-toc-toggle {
+        top: 10px;
+        inset-inline-end: 10px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .workshop-toc-show-btn {
+        display: flex;
+        top: 64px;
+        inset-inline-start: 8px;
+        height: 36px;
+        width: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--tw-color-blue-200);
+        border-inline-start: 1px solid var(--tw-color-blue-200);
+        z-index: 89;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    [dir='rtl'] .workshop-toc-show-btn {
+        border-radius: 50%;
+        border: 1px solid var(--tw-color-blue-200);
+    }
+
+    .workshop-toc-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .workshop-toc-link {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+        text-align: start;
+    }
+
+    .workshop-toc-title {
+        font-size: 0.7rem;
+        margin-bottom: 8px;
+    }
+
+    .workshop-toc-divider {
+        margin-bottom: 8px;
+    }
+
+    /* Overlay backdrop when TOC is open on mobile */
+    .workshop-toc-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.2);
+        z-index: 89;
+    }
+
+    .workshop-toc-backdrop--hidden {
         display: none;
     }
 }

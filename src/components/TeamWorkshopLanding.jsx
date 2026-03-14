@@ -14,6 +14,7 @@ import {
     ArrowRight,
     ChevronLeft,
     ChevronRight,
+    ChevronDown,
     X,
     Play
 } from 'lucide-react';
@@ -395,7 +396,7 @@ function TeamWorkshopLanding() {
     // Scroll progress & active section tracking
     const [scrollProgress, setScrollProgress] = useState(0);
     const [activeSection, setActiveSection] = useState('hero');
-    const [tocOpen, setTocOpen] = useState(true);
+    const [tocOpen, setTocOpen] = useState(window.innerWidth >= 1750);
     const tocRef = useRef(null);
 
     const tocSections = [
@@ -525,6 +526,12 @@ function TeamWorkshopLanding() {
             {/* ===== SCROLL PROGRESS BAR ===== */}
             <div className="workshop-scroll-progress" style={{ width: `${scrollProgress}%`, '--scroll-progress': `${scrollProgress}%` }} />
 
+            {/* ===== MOBILE TOC BACKDROP ===== */}
+            <div
+                className={`workshop-toc-backdrop${tocOpen ? '' : ' workshop-toc-backdrop--hidden'}`}
+                onClick={() => setTocOpen(false)}
+            />
+
             {/* ===== TABLE OF CONTENTS SIDEBAR ===== */}
             <nav
                 ref={tocRef}
@@ -547,7 +554,12 @@ function TeamWorkshopLanding() {
                                 className={`workshop-toc-link${activeSection === section.id ? ' workshop-toc-link--active' : ''}`}
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' });
+                                    const el = document.getElementById(section.id);
+                                    if (el) {
+                                        const y = el.getBoundingClientRect().top + window.scrollY - 90;
+                                        window.scrollTo({ top: y, behavior: 'smooth' });
+                                    }
+                                    if (window.innerWidth < 768) setTocOpen(false);
                                 }}
                             >
                                 {section.label}
@@ -564,7 +576,8 @@ function TeamWorkshopLanding() {
                     onClick={() => setTocOpen(true)}
                     aria-label="Show menu"
                 >
-                    {isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+                    <span className="workshop-toc-show-icon-desktop">{isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
+                    <span className="workshop-toc-show-icon-mobile">{isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
                 </button>
             )}
 

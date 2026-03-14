@@ -1526,4 +1526,19 @@
     .workshop-hide-mobile {
         display: none !important;
     }
+
+    .workshop-stack-scroller > .workshop-slider-clone {
+        scroll-snap-align: none;
+    }
+}
+
+/* Hide clones on desktop (vertical stack) */
+.workshop-slider-clone {
+    display: none;
+}
+
+@media (max-width: 899px) {
+    .workshop-slider-clone {
+        display: block;
+    }
 }

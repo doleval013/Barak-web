@@ -27,7 +27,8 @@ export default function Programs() {
             title: t('program_events_title'),
             icon: PartyPopper,
             content: t('program_events_content'),
-            video: 'https://www.youtube.com/embed/kZMeB9DZNAs?rel=0'
+            video: 'https://www.youtube.com/embed/kZMeB9DZNAs?rel=0',
+            workshopLink: '/workshop'
         },
         {
             id: 'community',
@@ -209,6 +210,23 @@ export default function Programs() {
                                                         headers: { 'Content-Type': 'application/json' },
                                                         body: JSON.stringify({ type: 'program_view', name: 'program_card', metadata: t(program.title) })
                                                     }).catch(console.error);
+                                                }}
+                                                className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                            >
+                                                {t('more_details')}
+                                                <FileText size={18} />
+                                            </button>
+                                        )}
+
+                                        {program.workshopLink && (
+                                            <button
+                                                onClick={() => {
+                                                    fetch('/api/event', {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ type: 'program_view', name: 'workshop_link', metadata: t(program.title) })
+                                                    }).catch(console.error);
+                                                    window.location.href = program.workshopLink;
                                                 }}
                                                 className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                             >

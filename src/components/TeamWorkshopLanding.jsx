@@ -28,65 +28,158 @@ const GALLERY_IMAGES = [
 ];
 
 /* ============================================================
-   MOBILE SLIDER COMPONENT
+   MOBILE SLIDER COMPONENT (infinite-loop with clones)
    ============================================================ */
 const MobileSlider = ({ children }) => {
     const scrollRef = useRef(null);
     const [isHovered, setIsHovered] = useState(false);
+    const childArray = React.Children.toArray(children);
+    const count = childArray.length;
+    const currentIndex = useRef(1); // index inside extended array (0 = clone-last, 1..count = real, count+1 = clone-first)
+    const isTransitioning = useRef(false);
+    const autoTimerRef = useRef(null);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const isMobile = window.innerWidth <= 899;
-            if (isMobile && scrollRef.current && !isHovered) {
-                const scroller = scrollRef.current;
-                const maxScroll = scroller.scrollWidth - scroller.clientWidth;
-                if (maxScroll <= 0) return;
-
-                const currentScroll = Math.abs(scroller.scrollLeft);
-                if (currentScroll >= maxScroll - 10) {
-                    scroller.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    const isRTL = document.documentElement.dir === 'rtl';
-                    scroller.scrollBy({ left: isRTL ? -scroller.clientWidth : scroller.clientWidth, behavior: 'smooth' });
-                }
-            }
-        }, 4000);
-        return () => clearInterval(interval);
-    }, [isHovered]);
-
-    const scrollPrev = () => {
-        if (scrollRef.current) {
-            const scroller = scrollRef.current;
-            const isRTL = document.documentElement.dir === 'rtl';
-            const currentScroll = Math.abs(scroller.scrollLeft);
-            const maxScroll = scroller.scrollWidth - scroller.clientWidth;
-
-            if (currentScroll < 10) {
-                // At the start, jump to the end
-                scroller.scrollTo({ left: isRTL ? -maxScroll : maxScroll, behavior: 'smooth' });
-            } else {
-                const offset = isRTL ? scroller.clientWidth : -scroller.clientWidth;
-                scroller.scrollBy({ left: offset, behavior: 'smooth' });
-            }
-        }
+    // Reset auto-scroll timer (call after any user interaction)
+    const resetAutoTimer = () => {
+        clearTimeout(autoTimerRef.current);
+        autoTimerRef.current = null;
     };
+
+    // Build extended slides: [clone_last, ...real slides, clone_first]
+    const slides = count > 1
+        ? [
+            React.cloneElement(childArray[count - 1], {
+                key: 'clone-start',
+                className: (childArray[count - 1].props.className || '') + ' workshop-slider-clone'
+            }),
+            ...childArray,
+            React.cloneElement(childArray[0], {
+                key: 'clone-end',
+                className: (childArray[0].props.className || '') + ' workshop-slider-clone'
+            }),
+        ]
+        : childArray;
+
+    // Scroll the container so that the slide at `idx` is fully in view
+    const scrollToIdx = (idx, behavior = 'smooth') => {
+        const scroller = scrollRef.current;
+        if (!scroller) return;
+        const w = scroller.clientWidth;
+        const isRTL = getComputedStyle(scroller).direction === 'rtl';
+        scroller.scrollTo({ left: isRTL ? -(w * idx) : w * idx, behavior });
+    };
+
+    // On mount (and resize) position the scroller at the first real slide
+    useEffect(() => {
+        if (count <= 1) return;
+        const init = () => {
+            const scroller = scrollRef.current;
+            if (!scroller || window.innerWidth > 899) return;
+            scroller.style.scrollSnapType = 'none';
+            scrollToIdx(1, 'instant');
+            currentIndex.current = 1;
+            requestAnimationFrame(() => { if (scroller) scroller.style.scrollSnapType = ''; });
+        };
+        setTimeout(init, 100);
+        window.addEventListener('resize', init);
+        return () => window.removeEventListener('resize', init);
+    }, [count]);
+
+    // If the user manually swipes onto a clone, jump back to the real slide
+    useEffect(() => {
+        const scroller = scrollRef.current;
+        if (!scroller || count <= 1) return;
+        let timeout;
+        const onScroll = () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (isTransitioning.current) return;
+                const w = scroller.clientWidth;
+                if (w === 0) return;
+                const idx = Math.round(Math.abs(scroller.scrollLeft) / w);
+                if (idx <= 0) {
+                    scroller.style.scrollSnapType = 'none';
+                    scrollToIdx(count, 'instant');
+                    currentIndex.current = count;
+                    requestAnimationFrame(() => { scroller.style.scrollSnapType = ''; });
+                } else if (idx >= count + 1) {
+                    scroller.style.scrollSnapType = 'none';
+                    scrollToIdx(1, 'instant');
+                    currentIndex.current = 1;
+                    requestAnimationFrame(() => { scroller.style.scrollSnapType = ''; });
+                } else {
+                    currentIndex.current = idx;
+                }
+            }, 120);
+        };
+        scroller.addEventListener('scroll', onScroll);
+        return () => { scroller.removeEventListener('scroll', onScroll); clearTimeout(timeout); };
+    }, [count]);
 
     const scrollNext = () => {
-        if (scrollRef.current) {
-            const scroller = scrollRef.current;
-            const isRTL = document.documentElement.dir === 'rtl';
-            const currentScroll = Math.abs(scroller.scrollLeft);
-            const maxScroll = scroller.scrollWidth - scroller.clientWidth;
-
-            if (currentScroll >= maxScroll - 10) {
-                // At the end, jump to the beginning
-                scroller.scrollTo({ left: 0, behavior: 'smooth' });
-            } else {
-                const offset = isRTL ? -scroller.clientWidth : scroller.clientWidth;
-                scroller.scrollBy({ left: offset, behavior: 'smooth' });
-            }
+        const scroller = scrollRef.current;
+        if (!scroller || isTransitioning.current || count <= 1) return;
+        resetAutoTimer();
+        const next = currentIndex.current + 1;
+        if (next > count) {
+            // Wrap forward: animate to clone-first, then jump to real first
+            isTransitioning.current = true;
+            scroller.style.scrollSnapType = 'none';
+            scrollToIdx(count + 1, 'smooth');
+            currentIndex.current = count + 1;
+            setTimeout(() => {
+                scrollToIdx(1, 'instant');
+                currentIndex.current = 1;
+                requestAnimationFrame(() => {
+                    if (scroller) scroller.style.scrollSnapType = '';
+                    isTransitioning.current = false;
+                });
+            }, 420);
+        } else {
+            currentIndex.current = next;
+            scrollToIdx(next, 'smooth');
         }
     };
+
+    const scrollPrev = () => {
+        const scroller = scrollRef.current;
+        if (!scroller || isTransitioning.current || count <= 1) return;
+        resetAutoTimer();
+        const prev = currentIndex.current - 1;
+        if (prev < 1) {
+            // Wrap backward: animate to clone-last, then jump to real last
+            isTransitioning.current = true;
+            scroller.style.scrollSnapType = 'none';
+            scrollToIdx(0, 'smooth');
+            currentIndex.current = 0;
+            setTimeout(() => {
+                scrollToIdx(count, 'instant');
+                currentIndex.current = count;
+                requestAnimationFrame(() => {
+                    if (scroller) scroller.style.scrollSnapType = '';
+                    isTransitioning.current = false;
+                });
+            }, 420);
+        } else {
+            currentIndex.current = prev;
+            scrollToIdx(prev, 'smooth');
+        }
+    };
+
+    // Auto-scroll: self-resetting timeout, restarts 4s after any slide action
+    useEffect(() => {
+        const scheduleNext = () => {
+            clearTimeout(autoTimerRef.current);
+            autoTimerRef.current = setTimeout(() => {
+                if (window.innerWidth <= 899 && !isHovered) {
+                    scrollNext();
+                }
+                scheduleNext();
+            }, 4000);
+        };
+        scheduleNext();
+        return () => clearTimeout(autoTimerRef.current);
+    }, [isHovered, count]);
 
     return (
         <div className="workshop-slider-wrapper">
@@ -102,10 +195,10 @@ const MobileSlider = ({ children }) => {
                 ref={scrollRef}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                onTouchStart={() => setIsHovered(true)}
-                onTouchEnd={() => setTimeout(() => setIsHovered(false), 3000)}
+                onTouchStart={() => { setIsHovered(true); resetAutoTimer(); }}
+                onTouchEnd={() => { resetAutoTimer(); setTimeout(() => setIsHovered(false), 3000); }}
             >
-                {children}
+                {slides}
             </div>
             <button
                 className="workshop-slider-arrow workshop-slider-arrow--next"

@@ -535,24 +535,6 @@ function TeamWorkshopLanding() {
                 </div>
             </section>
 
-            {/* ===== MOBILE GALLERY (visible only on mobile) ===== */}
-            <section className="workshop-mobile-gallery">
-                <div className="workshop-mobile-gallery-container">
-                    <MobileSlider>
-                        {GALLERY_IMAGES.map((img, i) => (
-                            <img
-                                key={i}
-                                src={img.src}
-                                alt={img.alt}
-                                className="workshop-split-image workshop-split-image--clickable"
-                                loading="lazy"
-                                onClick={() => setSelectedImageIndex(i)}
-                            />
-                        ))}
-                    </MobileSlider>
-                </div>
-            </section>
-
             {/* ===== INTRO SECTION (Image on Left in RTL, Right in LTR) ===== */}
             <section className="workshop-intro">
                 <div className="workshop-split-container">
@@ -817,6 +799,24 @@ function TeamWorkshopLanding() {
                         </motion.div>
 
                     </motion.div>
+                </div>
+            </section>
+
+            {/* ===== IMAGE GALLERY ===== */}
+            <section className="workshop-mobile-gallery">
+                <div className="workshop-mobile-gallery-container">
+                    <MobileSlider>
+                        {GALLERY_IMAGES.map((img, i) => (
+                            <img
+                                key={i}
+                                src={img.src}
+                                alt={img.alt}
+                                className="workshop-split-image workshop-split-image--clickable"
+                                loading="lazy"
+                                onClick={() => setSelectedImageIndex(i)}
+                            />
+                        ))}
+                    </MobileSlider>
                 </div>
             </section>
 

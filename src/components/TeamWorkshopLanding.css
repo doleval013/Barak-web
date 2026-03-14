@@ -65,6 +65,20 @@
     box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
 }
 
+@media (max-width: 767px) {
+    .workshop-scroll-progress {
+        top: 0;
+        left: auto;
+        right: 0;
+        width: 4px !important;
+        height: var(--scroll-progress, 0%);
+        background: linear-gradient(180deg, var(--tw-color-blue-600), var(--tw-color-sky-400));
+        border-radius: 0 0 2px 2px;
+        transition: height 0.1s linear;
+        box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }
+}
+
 /* ============================
    TABLE OF CONTENTS SIDEBAR
    ============================ */

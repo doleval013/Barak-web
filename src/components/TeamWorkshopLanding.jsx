@@ -281,7 +281,17 @@ const translations = {
         error_phone: 'מספר הטלפון אינו תקין. יש להזין 9-10 ספרות, למשל: 0501234567',
         success_msg: '✓ הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.',
         error_msg: 'אירעה שגיאה. אנא נסו שוב.',
-        footer_text: '© 2026 ברק אלוני - סדנאות כלבנות לפיתוח צוותים'
+        footer_text: '© 2026 ברק אלוני - סדנאות כלבנות לפיתוח צוותים',
+
+        toc_title: 'בעמוד זה',
+        toc_hero: 'סקירה כללית',
+        toc_video: 'סרטון',
+        toc_intro: 'על הסדנה',
+        toc_practice: 'מה מתרגלים?',
+        toc_why_dogs: 'למה כלב?',
+        toc_benefits: 'תועלות עסקיות',
+        toc_audience: 'למי מתאים?',
+        toc_contact: 'צור קשר'
     },
     en: {
         back: 'Back',
@@ -348,7 +358,17 @@ const translations = {
         error_phone: 'Invalid phone number. Please enter 9-10 digits.',
         success_msg: '✓ Details sent successfully! We will get back to you soon.',
         error_msg: 'An error occurred. Please try again.',
-        footer_text: '© 2026 Barak Aloni - Dog Training Workshops for Team Development'
+        footer_text: '© 2026 Barak Aloni - Dog Training Workshops for Team Development',
+
+        toc_title: 'In This Page',
+        toc_hero: 'Overview',
+        toc_video: 'Video',
+        toc_intro: 'About the Workshop',
+        toc_practice: 'What We Practice',
+        toc_why_dogs: 'Why Dogs?',
+        toc_benefits: 'Business Benefits',
+        toc_audience: 'Who Is It For?',
+        toc_contact: 'Contact'
     }
 };
 
@@ -368,6 +388,48 @@ function TeamWorkshopLanding() {
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
     const [videoPlaying, setVideoPlaying] = useState(false);
     const lightboxTouchStart = useRef(null);
+
+    // Scroll progress & active section tracking
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [activeSection, setActiveSection] = useState('hero');
+
+    const tocSections = [
+        { id: 'hero', label: t.toc_hero },
+        { id: 'video', label: t.toc_video },
+        { id: 'intro', label: t.toc_intro },
+        { id: 'practice', label: t.toc_practice },
+        { id: 'why-dogs', label: t.toc_why_dogs },
+        { id: 'benefits', label: t.toc_benefits },
+        { id: 'audience', label: t.toc_audience },
+        { id: 'contact', label: t.toc_contact },
+    ];
+
+    useEffect(() => {
+        const handleScroll = () => {
+            // Progress bar
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            setScrollProgress(Math.min(100, Math.max(0, progress)));
+
+            // Active section detection
+            const sectionIds = tocSections.map(s => s.id);
+            let current = sectionIds[0];
+            for (const id of sectionIds) {
+                const el = document.getElementById(id);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top <= 150) {
+                        current = id;
+                    }
+                }
+            }
+            setActiveSection(current);
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -437,6 +499,31 @@ function TeamWorkshopLanding() {
     return (
         <div className="workshop-page" dir={isRTL ? 'rtl' : 'ltr'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 
+            {/* ===== SCROLL PROGRESS BAR ===== */}
+            <div className="workshop-scroll-progress" style={{ width: `${scrollProgress}%` }} />
+
+            {/* ===== TABLE OF CONTENTS SIDEBAR ===== */}
+            <nav className="workshop-toc">
+                <div className="workshop-toc-title">{t.toc_title}</div>
+                <div className="workshop-toc-divider" />
+                <ul className="workshop-toc-list">
+                    {tocSections.map((section) => (
+                        <li key={section.id}>
+                            <a
+                                href={`#${section.id}`}
+                                className={`workshop-toc-link${activeSection === section.id ? ' workshop-toc-link--active' : ''}`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                            >
+                                {section.label}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+
             {/* ===== NAVIGATION ===== */}
             <nav className="workshop-nav">
                 <div className="workshop-nav-container">
@@ -455,7 +542,7 @@ function TeamWorkshopLanding() {
             </nav>
 
             {/* ===== HERO SECTION ===== */}
-            <section className="workshop-hero workshop-hero--image-bg">
+            <section id="hero" className="workshop-hero workshop-hero--image-bg">
                 <div className="workshop-hero-overlay" />
                 <div className="workshop-hero-content workshop-hero-content--centered">
                     <motion.div initial="hidden" animate="visible" variants={stagger} className="workshop-hero-text">
@@ -480,7 +567,7 @@ function TeamWorkshopLanding() {
             </section>
 
             {/* ===== VIDEO SECTION ===== */}
-            <section className="workshop-video-section">
+            <section id="video" className="workshop-video-section">
                 {/* Decorative background elements */}
                 <div className="workshop-video-bg-glow workshop-video-bg-glow--1" />
                 <div className="workshop-video-bg-glow workshop-video-bg-glow--2" />
@@ -536,7 +623,7 @@ function TeamWorkshopLanding() {
             </section>
 
             {/* ===== INTRO SECTION (Image on Left in RTL, Right in LTR) ===== */}
-            <section className="workshop-intro">
+            <section id="intro" className="workshop-intro">
                 <div className="workshop-split-container">
                     <div className="workshop-split-grid">
                         <motion.div
@@ -577,7 +664,7 @@ function TeamWorkshopLanding() {
             </section>
 
             {/* ===== PRACTICE SECTION (6 items with polygon art) ===== */}
-            <section className="workshop-practice">
+            <section id="practice" className="workshop-practice">
                 <div className="workshop-practice-container">
                     <motion.div
                         initial="hidden" whileInView="visible"
@@ -613,7 +700,7 @@ function TeamWorkshopLanding() {
             </section>
 
             {/* ===== WHY DOGS SECTION ===== */}
-            <section className="workshop-why-dogs">
+            <section id="why-dogs" className="workshop-why-dogs">
                 <div className="workshop-split-container">
                     <div className="workshop-split-grid">
                         <motion.div
@@ -719,7 +806,7 @@ function TeamWorkshopLanding() {
             </section>
 
             {/* ===== BUSINESS BENEFITS ===== */}
-            <section className="workshop-benefits">
+            <section id="benefits" className="workshop-benefits">
                 <div className="workshop-benefits-container">
                     <div className="workshop-benefits-grid">
                         {/* Cards side */}
@@ -772,7 +859,7 @@ function TeamWorkshopLanding() {
             </section>
 
             {/* ===== TARGET AUDIENCE ===== */}
-            <section className="workshop-audience-new">
+            <section id="audience" className="workshop-audience-new">
                 <div className="workshop-audience-new-container">
                     <motion.div
                         initial="hidden" whileInView="visible"

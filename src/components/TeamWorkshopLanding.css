@@ -39,11 +39,16 @@
    PAGE CONTAINER
    ============================ */
 .workshop-page {
+    position: relative;
     min-height: 100vh;
     background-color: var(--tw-color-white);
     direction: rtl;
     overflow-x: hidden;
+    --toc-width: 260px;
+    --toc-offset: 48px;
 }
+
+/* TOC only shown when screen is wide enough (≥1536px) — no overlap possible */
 
 /* ============================
    SCROLL PROGRESS BAR
@@ -65,34 +70,119 @@
    ============================ */
 .workshop-toc {
     position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 120px;
     inset-inline-start: 24px;
+    width: var(--toc-width);
     z-index: 40;
-    background: rgba(15, 23, 42, 0.92);
-    backdrop-filter: blur(16px);
-    border-radius: 16px;
-    padding: 24px 20px;
-    max-width: 220px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(219, 234, 254, 0.6);
+    border-radius: 14px;
+    padding: 24px 18px;
+    overflow-y: auto;
+    max-height: calc(100vh - 160px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.workshop-toc:hover {
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Toggle (hide) button inside the TOC */
+.workshop-toc-toggle {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--tw-color-blue-200);
+    background: var(--tw-color-white);
+    color: var(--tw-color-slate-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.workshop-toc-toggle:hover {
+    background: var(--tw-color-blue-50);
+    color: var(--tw-color-blue-700);
+    border-color: var(--tw-color-blue-400);
+}
+
+/* Hidden state — slide off-screen */
+.workshop-toc--hidden {
+    transform: translateX(calc(-100% - 40px));
+    opacity: 0;
+    pointer-events: none;
+}
+
+[dir='rtl'] .workshop-toc--hidden {
+    transform: translateX(calc(100% + 40px));
+}
+
+/* Bring-back tab */
+.workshop-toc-show-btn {
+    position: fixed;
+    top: 140px;
+    inset-inline-start: 0;
+    z-index: 40;
+    width: 32px;
+    height: 48px;
+    border: 1px solid var(--tw-color-blue-200);
+    border-inline-start: none;
+    border-radius: 0 8px 8px 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--tw-color-blue-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+
+[dir='rtl'] .workshop-toc-show-btn {
+    border-radius: 8px 0 0 8px;
+    border: 1px solid var(--tw-color-blue-200);
+    border-inline-end: none;
+}
+
+.workshop-toc-show-btn:hover {
+    background: var(--tw-color-blue-50);
+    width: 40px;
+}
+
+.workshop-toc--unpinned {
+    position: absolute;
+    max-height: none;
 }
 
 .workshop-toc-title {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: rgba(255, 255, 255, 0.95);
-    margin-bottom: 12px;
+    color: var(--tw-color-slate-800);
+    margin-bottom: 14px;
+    padding-inline-start: 14px;
 }
 
 .workshop-toc-divider {
     width: 100%;
     height: 1px;
-    background: rgba(255, 255, 255, 0.12);
-    margin-bottom: 16px;
+    background: var(--tw-color-blue-100);
+    margin-bottom: 18px;
 }
 
 .workshop-toc-list {
@@ -101,37 +191,40 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
 }
 
 .workshop-toc-link {
     display: block;
-    padding: 8px 12px;
-    font-size: 0.85rem;
+    padding: 10px 14px;
+    font-size: 0.925rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--tw-color-slate-600);
     text-decoration: none;
     border-radius: 8px;
     border-inline-start: 3px solid transparent;
-    transition: all 0.25s ease;
-    line-height: 1.4;
+    transition: all 0.2s ease;
+    line-height: 1.5;
 }
 
 .workshop-toc-link:hover {
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.06);
+    color: var(--tw-color-blue-700);
+    background: var(--tw-color-blue-50);
 }
 
 .workshop-toc-link--active {
-    color: #ffffff;
-    background: rgba(56, 189, 248, 0.12);
+    color: var(--tw-color-white);
+    background: var(--tw-color-blue-600);
     border-inline-start-color: var(--tw-color-sky-400);
     font-weight: 600;
 }
 
-/* Hide TOC on small screens */
-@media (max-width: 1279px) {
+/* Hide TOC when viewport isn't wide enough to fit both menu and content */
+@media (max-width: 1749px) {
     .workshop-toc {
+        display: none;
+    }
+    .workshop-toc-show-btn {
         display: none;
     }
 }
@@ -155,10 +248,10 @@
 }
 
 .workshop-nav-container {
-    max-width: 1280px;
+    max-width: 1400px;
     margin: 0 auto;
     width: 100%;
-    padding: 0 24px;
+    padding: 0 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;

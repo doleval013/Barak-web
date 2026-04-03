@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - dev
-      - staging
     tags:
       - 'v*'
 
@@ -70,9 +69,6 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/heads/dev ]]; then
             echo "ENV=dev" >> $GITHUB_ENV
             echo "VERSION=dev-${{ github.sha }}" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == refs/heads/staging ]]; then
-            echo "ENV=staging" >> $GITHUB_ENV
-            echo "VERSION=staging-${{ github.sha }}" >> $GITHUB_ENV
           fi
 
       - name: Update Kubernetes Manifest in Infra Repo

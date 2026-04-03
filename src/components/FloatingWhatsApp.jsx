@@ -49,6 +49,15 @@ export default function FloatingWhatsApp({ isBannerOpen }) {
                 whileTap={{ scale: 0.9 }}
                 className="relative flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg shadow-green-900/30 hover:shadow-green-900/50 transition-shadow"
                 aria-label="Chat on WhatsApp"
+                onClick={() => {
+                    if (process.env.NODE_ENV !== 'development') {
+                        fetch('/api/event', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ type: 'whatsapp_click', name: 'whatsapp_float', metadata: window.location.pathname })
+                        }).catch(() => {});
+                    }
+                }}
             >
                 <WhatsAppIcon size={30} />
             </motion.a>

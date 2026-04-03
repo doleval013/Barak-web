@@ -493,7 +493,18 @@ function TeamWorkshopLanding() {
                     message: `מתעניין בסדנת כלבנות לפיתוח צוות.\nשם: ${formData.name}\nחברה: ${formData.company}\nטלפון: ${formData.phone}\nאימייל: ${formData.email}`
                 })
             });
-            if (response.ok) { setSubmitStatus('success'); setFormData({ name: '', company: '', phone: '', email: '' }); }
+            if (response.ok) {
+                setSubmitStatus('success');
+                setFormData({ name: '', company: '', phone: '', email: '' });
+                // Track form submission
+                if (process.env.NODE_ENV !== 'development') {
+                    fetch('/api/event', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'form_submit', name: 'workshop_lead', metadata: formData.company || 'N/A' })
+                    }).catch(() => {});
+                }
+            }
             else setSubmitStatus('error');
         } catch { setSubmitStatus('error'); }
         finally { setIsSubmitting(false); setTimeout(() => setSubmitStatus(null), 5000); }
@@ -642,7 +653,17 @@ function TeamWorkshopLanding() {
                                 {!videoPlaying ? (
                                     <div
                                         className="workshop-video-thumbnail"
-                                        onClick={() => setVideoPlaying(true)}
+                                        onClick={() => {
+                                            setVideoPlaying(true);
+                                            // Track workshop video play
+                                            if (process.env.NODE_ENV !== 'development') {
+                                                fetch('/api/event', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ type: 'video_click', name: 'workshop_video', metadata: 'workshop_page' })
+                                                }).catch(() => {});
+                                            }
+                                        }}
                                         role="button"
                                         tabIndex={0}
                                         aria-label={isRTL ? 'הפעל סרטון' : 'Play video'}

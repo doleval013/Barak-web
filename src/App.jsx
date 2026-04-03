@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { LanguageProvider } from './context/LanguageContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -25,31 +25,48 @@ function App() {
 
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState('accessibility');
-  const [isCookieBannerOpen, setIsCookieBannerOpen] = useState(false);    // Track visits
+  const [isCookieBannerOpen, setIsCookieBannerOpen] = useState(false);
 
+  // --- Helper: map path to trackable page name ---
+  const getPageName = (path) => {
+    if (path === '/' || path === '') return 'home';
+    if (path === '/workshop' || path === '/teams') return 'workshop';
+    if (path === '/admin') return 'admin';
+    return path.replace(/^\//, '');
+  };
+
+  // --- Helper: parse UTM params from URL ---
+  const getUtmParams = () => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      utm_source: params.get('utm_source') || null,
+      utm_medium: params.get('utm_medium') || null,
+      utm_campaign: params.get('utm_campaign') || null,
+    };
+  };
+
+  // --- Helper: detect return visitor ---
+  const isReturningVisitor = () => {
+    const firstVisit = localStorage.getItem('barak_first_visit');
+    if (firstVisit) return true;
+    localStorage.setItem('barak_first_visit', new Date().toISOString());
+    return false;
+  };
+
+  // Track visits
   useEffect(() => {
     const trackVisit = async () => {
       try {
-        // 1. Get Today's Date Key (YYYY-MM-DD)
-        const today = new Date().toISOString().split('T')[0];
-        const storageKey = `visited_${today}`;
-        const hasVisitedToday = sessionStorage.getItem(storageKey); // Use sessionStorage to track per session for better duration tracking, or stick to localStorage but create a new visit anyway?
-        // User wants "for each visit how much time...". Usually "visit" = session.
-        // If I use localStorage, I only count 1 visit per day. That's fine for "Unique Visitors" but validation of "Duration" might require a session ID.
-        // Let's create a NEW visit entry for every session (page load) if we want to track DURATION of that session.
-        // But the previous logic was "Unique Visitors".
-        // Let's keep "Unique Visitors" logic for the "Visits" count, but maybe always create a visit ID for duration tracking?
-        // Okay, the backend creates a row in 'visits'. If I don't call it, I don't get a row.
-        // If I only call it once per day (localStorage), then I can only track duration for that ONE visit.
-        // If the user opens the page again later, no new visit row, no tracking.
-        // Compromise: Use sessionStorage. One visit per session.
-
+        // Admin exclusion: don't track if on admin page or if browser is marked as admin
         if (
           window.location.pathname.startsWith('/admin') ||
-          sessionStorage.getItem('barak_admin_token')
+          sessionStorage.getItem('barak_admin_token') ||
+          localStorage.getItem('barak_is_admin')
         ) {
-          // Verify if we should flag this user permanently as admin-visitor?
-          // For now, just don't track this session.
+          // Mark browser as admin permanently
+          if (window.location.pathname.startsWith('/admin')) {
+            localStorage.setItem('barak_is_admin', 'true');
+          }
           return;
         }
 
@@ -57,38 +74,72 @@ function App() {
 
         if (!visitId) {
           if (process.env.NODE_ENV !== 'development') {
+            const pageName = getPageName(window.location.pathname);
+            const utmParams = getUtmParams();
+            const returning = isReturningVisitor();
+
             const res = await fetch('/api/visit', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                page: 'home',
+                page: pageName,
                 language: localStorage.getItem('language') || 'he',
-                referrer: document.referrer || 'direct'
+                referrer: document.referrer || 'direct',
+                utm_source: utmParams.utm_source,
+                utm_medium: utmParams.utm_medium,
+                utm_campaign: utmParams.utm_campaign,
+                is_returning: returning,
               })
             });
             if (res.ok) {
               const data = await res.json();
-              if (data.ignored) return; // Backend ignored it
+              if (data.ignored) return;
               visitId = data.id;
               sessionStorage.setItem('current_visit_id', visitId);
-
-              // Also mark daily unique visit for local checks if needed
-              localStorage.setItem(storageKey, 'true');
+              localStorage.setItem(`visited_${new Date().toISOString().split('T')[0]}`, 'true');
             }
           }
         }
 
         if (visitId && process.env.NODE_ENV !== 'development') {
-          // Start Heartbeat
-          const interval = setInterval(() => {
+          // --- Heartbeat ---
+          const heartbeatInterval = setInterval(() => {
             fetch('/api/visit/heartbeat', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ visitId })
             }).catch(err => console.error('Heartbeat failed', err));
-          }, 30000); // Every 30 seconds
+          }, 30000);
 
-          return () => clearInterval(interval);
+          // --- Scroll Depth Tracking ---
+          const scrollMilestones = new Set();
+          const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            if (docHeight <= 0) return;
+            const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+
+            const milestones = [25, 50, 75, 100];
+            for (const milestone of milestones) {
+              if (scrollPercent >= milestone && !scrollMilestones.has(milestone)) {
+                scrollMilestones.add(milestone);
+                fetch('/api/visit/scroll', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ visitId, depth: milestone })
+                }).catch(() => {});
+              }
+            }
+          };
+
+          window.addEventListener('scroll', handleScroll, { passive: true });
+          // Fire once on load in case the page is already scrolled
+          handleScroll();
+
+          return () => {
+            clearInterval(heartbeatInterval);
+            window.removeEventListener('scroll', handleScroll);
+          };
         }
 
       } catch (err) {

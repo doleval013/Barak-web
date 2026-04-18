@@ -36,6 +36,7 @@ export default function Header() {
   const navLinks = [
     { name: t('programs'), href: '#programs' },
     { name: language === 'he' ? 'סדנאות לצוותים' : 'Team Workshops', href: '/workshop' },
+    { name: language === 'he' ? 'מוסדות חינוך' : 'Educational Institutions', href: '/gefen' },
   ];
 
   return (

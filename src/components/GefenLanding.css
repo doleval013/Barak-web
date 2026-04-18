@@ -32,18 +32,26 @@
     padding-bottom: 40px;
 }
 
+/* ============================================================
+   MOBILE GALLERY — Keep visible so images appear on mobile
+   (the split image wrappers are hidden on mobile via workshop-hide-mobile)
+   ============================================================ */
 .gefen-page .workshop-mobile-gallery {
-    display: none; /* hide extra gallery — images are inline in sections */
+    display: block;
+    padding: 24px 0;
 }
 
 /* ============================================================
    IMAGES — Use landscape aspect ratio so they don't tower
-   over shorter text content
+   over shorter text content on desktop
    ============================================================ */
 .gefen-page .workshop-split-image {
     aspect-ratio: 16 / 9;
 }
 
+/* ============================================================
+   BENEFITS SECTION — Wider image column, stretch to fill height
+   ============================================================ */
 .gefen-page .workshop-benefits-grid {
     align-items: stretch;
     grid-template-columns: 1fr 0.8fr;
@@ -62,6 +70,32 @@
     min-height: 360px;
     width: 100%;
     object-fit: cover;
+}
+
+/* On mobile, reset the benefits grid to single column */
+@media (max-width: 899px) {
+    .gefen-page .workshop-benefits-grid {
+        grid-template-columns: 1fr;
+    }
+    .gefen-page .workshop-benefits-image {
+        min-height: 220px;
+        aspect-ratio: 16/9;
+        flex: none;
+    }
+}
+
+/* ============================================================
+   AUDIENCE GRID — Max 2 columns (4 cards) feels less cramped
+   ============================================================ */
+.gefen-page .workshop-audience-new-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px;
+}
+
+@media (max-width: 480px) {
+    .gefen-page .workshop-audience-new-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
 
 /* Reduce gap between stacked images */

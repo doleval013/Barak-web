@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
 import './TeamWorkshopLanding.css';
+import './GefenLanding.css';
 import { useLanguage } from '../context/LanguageContext';
 import {
     Phone,
@@ -536,7 +537,7 @@ function GefenLanding() {
     const audiences = [t.audience_1, t.audience_2, t.audience_3, t.audience_4];
 
     return (
-        <div className="workshop-page" dir={isRTL ? 'rtl' : 'ltr'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+        <div className="workshop-page gefen-page" dir={isRTL ? 'rtl' : 'ltr'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 
             {/* ===== SCROLL PROGRESS BAR ===== */}
             <div className="workshop-scroll-progress" style={{ width: `${scrollProgress}%`, '--scroll-progress': `${scrollProgress}%` }} />

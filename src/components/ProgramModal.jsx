@@ -75,7 +75,8 @@ export default function ProgramModal({ isOpen, onClose }) {
                                             t('program_goal_2'),
                                             t('program_goal_3'),
                                             t('program_goal_4'),
-                                            t('program_goal_5')
+                                            t('program_goal_5'),
+                                            t('program_goal_6')
                                         ].map((goal, i) => (
                                             <li key={i} className="flex items-start gap-3">
                                                 <CheckCircle2 size={18} className="text-blue-500 shrink-0 mt-0.5" />

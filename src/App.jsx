@@ -12,6 +12,7 @@ import AccessibilityWidget from './components/AccessibilityWidget';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 import AdminDashboard from './components/AdminDashboard';
 import TeamWorkshopLanding from './components/TeamWorkshopLanding';
+import GefenLanding from './components/GefenLanding';
 
 function App() {
   // Simple Routing
@@ -31,6 +32,7 @@ function App() {
   const getPageName = (path) => {
     if (path === '/' || path === '') return 'home';
     if (path === '/workshop' || path === '/teams') return 'workshop';
+    if (path === '/gefen') return 'gefen';
     if (path === '/admin') return 'admin';
     return path.replace(/^\//, '');
   };
@@ -178,6 +180,16 @@ function App() {
     return (
       <LanguageProvider>
         <TeamWorkshopLanding />
+        <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
+      </LanguageProvider>
+    );
+  }
+
+  // Route: Gefen Landing Page
+  if (currentPath === '/gefen') {
+    return (
+      <LanguageProvider>
+        <GefenLanding />
         <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
       </LanguageProvider>
     );

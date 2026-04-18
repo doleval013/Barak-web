@@ -20,7 +20,7 @@ export default function Programs() {
             icon: School,
             content: t('program_education_content'),
             video: 'https://www.youtube.com/embed/HC4Sm4KhXlU?autoplay=1&rel=0',
-            hasModal: true
+            programLink: '/gefen'
         },
         {
             id: 'events',
@@ -218,15 +218,15 @@ export default function Programs() {
                                             </button>
                                         )}
 
-                                        {program.workshopLink && (
+                                        {(program.workshopLink || program.programLink) && (
                                             <button
                                                 onClick={() => {
                                                     fetch('/api/event', {
                                                         method: 'POST',
                                                         headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({ type: 'program_view', name: 'workshop_link', metadata: t(program.title) })
+                                                        body: JSON.stringify({ type: 'program_view', name: 'program_link', metadata: t(program.title) })
                                                     }).catch(console.error);
-                                                    window.location.href = program.workshopLink;
+                                                    window.location.href = program.workshopLink || program.programLink;
                                                 }}
                                                 className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                             >

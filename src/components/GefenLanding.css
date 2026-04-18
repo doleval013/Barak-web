@@ -1,0 +1,92 @@
+/* GefenLanding.css — Layout overrides to eliminate blank spaces */
+
+/* ============================================================
+   SECTION PADDING - Cut in half across all sections
+   ============================================================ */
+.gefen-page .workshop-intro {
+    padding: 40px 0;
+}
+
+.gefen-page .workshop-practice {
+    padding: 40px 0;
+}
+
+.gefen-page .workshop-why-dogs {
+    padding: 40px 0;
+}
+
+.gefen-page .workshop-benefits {
+    padding: 40px 0;
+}
+
+.gefen-page .workshop-audience-new {
+    padding: 40px 0;
+}
+
+.gefen-page .workshop-contact {
+    padding: 56px 0;
+}
+
+.gefen-page .workshop-video-section {
+    padding-top: 16px;
+    padding-bottom: 40px;
+}
+
+.gefen-page .workshop-mobile-gallery {
+    display: none; /* hide extra gallery — images are inline in sections */
+}
+
+/* ============================================================
+   IMAGES — Use landscape aspect ratio so they don't tower
+   over shorter text content
+   ============================================================ */
+.gefen-page .workshop-split-image {
+    aspect-ratio: 16 / 9;
+}
+
+.gefen-page .workshop-benefits-grid {
+    align-items: stretch;
+    grid-template-columns: 1fr 0.8fr;
+}
+
+.gefen-page .workshop-benefits-image-wrapper {
+    position: static;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+}
+
+.gefen-page .workshop-benefits-image {
+    aspect-ratio: unset;
+    flex: 1;
+    min-height: 360px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Reduce gap between stacked images */
+.gefen-page .workshop-stack-scroller {
+    gap: 16px;
+}
+
+/* ============================================================
+   SECTION HEADERS - Tighten
+   ============================================================ */
+.gefen-page .workshop-practice-header {
+    margin-bottom: 28px;
+}
+
+/* Tighten the full-width experiential content block in why-dogs */
+.gefen-page .workshop-fullwidth-content {
+    margin-top: 32px !important;
+}
+
+/* Reduce intro highlight vertical margins */
+.gefen-page .workshop-intro-highlight {
+    margin: 16px 0;
+}
+
+/* Reduce principles block margin */
+.gefen-page .workshop-principles {
+    margin: 24px 0;
+}

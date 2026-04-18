@@ -1,0 +1,1154 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Logo from './Logo';
+import './TeamWorkshopLanding.css';
+import './GefenLanding.css';
+import { useLanguage } from '../context/LanguageContext';
+import {
+    Phone,
+    Mail,
+    User,
+    Send,
+    Building2,
+    Globe,
+    ArrowLeft,
+    ArrowRight,
+    ChevronLeft,
+    ChevronRight,
+    ChevronDown,
+    X,
+    Play
+} from 'lucide-react';
+import FloatingWhatsApp from './FloatingWhatsApp';
+import imgFeed from '../assets/schools/kid-feed-jessie.jpg';
+import imgGate from '../assets/schools/jessie-petted.jpg';
+import imgHighfive from '../assets/schools/jessie-and-soccor.jpg';
+import imgRelax from '../assets/schools/jessie-petted-zoomin.jpg';
+import imgRelax2 from '../assets/schools/girl-feed-jessie.jpg';
+import imgStare from '../assets/schools/jessie-kid-stare.jpg';
+import imgCube from '../assets/schools/jessie-cube-kid.jpg';
+
+const GALLERY_IMAGES = [
+    { src: imgHighfive, alt: 'High five connection' },
+    { src: imgFeed, alt: 'Training with treats' },
+    { src: imgRelax2, alt: 'Workshop interaction' },
+    { src: imgRelax, alt: 'Relaxed engagement' },
+    { src: imgStare, alt: 'Focus and connection' },
+    { src: imgCube, alt: 'Playful learning' },
+];
+
+/* ============================================================
+   MOBILE SLIDER COMPONENT (infinite-loop with clones)
+   ============================================================ */
+const MobileSlider = ({ children }) => {
+    const scrollRef = useRef(null);
+    const [isHovered, setIsHovered] = useState(false);
+    const childArray = React.Children.toArray(children);
+    const count = childArray.length;
+    const currentIndex = useRef(1); // index inside extended array (0 = clone-last, 1..count = real, count+1 = clone-first)
+    const isTransitioning = useRef(false);
+    const autoTimerRef = useRef(null);
+
+    // Reset auto-scroll timer (call after any user interaction)
+    const resetAutoTimer = () => {
+        clearTimeout(autoTimerRef.current);
+        autoTimerRef.current = null;
+    };
+
+    // Build extended slides: [clone_last, ...real slides, clone_first]
+    const slides = count > 1
+        ? [
+            React.cloneElement(childArray[count - 1], {
+                key: 'clone-start',
+                className: (childArray[count - 1].props.className || '') + ' workshop-slider-clone'
+            }),
+            ...childArray,
+            React.cloneElement(childArray[0], {
+                key: 'clone-end',
+                className: (childArray[0].props.className || '') + ' workshop-slider-clone'
+            }),
+        ]
+        : childArray;
+
+    // Scroll the container so that the slide at `idx` is fully in view
+    const scrollToIdx = (idx, behavior = 'smooth') => {
+        const scroller = scrollRef.current;
+        if (!scroller) return;
+        const w = scroller.clientWidth;
+        const isRTL = getComputedStyle(scroller).direction === 'rtl';
+        scroller.scrollTo({ left: isRTL ? -(w * idx) : w * idx, behavior });
+    };
+
+    // On mount (and resize) position the scroller at the first real slide
+    useEffect(() => {
+        if (count <= 1) return;
+        const init = () => {
+            const scroller = scrollRef.current;
+            if (!scroller || window.innerWidth > 899) return;
+            scroller.style.scrollSnapType = 'none';
+            scrollToIdx(1, 'instant');
+            currentIndex.current = 1;
+            requestAnimationFrame(() => { if (scroller) scroller.style.scrollSnapType = ''; });
+        };
+        setTimeout(init, 100);
+        window.addEventListener('resize', init);
+        return () => window.removeEventListener('resize', init);
+    }, [count]);
+
+    // If the user manually swipes onto a clone, jump back to the real slide
+    useEffect(() => {
+        const scroller = scrollRef.current;
+        if (!scroller || count <= 1) return;
+        let timeout;
+        const onScroll = () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (isTransitioning.current) return;
+                const w = scroller.clientWidth;
+                if (w === 0) return;
+                const idx = Math.round(Math.abs(scroller.scrollLeft) / w);
+                if (idx <= 0) {
+                    scroller.style.scrollSnapType = 'none';
+                    scrollToIdx(count, 'instant');
+                    currentIndex.current = count;
+                    requestAnimationFrame(() => { scroller.style.scrollSnapType = ''; });
+                } else if (idx >= count + 1) {
+                    scroller.style.scrollSnapType = 'none';
+                    scrollToIdx(1, 'instant');
+                    currentIndex.current = 1;
+                    requestAnimationFrame(() => { scroller.style.scrollSnapType = ''; });
+                } else {
+                    currentIndex.current = idx;
+                }
+            }, 120);
+        };
+        scroller.addEventListener('scroll', onScroll);
+        return () => { scroller.removeEventListener('scroll', onScroll); clearTimeout(timeout); };
+    }, [count]);
+
+    const scrollNext = () => {
+        const scroller = scrollRef.current;
+        if (!scroller || isTransitioning.current || count <= 1) return;
+        resetAutoTimer();
+        const next = currentIndex.current + 1;
+        if (next > count) {
+            // Wrap forward: animate to clone-first, then jump to real first
+            isTransitioning.current = true;
+            scroller.style.scrollSnapType = 'none';
+            scrollToIdx(count + 1, 'smooth');
+            currentIndex.current = count + 1;
+            setTimeout(() => {
+                scrollToIdx(1, 'instant');
+                currentIndex.current = 1;
+                requestAnimationFrame(() => {
+                    if (scroller) scroller.style.scrollSnapType = '';
+                    isTransitioning.current = false;
+                });
+            }, 420);
+        } else {
+            currentIndex.current = next;
+            scrollToIdx(next, 'smooth');
+        }
+    };
+
+    const scrollPrev = () => {
+        const scroller = scrollRef.current;
+        if (!scroller || isTransitioning.current || count <= 1) return;
+        resetAutoTimer();
+        const prev = currentIndex.current - 1;
+        if (prev < 1) {
+            // Wrap backward: animate to clone-last, then jump to real last
+            isTransitioning.current = true;
+            scroller.style.scrollSnapType = 'none';
+            scrollToIdx(0, 'smooth');
+            currentIndex.current = 0;
+            setTimeout(() => {
+                scrollToIdx(count, 'instant');
+                currentIndex.current = count;
+                requestAnimationFrame(() => {
+                    if (scroller) scroller.style.scrollSnapType = '';
+                    isTransitioning.current = false;
+                });
+            }, 420);
+        } else {
+            currentIndex.current = prev;
+            scrollToIdx(prev, 'smooth');
+        }
+    };
+
+    // Auto-scroll: self-resetting timeout, restarts 4s after any slide action
+    useEffect(() => {
+        const scheduleNext = () => {
+            clearTimeout(autoTimerRef.current);
+            autoTimerRef.current = setTimeout(() => {
+                if (window.innerWidth <= 899 && !isHovered) {
+                    scrollNext();
+                }
+                scheduleNext();
+            }, 4000);
+        };
+        scheduleNext();
+        return () => clearTimeout(autoTimerRef.current);
+    }, [isHovered, count]);
+
+    return (
+        <div className="workshop-slider-wrapper">
+            <button
+                className="workshop-slider-arrow workshop-slider-arrow--prev"
+                onClick={scrollPrev}
+                aria-label="Previous image"
+            >
+                <ArrowLeft size={24} />
+            </button>
+            <div
+                className="workshop-stack-scroller"
+                ref={scrollRef}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onTouchStart={() => { setIsHovered(true); resetAutoTimer(); }}
+                onTouchEnd={() => { resetAutoTimer(); setTimeout(() => setIsHovered(false), 3000); }}
+            >
+                {slides}
+            </div>
+            <button
+                className="workshop-slider-arrow workshop-slider-arrow--next"
+                onClick={scrollNext}
+                aria-label="Next image"
+            >
+                <ArrowRight size={24} />
+            </button>
+        </div>
+    );
+};
+
+/* ============================================================
+   TRANSLATIONS
+   ============================================================ */
+const translations = {
+    he: {
+        back: 'חזרה',
+        hero_title_1: 'תוכנית גפ"ן /',
+        hero_title_highlight: ' מוסדות חינוך',
+        hero_subtitle: 'אילוף כלבים טיפולי המשמש כמראה לחיים עצמם',
+        hero_description: 'התוכנית שלנו מאושרת גפ"ן ומעניקה כלים משמעותיים וישימים לילדים ובני נוער דרך עבודה חינוכית ומרתקת עם כלבים.',
+        cta_check: 'לבדיקת התאמה למוסד',
+
+        intro_text_1: 'התוכנית מציעה סביבה טיפולית מעשית - שילוב של כלים להתמודדות עם אתגרים שיכולים להיות מיושמים באופן מיידי בחיי התלמידים.',
+        intro_highlight: 'הכלב מקבל כל אחד כמו שהוא -',
+        intro_text_2: 'סביבה בטוחה בזמן אמת בה התלמידים מתנסים ומתחזקים.',
+        intro_text_3: 'שילוב של חוויה שוברת שגרה המעודדת תקשורת ברורה וגיבוש חברתי תוך זמן קצר.',
+
+        practice_title: 'מטרות התוכנית',
+        practice_1_title: 'העצמה אישית וקבוצתית',
+        practice_1_desc: 'דרך העבודה החווייתית, בה הכלבים משמשים כמראה לחיים עצמם, התלמידים מפתחים תחושת מסוגלות ולומדים עבודת צוות.',
+        practice_2_title: 'קבלת האחר וקבלה עצמית',
+        practice_2_desc: 'הכלב מקבל כל תלמיד ללא תנאי, מה שמאפשר לתלמידים ללמוד לקבל את עצמם ואת השונים מהם בסביבה תומכת.',
+        practice_3_title: 'גיבוש שיח חברתי ופיתוח כישורי חיים',
+        practice_3_desc: 'התוכנית מקנה מיומנויות חשובות כמו סבלנות, תקשורת ברורה, הצבת גבולות ואחריות אישית בסביבת בית הספר ומחוצה לה.',
+        practice_4_title: 'התמודדות עם פחדים ומחסומים',
+        practice_4_desc: 'המפגש ההדרגתי מעניק חוויה בטוחה המאפשרת יכולת התמודדות והצלחה עם פחדים שמקבלת ביטוי גם בתחומי חיים אחרים.',
+
+        why_dogs_title: 'למה דווקא כלבים בחינוך?',
+        why_dogs_text_1: 'השילוב של כלבים אינו רק אלמנט בידורי - זהו מנגנון חינוכי היוצר תוצאות ברורות. כלב מגיב באופן טיפוסי לבהירות, ליציבות ולתקשורת איכותית.',
+        why_dogs_text_2: 'כאשר ההנחיה ברורה - מתקבלת תוצאה. כאשר המסר מבלבל - אין פעולה מדויקת מול הכלב.',
+        why_dogs_text_3: 'משוב מיידי זה נותן לתלמידים אפשרות לראות בלייב את אופן הפעולה שלהם, וכיצד היא משפיעה על סביבתם.',
+        why_dogs_principles_title: 'היעדים והערכים בתוכנית זהים לחיי הכיתה:',
+        why_dogs_principle_1: 'יצירת סביבה חינוכית בטוחה.',
+        why_dogs_principle_2: 'דיונים ללא שיפוטיות.',
+        why_dogs_principle_3: 'הבעת דעה ללא חשש.',
+        why_dogs_principle_4: 'לקיחת אחריות אישית (מוסר ואמפתיה).',
+        why_dogs_experiential_1: 'הלמידה החווייתית מעלה את המעורבות של כלל התלמידים, גם המופנמים שבהם, ומייצרת פתיחות מדהימה.',
+        why_dogs_experiential_2: 'האינטראקציה חסרת השיפוטיות מאפשרת לתלמידים לתרגל מיומנויות חברתיות בדרך נגישה שמתרכזת בתוצאה.',
+        why_dogs_result_title: 'התוצאה:',
+        why_dogs_result_1: 'גיבוש חברתי וקשרים חיוביים.',
+        why_dogs_result_2: 'העלאת הבטחון העצמי.',
+        why_dogs_result_3: 'שיפור ביכולת האמפתיה המשותפת.',
+        why_dogs_result_4: 'למידת ערכי עזרה הדדית וכבוד בעלי חיים.',
+
+        benefits_title: 'קהל יעד ומאפיינים',
+        benefit_1: 'תלמידים ולומדים מכתה א׳ עד יב׳',
+        benefit_2: 'מותאם למגוון אוכלוסיות',
+        benefit_3: 'ילדי החינוך המיוחד',
+        benefit_4: 'נוער בסיכון ולקויות למידה',
+        benefit_5: 'נוער עולה',
+        benefit_6: 'קבוצות הומוגניות וקבועות לצורך יצירת אמון.',
+
+        audience_title: 'פרטים טכניים',
+        audience_1: 'גודל קבוצה מומלץ: 6-8 תלמידים יחד',
+        audience_2: 'דרישות בסיס: כיתת לימוד קבועה',
+        audience_3: 'ליווי נדרש: רכזת/יועצת חינוכית',
+        audience_4: 'תקשורת אישית ישירה עם צוות ההוראה',
+
+        contact_title: 'רוצים לבדוק התאמה למוסד החינוכי?',
+        contact_subtitle: 'השאירו פרטים ונחזור אליכם לשיחה קצרה.',
+        form_name: 'שם מלא (נציג המוסד)',
+        form_company: 'שם המוסד / ביה"ס',
+        form_phone: 'טלפון',
+        form_email: 'אימייל',
+        form_submit: 'שליחה',
+        form_sending: 'שולח...',
+        error_phone: 'מספר הטלפון אינו תקין.',
+        success_msg: '✓ הפרטים נשלחו בהצלחה! נחזור אליכם בהקדם.',
+        error_msg: 'אירעה שגיאה. אנא נסו שוב.',
+        footer_text: '© 2026 ברק אלוני - סדנאות אילוף וגפ"ן',
+
+        toc_title: 'בעמוד זה',
+        toc_hero: 'סקירה כללית',
+        toc_video: 'סרטון הדגמה',
+        toc_intro: 'אודות',
+        toc_practice: 'מטרות שנתרגל',
+        toc_why_dogs: 'למה כלבים?',
+        toc_benefits: 'קהל היעד',
+        toc_audience: 'פרטים טכניים',
+        toc_contact: 'יצירת קשר'
+    },
+    en: {
+        back: 'Back',
+        hero_title_1: 'Gefen Program /',
+        hero_title_highlight: ' Educational Institutions',
+        hero_subtitle: 'Therapeutic dog training operating as a mirror to life',
+        hero_description: 'An approved educational program giving youth crucial tools through engaging work with dogs.',
+        cta_check: 'Check Suitability',
+
+        intro_text_1: 'The program offers an experiential environment - applying tools for challenges in real time.',
+        intro_highlight: 'The dog unconditionally accepts -',
+        intro_text_2: 'Creating a safe, non-judgmental space for students to experiment and grow.',
+        intro_text_3: 'Breaking routines encourages clear communication and rapid social bonding.',
+
+        practice_title: 'Program Goals',
+        practice_1_title: 'Personal & Group Empowerment',
+        practice_1_desc: 'Through experiential work, dogs act as a mirror to life itself as students learn teamwork.',
+        practice_2_title: 'Acceptance',
+        practice_2_desc: 'Unconditional acceptance allows students to accept themselves and others.',
+        practice_3_title: 'Bonding & Life Skills',
+        practice_3_desc: 'Teaching crucial skills like patience, boundaries, and responsibility outside the classroom.',
+        practice_4_title: 'Overcoming Fears',
+        practice_4_desc: 'Safe encounters allow students to confront barriers and succeed.',
+
+        why_dogs_title: 'Why Dogs in Education?',
+        why_dogs_text_1: 'Dogs respond natively to clear leadership and consistency.',
+        why_dogs_text_2: 'When instruction is clear - the result is positive.',
+        why_dogs_text_3: 'Real-time feedback demonstrates to students their direct impact on their environment.',
+        why_dogs_principles_title: 'Principles match classroom dynamics:',
+        why_dogs_principle_1: 'Creating safe environments.',
+        why_dogs_principle_2: 'Non-judgmental discussions.',
+        why_dogs_principle_3: 'Fearless expression.',
+        why_dogs_principle_4: 'Personal responsibility.',
+        why_dogs_experiential_1: 'Increases all students’ involvement.',
+        why_dogs_experiential_2: 'Allows practicing complex abilities effortlessly.',
+        why_dogs_result_title: 'The Result:',
+        why_dogs_result_1: 'Social cohesion.',
+        why_dogs_result_2: 'Increased self-confidence.',
+        why_dogs_result_3: 'Expanded empathy.',
+        why_dogs_result_4: 'Respect towards life.',
+
+        benefits_title: 'Target Audience',
+        benefit_1: 'Grades 1 through 12',
+        benefit_2: 'Adapted for all populations',
+        benefit_3: 'Special Needs',
+        benefit_4: 'At-risk Youth',
+        benefit_5: 'New immigrants',
+        benefit_6: 'Fixed, consistent group environments',
+
+        audience_title: 'Technical Details',
+        audience_1: 'Groups of 6-8',
+        audience_2: 'Consistent environment requirement',
+        audience_3: 'Guided securely',
+        audience_4: 'Transparent team communication',
+
+        contact_title: 'Want School Integration?',
+        contact_subtitle: 'Reach out to check compatibility.',
+        form_name: 'Name',
+        form_company: 'School',
+        form_phone: 'Phone',
+        form_email: 'Email',
+        form_submit: 'Submit',
+        form_sending: 'Sending...',
+        error_phone: 'Invalid phone',
+        success_msg: '✓ Details sent!',
+        error_msg: 'Error sending.',
+        footer_text: '© 2026 Barak Aloni',
+
+        toc_title: 'In This Page',
+        toc_hero: 'Overview',
+        toc_video: 'Video',
+        toc_intro: 'About',
+        toc_practice: 'Goals',
+        toc_why_dogs: 'Why Dogs',
+        toc_benefits: 'Audience',
+        toc_audience: 'Requirements',
+        toc_contact: 'Contact'
+    }
+};
+
+/* ============================================================
+   MAIN COMPONENT
+   ============================================================ */
+function GefenLanding() {
+    const { language, toggleLanguage } = useLanguage();
+    const isRTL = language === 'he';
+    const t = translations[language];
+    const ArrowBack = isRTL ? ArrowRight : ArrowLeft;
+    const ArrowNext = isRTL ? ArrowLeft : ArrowRight;
+
+    const [formData, setFormData] = useState({ name: '', company: '', phone: '', email: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState(null);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+    const [videoPlaying, setVideoPlaying] = useState(false);
+    const lightboxTouchStart = useRef(null);
+
+    // Scroll progress & active section tracking
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [activeSection, setActiveSection] = useState('hero');
+    const [tocOpen, setTocOpen] = useState(window.innerWidth >= 1750);
+    const tocRef = useRef(null);
+
+    const tocSections = [
+        { id: 'hero', label: t.toc_hero },
+        { id: 'video', label: t.toc_video },
+        { id: 'intro', label: t.toc_intro },
+        { id: 'practice', label: t.toc_practice },
+        { id: 'why-dogs', label: t.toc_why_dogs },
+        { id: 'benefits', label: t.toc_benefits },
+        { id: 'audience', label: t.toc_audience },
+        { id: 'contact', label: t.toc_contact },
+    ];
+
+    useEffect(() => {
+        const handleScroll = () => {
+            // Progress bar
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            setScrollProgress(Math.min(100, Math.max(0, progress)));
+
+            // Active section detection
+            const sectionIds = tocSections.map(s => s.id);
+            let current = sectionIds[0];
+            for (const id of sectionIds) {
+                const el = document.getElementById(id);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top <= 150) {
+                        current = id;
+                    }
+                }
+            }
+            setActiveSection(current);
+
+            // Smoothly unpin TOC before the contact section
+            const contactEl = document.getElementById('contact');
+            const tocEl = tocRef.current;
+            if (contactEl && tocEl && window.innerWidth >= 1280) {
+                const tocHeight = tocEl.offsetHeight;
+                // The point (in scroll px) where fixed TOC bottom would touch contact top
+                const contactOffsetTop = contactEl.getBoundingClientRect().top + scrollTop;
+                const stopScroll = contactOffsetTop - 120 - tocHeight - 24;
+
+                if (scrollTop > stopScroll) {
+                    tocEl.style.position = 'absolute';
+                    tocEl.style.top = `${stopScroll + 120}px`;
+                } else {
+                    tocEl.style.position = '';
+                    tocEl.style.top = '';
+                }
+            }
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (selectedImageIndex === null) return;
+            if (e.key === 'Escape') setSelectedImageIndex(null);
+            if (e.key === 'ArrowLeft') setSelectedImageIndex(prev => (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
+            if (e.key === 'ArrowRight') setSelectedImageIndex(prev => (prev + 1) % GALLERY_IMAGES.length);
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [selectedImageIndex]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (submitStatus === 'invalid_phone' && name === 'phone') setSubmitStatus(null);
+        if (name === 'phone') {
+            setFormData(prev => ({ ...prev, [name]: value.replace(/\D/g, '') }));
+            return;
+        }
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const validatePhone = (phone) => /^0\d{8,9}$/.test(phone);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validatePhone(formData.phone)) { setSubmitStatus('invalid_phone'); return; }
+        setIsSubmitting(true);
+        setSubmitStatus(null);
+        try {
+            const response = await fetch('https://formspree.io/f/mdkqdljn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...formData,
+                    _subject: 'מתעניין בתוכנית גפ"ן',
+                    message: `מתעניין בסדנת כלבנות לפיתוח צוות.\nשם: ${formData.name}\nחברה: ${formData.company}\nטלפון: ${formData.phone}\nאימייל: ${formData.email}`
+                })
+            });
+            if (response.ok) {
+                setSubmitStatus('success');
+                setFormData({ name: '', company: '', phone: '', email: '' });
+                // Track form submission
+                if (process.env.NODE_ENV !== 'development') {
+                    fetch('/api/event', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'form_submit', name: 'gefen_lead', metadata: formData.company || 'N/A' })
+                    }).catch(() => {});
+                }
+            }
+            else setSubmitStatus('error');
+        } catch { setSubmitStatus('error'); }
+        finally { setIsSubmitting(false); setTimeout(() => setSubmitStatus(null), 5000); }
+    };
+
+    // Animation variants
+    const fadeUp = {
+        hidden: { opacity: 0, y: 40, filter: 'blur(8px)' },
+        visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] } }
+    };
+    const stagger = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.1 } }
+    };
+
+    const practiceItems = [
+        { title: t.practice_1_title, desc: t.practice_1_desc },
+        { title: t.practice_2_title, desc: t.practice_2_desc },
+        { title: t.practice_3_title, desc: t.practice_3_desc },
+        { title: t.practice_4_title, desc: t.practice_4_desc }
+    ];
+
+    const benefits = [t.benefit_1, t.benefit_2, t.benefit_3, t.benefit_4, t.benefit_5, t.benefit_6];
+
+    const audiences = [t.audience_1, t.audience_2, t.audience_3, t.audience_4];
+
+    return (
+        <div className="workshop-page gefen-page" dir={isRTL ? 'rtl' : 'ltr'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+
+            {/* ===== SCROLL PROGRESS BAR ===== */}
+            <div className="workshop-scroll-progress" style={{ width: `${scrollProgress}%`, '--scroll-progress': `${scrollProgress}%` }} />
+
+            {/* ===== MOBILE TOC BACKDROP ===== */}
+            <div
+                className={`workshop-toc-backdrop${tocOpen ? '' : ' workshop-toc-backdrop--hidden'}`}
+                onClick={() => setTocOpen(false)}
+            />
+
+            {/* ===== TABLE OF CONTENTS SIDEBAR ===== */}
+            <nav
+                ref={tocRef}
+                className={`workshop-toc${tocOpen ? '' : ' workshop-toc--hidden'}`}
+            >
+                <button
+                    className="workshop-toc-toggle"
+                    onClick={() => setTocOpen(false)}
+                    aria-label="Hide menu"
+                >
+                    {isRTL ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+                </button>
+                <div className="workshop-toc-title">{t.toc_title}</div>
+                <div className="workshop-toc-divider" />
+                <ul className="workshop-toc-list">
+                    {tocSections.map((section) => (
+                        <li key={section.id}>
+                            <a
+                                href={`#${section.id}`}
+                                className={`workshop-toc-link${activeSection === section.id ? ' workshop-toc-link--active' : ''}`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const el = document.getElementById(section.id);
+                                    if (el) {
+                                        const y = el.getBoundingClientRect().top + window.scrollY - 90;
+                                        window.scrollTo({ top: y, behavior: 'smooth' });
+                                    }
+                                    if (window.innerWidth < 768) setTocOpen(false);
+                                }}
+                            >
+                                {section.label}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+
+            {/* ===== TOC BRING-BACK TAB ===== */}
+            {!tocOpen && (
+                <button
+                    className="workshop-toc-show-btn"
+                    onClick={() => setTocOpen(true)}
+                    aria-label="Show menu"
+                >
+                    <span className="workshop-toc-show-icon-desktop">{isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
+                    <span className="workshop-toc-show-icon-mobile"><ChevronRight size={18} /></span>
+                </button>
+            )}
+
+            {/* ===== NAVIGATION ===== */}
+            <nav className="workshop-nav">
+                <div className="workshop-nav-container">
+                    <Logo href="/" />
+                    <div className="workshop-nav-controls">
+                        <button onClick={toggleLanguage} className="workshop-lang-btn">
+                            <Globe size={20} />
+                            <span>{language === 'he' ? 'EN' : 'עב'}</span>
+                        </button>
+                        <a href="/" className="workshop-back-link">
+                            <ArrowBack />
+                            <span>{t.back}</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            {/* ===== HERO SECTION ===== */}
+            <section id="hero" className="workshop-hero" style={{ backgroundImage: `url(${imgGate})`, backgroundSize: "cover", backgroundPosition: "center 30%" }}>
+                <div className="workshop-hero-overlay" />
+                <div className="workshop-hero-content workshop-hero-content--centered">
+                    <motion.div initial="hidden" animate="visible" variants={stagger} className="workshop-hero-text">
+                        <motion.h1 variants={fadeUp} className="workshop-hero-title">
+                            {t.hero_title_1}
+                            <span className="workshop-hero-title-highlight">{t.hero_title_highlight}</span>
+                        </motion.h1>
+                        <motion.p variants={fadeUp} className="workshop-hero-subtitle">
+                            {t.hero_subtitle}
+                        </motion.p>
+                        <motion.p variants={fadeUp} className="workshop-hero-description">
+                            {t.hero_description}
+                        </motion.p>
+                        <motion.div variants={fadeUp} className="workshop-cta-desktop" style={{ justifyContent: 'center' }}>
+                            <a href="#contact" className="workshop-cta-btn">
+                                <span>{t.cta_check}</span>
+                                <ArrowNext />
+                            </a>
+                        </motion.div>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* ===== VIDEO SECTION ===== */}
+            <section id="video" className="workshop-video-section">
+                {/* Decorative background elements */}
+                <div className="workshop-video-bg-glow workshop-video-bg-glow--1" />
+                <div className="workshop-video-bg-glow workshop-video-bg-glow--2" />
+
+                <div className="workshop-split-container">
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-50px' }}
+                        transition={{ duration: 0.8, delay: 0.15 }}
+                        className="workshop-standalone-video"
+                    >
+                        <div className="workshop-video-container">
+                            <div className="workshop-video-frame">
+                                {!videoPlaying ? (
+                                    <div
+                                        className="workshop-video-thumbnail"
+                                        onClick={() => {
+                                            setVideoPlaying(true);
+                                            // Track workshop video play
+                                            if (process.env.NODE_ENV !== 'development') {
+                                                fetch('/api/event', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ type: 'video_click', name: 'workshop_video', metadata: 'workshop_page' })
+                                                }).catch(() => {});
+                                            }
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label={isRTL ? 'הפעל סרטון' : 'Play video'}
+                                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setVideoPlaying(true); }}
+                                    >
+                                        <img
+                                            src="https://img.youtube.com/vi/HC4Sm4KhXlU/maxresdefault.jpg"
+                                            alt={isRTL ? 'סדנת כלבנות לצוותים' : 'Dog training workshop for teams'}
+                                            className="workshop-video-thumb-img"
+                                            loading="eager"
+                                        />
+                                        <div className="workshop-video-overlay" />
+                                        <motion.button
+                                            className="workshop-video-play-btn"
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            aria-label={isRTL ? 'הפעל סרטון' : 'Play video'}
+                                        >
+                                            <Play size={32} fill="white" strokeWidth={0} />
+                                        </motion.button>
+                                    </div>
+                                ) : (
+                                    <iframe
+                                        src="https://www.youtube.com/embed/HC4Sm4KhXlU?rel=0&autoplay=1&modestbranding=1"
+                                        title={isRTL ? 'סדנת כלבנות לצוותים' : 'Dog training workshop for teams'}
+                                        className="workshop-video-iframe"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* ===== INTRO SECTION (Image on Left in RTL, Right in LTR) ===== */}
+            <section id="intro" className="workshop-intro">
+                <div className="workshop-split-container">
+                    <div className="workshop-split-grid">
+                        <motion.div
+                            initial="hidden" whileInView="visible"
+                            viewport={{ once: true, margin: '-80px' }}
+                            variants={stagger}
+                            className="workshop-intro-content"
+                        >
+                            <motion.p variants={fadeUp} className="workshop-intro-text">
+                                {t.intro_text_1}
+                            </motion.p>
+                            <motion.h2 variants={fadeUp} className="workshop-intro-highlight" style={{ fontSize: '1.25rem' }}>
+                                {t.intro_highlight}
+                                <span style={{ fontWeight: 400, color: 'var(--tw-color-slate-600)' }}> {t.intro_text_2}</span>
+                            </motion.h2>
+                            <motion.p variants={fadeUp} className="workshop-intro-text workshop-intro-text--accent">
+                                {t.intro_text_3}
+                            </motion.p>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.8 }}
+                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack workshop-hide-mobile"
+                        >
+                            <MobileSlider>
+                                <img
+                                    src={imgHighfive}
+                                    alt="High five connection"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => setSelectedImageIndex(0)}
+                                />
+                                <img
+                                    src={imgStare}
+                                    alt="Focus and connection"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => setSelectedImageIndex(4)}
+                                />
+                            </MobileSlider>
+                            <div className="workshop-split-image-decoration"></div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ===== PRACTICE SECTION (6 items with polygon art) ===== */}
+            <section id="practice" className="workshop-practice">
+                <div className="workshop-practice-container">
+                    <motion.div
+                        initial="hidden" whileInView="visible"
+                        viewport={{ once: true, margin: '-80px' }}
+                        variants={stagger}
+                        className="workshop-practice-header"
+                    >
+                        <motion.div variants={fadeUp} className="workshop-section-divider" />
+                        <motion.h2 variants={fadeUp} className="workshop-practice-title">
+                            {t.practice_title}
+                        </motion.h2>
+                    </motion.div>
+
+                    <motion.div
+                        initial="hidden" whileInView="visible"
+                        viewport={{ once: true, margin: '-50px' }}
+                        variants={stagger}
+                        className="workshop-practice-grid"
+                    >
+                        {practiceItems.map((item, i) => (
+                            <motion.div
+                                key={i}
+                                variants={fadeUp}
+                                whileHover={{ y: -3, transition: { duration: 0.25 } }}
+                                className="workshop-practice-card"
+                            >
+                                <h3 className="workshop-practice-card-title">{item.title}</h3>
+                                <p className="workshop-practice-card-desc">{item.desc}</p>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* ===== WHY DOGS SECTION ===== */}
+            <section id="why-dogs" className="workshop-why-dogs">
+                <div className="workshop-split-container">
+                    <div className="workshop-split-grid">
+                        <motion.div
+                            initial="hidden" whileInView="visible"
+                            viewport={{ once: true, margin: '-80px' }}
+                            variants={stagger}
+                        >
+                            <motion.div variants={fadeUp} className="workshop-section-divider" />
+                            <motion.h2 variants={fadeUp} className="workshop-why-dogs-title">
+                                {t.why_dogs_title}
+                            </motion.h2>
+                            <motion.p variants={fadeUp} className="workshop-why-dogs-lead">
+                                {t.why_dogs_text_1}
+                            </motion.p>
+
+                            <motion.p variants={fadeUp} className="workshop-why-dogs-text">
+                                {t.why_dogs_text_2}
+                            </motion.p>
+                            <motion.p variants={fadeUp} className="workshop-why-dogs-text workshop-why-dogs-text--strong">
+                                {t.why_dogs_text_3}
+                            </motion.p>
+
+                            {/* Principles */}
+                            <motion.div variants={fadeUp} className="workshop-principles">
+                                <h3 className="workshop-principles-title">{t.why_dogs_principles_title}</h3>
+                                <div className="workshop-principles-grid">
+                                    {[t.why_dogs_principle_1, t.why_dogs_principle_2, t.why_dogs_principle_3, t.why_dogs_principle_4].map((p, i) => (
+                                        <motion.div
+                                            key={i}
+                                            className="workshop-principle-item"
+                                            initial={{ opacity: 0, x: isRTL ? 30 : -30 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.15, duration: 0.5 }}
+                                        >
+                                            <div className="workshop-principle-marker" />
+                                            <span>{p}</span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </motion.div>
+
+                        {/* Why Dogs Image Stack */}
+                        <motion.div
+                            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.8 }}
+                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack workshop-hide-mobile"
+                        >
+                            <MobileSlider>
+                                <img
+                                    src={imgFeed}
+                                    alt="Training with treats"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => setSelectedImageIndex(1)}
+                                />
+                                <img
+                                    src={imgRelax2}
+                                    alt="Workshop interaction"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => setSelectedImageIndex(2)}
+                                />
+                                <img
+                                    src={imgCube}
+                                    alt="Playful learning"
+                                    className="workshop-split-image workshop-split-image--clickable"
+                                    loading="lazy"
+                                    onClick={() => setSelectedImageIndex(5)}
+                                />
+                            </MobileSlider>
+                            <div className="workshop-split-image-decoration workshop-split-image-decoration--secondary"></div>
+                        </motion.div>
+                    </div>
+
+                    {/* Experiential Text and Result Box (Full Width) */}
+                    <motion.div
+                        initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}
+                        variants={stagger} className="workshop-fullwidth-content mt-16"
+                        style={{ marginTop: '64px' }}
+                    >
+                        <motion.p variants={fadeUp} className="workshop-why-dogs-text" style={{ maxWidth: '800px', margin: '0 auto 20px', textAlign: 'center' }}>
+                            {t.why_dogs_experiential_1}
+                        </motion.p>
+                        <motion.p variants={fadeUp} className="workshop-why-dogs-text" style={{ maxWidth: '800px', margin: '0 auto 40px', textAlign: 'center' }}>
+                            {t.why_dogs_experiential_2}
+                        </motion.p>
+
+                        <motion.div variants={fadeUp} className="workshop-result-box" style={{ maxWidth: '900px', margin: '0 auto' }}>
+                            <h3 style={{ textAlign: isRTL ? 'right' : 'left' }}>{t.why_dogs_result_title}</h3>
+                            <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                                {[t.why_dogs_result_1, t.why_dogs_result_2, t.why_dogs_result_3, t.why_dogs_result_4].map((r, i) => (
+                                    <motion.li
+                                        key={i}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: 0.1 * i }}
+                                    >
+                                        {r}
+                                    </motion.li>
+                                ))}
+                            </ul>
+                        </motion.div>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* ===== BUSINESS BENEFITS ===== */}
+            <section id="benefits" className="workshop-benefits">
+                <div className="workshop-benefits-container">
+                    <div className="workshop-benefits-grid">
+                        {/* Cards side */}
+                        <motion.div
+                            initial="hidden" whileInView="visible"
+                            viewport={{ once: true, margin: '-80px' }}
+                            variants={stagger}
+                        >
+                            <motion.div variants={fadeUp} className="workshop-section-divider workshop-section-divider--light" />
+                            <motion.h2 variants={fadeUp} className="workshop-benefits-title">
+                                {t.benefits_title}
+                            </motion.h2>
+
+                            <div className="workshop-benefits-stack">
+                                {benefits.map((b, i) => (
+                                    <motion.div
+                                        key={i}
+                                        className="workshop-benefit-block"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: i * 0.1, duration: 0.4 }}
+                                        whileHover={{ y: -3 }}
+                                    >
+                                        <div className="workshop-benefit-block-num">{i + 1}</div>
+                                        <span>{b}</span>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+
+                        {/* Image side */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.8 }}
+                            className="workshop-benefits-image-wrapper workshop-hide-mobile"
+                        >
+                            <img
+                                src={imgRelax}
+                                alt="Relaxed engagement"
+                                className="workshop-benefits-image"
+                                loading="lazy"
+                                onClick={() => setSelectedImageIndex(3)}
+                            />
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ===== TARGET AUDIENCE ===== */}
+            <section id="audience" className="workshop-audience-new">
+                <div className="workshop-audience-new-container">
+                    <motion.div
+                        initial="hidden" whileInView="visible"
+                        viewport={{ once: true, margin: '-80px' }}
+                        variants={stagger}
+                    >
+                        <motion.div variants={fadeUp} className="workshop-section-divider" />
+                        <motion.h2 variants={fadeUp} className="workshop-audience-new-title">
+                            {t.audience_title}
+                        </motion.h2>
+
+                        <motion.div variants={stagger} className="workshop-audience-new-grid">
+                            {audiences.map((a, i) => (
+                                <motion.div
+                                    key={i}
+                                    variants={fadeUp}
+                                    whileHover={{ y: -3 }}
+                                    className="workshop-audience-new-card"
+                                >
+
+                                    <span>{a}</span>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* ===== IMAGE GALLERY ===== */}
+            <section className="workshop-mobile-gallery">
+                <div className="workshop-mobile-gallery-container">
+                    <MobileSlider>
+                        {GALLERY_IMAGES.map((img, i) => (
+                            <img
+                                key={i}
+                                src={img.src}
+                                alt={img.alt}
+                                className="workshop-split-image workshop-split-image--clickable"
+                                loading="lazy"
+                                onClick={() => setSelectedImageIndex(i)}
+                            />
+                        ))}
+                    </MobileSlider>
+                </div>
+            </section>
+
+            {/* ===== CONTACT FORM ===== */}
+            <section id="contact" className="workshop-contact">
+                <div className="workshop-contact-container">
+                    <motion.div
+                        initial="hidden" whileInView="visible" viewport={{ once: true }}
+                        variants={stagger} className="workshop-contact-header"
+                    >
+                        <motion.h2 variants={fadeUp} className="workshop-contact-title">{t.contact_title}</motion.h2>
+                        <motion.p variants={fadeUp} className="workshop-contact-subtitle">{t.contact_subtitle}</motion.p>
+                    </motion.div>
+
+                    <motion.form
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        onSubmit={handleSubmit}
+                        className="workshop-form"
+                    >
+                        <div className="workshop-form-grid">
+                            <div className="workshop-input-group">
+                                <User className="workshop-input-icon" />
+                                <input type="text" name="name" value={formData.name}
+                                    onChange={handleInputChange} placeholder={t.form_name}
+                                    required className="workshop-input" />
+                            </div>
+                            <div className="workshop-input-group">
+                                <Building2 className="workshop-input-icon" />
+                                <input type="text" name="company" value={formData.company}
+                                    onChange={handleInputChange} placeholder={t.form_company}
+                                    className="workshop-input" />
+                            </div>
+                            <div className="workshop-input-group">
+                                <Phone className="workshop-input-icon" />
+                                <input type="tel" name="phone" value={formData.phone}
+                                    onChange={handleInputChange} placeholder={t.form_phone}
+                                    required dir="ltr"
+                                    className={`workshop-input ${submitStatus === 'invalid_phone' ? 'workshop-input--error' : ''}`}
+                                    style={{ textAlign: isRTL ? 'right' : 'left' }} />
+                            </div>
+                            <div className="workshop-input-group">
+                                <Mail className="workshop-input-icon" />
+                                <input type="email" name="email" value={formData.email}
+                                    onChange={handleInputChange} placeholder={t.form_email}
+                                    className="workshop-input" />
+                            </div>
+                        </div>
+
+                        {submitStatus === 'invalid_phone' && (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                className="workshop-form-message workshop-form-message--error">
+                                {t.error_phone}
+                            </motion.div>
+                        )}
+
+                        <motion.button type="submit" disabled={isSubmitting}
+                            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                            className="workshop-submit-btn">
+                            {isSubmitting ? <span>{t.form_sending}</span> : <><span>{t.form_submit}</span><Send /></>}
+                        </motion.button>
+
+                        {submitStatus === 'success' && (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                className="workshop-form-message workshop-form-message--success">
+                                {t.success_msg}
+                            </motion.div>
+                        )}
+                        {submitStatus === 'error' && (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                className="workshop-form-message workshop-form-message--error">
+                                {t.error_msg}
+                            </motion.div>
+                        )}
+                    </motion.form>
+                </div>
+            </section>
+
+            {/* ===== FOOTER ===== */}
+            <footer className="workshop-footer">
+                <p>{t.footer_text}</p>
+            </footer>
+
+            {/* ===== WHATSAPP BUTTON ===== */}
+            <FloatingWhatsApp isBannerOpen={false} />
+
+            {/* ===== IMAGE LIGHTBOX MODAL ===== */}
+            <AnimatePresence>
+                {selectedImageIndex !== null && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="workshop-lightbox"
+                        onClick={() => setSelectedImageIndex(null)}
+                    >
+                        <button className="workshop-lightbox-close" onClick={() => setSelectedImageIndex(null)}>
+                            <X size={32} />
+                        </button>
+                        <button
+                            className="workshop-lightbox-arrow workshop-lightbox-arrow--prev"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImageIndex(prev => (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
+                            }}
+                        >
+                            <ArrowLeft size={28} />
+                        </button>
+                        <motion.img
+                            key={selectedImageIndex}
+                            src={GALLERY_IMAGES[selectedImageIndex].src}
+                            alt={GALLERY_IMAGES[selectedImageIndex].alt}
+                            className="workshop-lightbox-image"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.25 }}
+                            onClick={(e) => e.stopPropagation()}
+                            onTouchStart={(e) => { lightboxTouchStart.current = e.touches[0].clientX; }}
+                            onTouchEnd={(e) => {
+                                if (lightboxTouchStart.current === null) return;
+                                const diff = lightboxTouchStart.current - e.changedTouches[0].clientX;
+                                if (Math.abs(diff) > 50) {
+                                    if (diff > 0) setSelectedImageIndex(prev => (prev + 1) % GALLERY_IMAGES.length);
+                                    else setSelectedImageIndex(prev => (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length);
+                                }
+                                lightboxTouchStart.current = null;
+                            }}
+                        />
+                        <button
+                            className="workshop-lightbox-arrow workshop-lightbox-arrow--next"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImageIndex(prev => (prev + 1) % GALLERY_IMAGES.length);
+                            }}
+                        >
+                            <ArrowRight size={28} />
+                        </button>
+                        <div className="workshop-lightbox-counter" onClick={(e) => e.stopPropagation()}>
+                            {selectedImageIndex + 1} / {GALLERY_IMAGES.length}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+export default GefenLanding;

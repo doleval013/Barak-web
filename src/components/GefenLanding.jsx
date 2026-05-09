@@ -84,7 +84,7 @@ const MobileSlider = ({ children }) => {
         if (count <= 1) return;
         const init = () => {
             const scroller = scrollRef.current;
-            if (!scroller || window.innerWidth > 899) return;
+            if (!scroller) return;
             scroller.style.scrollSnapType = 'none';
             scrollToIdx(1, 'instant');
             currentIndex.current = 1;
@@ -227,10 +227,10 @@ const MobileSlider = ({ children }) => {
 const translations = {
     he: {
         back: 'חזרה',
-        hero_title_1: 'תוכנית גפ"ן /',
-        hero_title_highlight: ' מוסדות חינוך',
-        hero_subtitle: 'אילוף כלבים טיפולי המשמש כמראה לחיים עצמם',
-        hero_description: 'התוכנית שלנו מאושרת גפ"ן ומעניקה כלים משמעותיים וישימים לילדים ובני נוער דרך עבודה חינוכית ומרתקת עם כלבים.',
+        hero_title_1: 'הדרכת ',
+        hero_title_highlight: 'כלבנות טיפולית',
+        hero_subtitle: 'תוכנית מאושרת גפ"ן למוסדות חינוך',
+        hero_description: 'התוכנית הינה תוכנית חינוכית המשלבת בין עולם הכלבנות לבין עולם ההתפתחות האישית. התוכנית נועדה לפתח מיומנויות חברתיות, תקשורת ובטחון עצמי אצל התלמידים.',
         cta_check: 'לבדיקת התאמה למוסד',
 
         intro_text_1: 'התוכנית מציעה סביבה טיפולית מעשית - שילוב של כלים להתמודדות עם אתגרים שיכולים להיות מיושמים באופן מיידי בחיי התלמידים.',
@@ -243,10 +243,14 @@ const translations = {
         practice_1_desc: 'דרך העבודה החווייתית, בה הכלבים משמשים כמראה לחיים עצמם, התלמידים מפתחים תחושת מסוגלות ולומדים עבודת צוות.',
         practice_2_title: 'קבלת האחר וקבלה עצמית',
         practice_2_desc: 'הכלב מקבל כל תלמיד ללא תנאי, מה שמאפשר לתלמידים ללמוד לקבל את עצמם ואת השונים מהם בסביבה תומכת.',
-        practice_3_title: 'גיבוש שיח חברתי ופיתוח כישורי חיים',
+        practice_3_title: 'חיזוק ופיתוח כישורי חיים',
         practice_3_desc: 'התוכנית מקנה מיומנויות חשובות כמו סבלנות, תקשורת ברורה, הצבת גבולות ואחריות אישית בסביבת בית הספר ומחוצה לה.',
-        practice_4_title: 'התמודדות עם פחדים ומחסומים',
+        practice_4_title: 'התגברות על פחדים',
         practice_4_desc: 'המפגש ההדרגתי מעניק חוויה בטוחה המאפשרת יכולת התמודדות והצלחה עם פחדים שמקבלת ביטוי גם בתחומי חיים אחרים.',
+        practice_5_title: 'חיזוק מעורבות חברתית',
+        methods_title: 'דרכי פעולה',
+        methods_desc_1: 'דרך עולם הכלבנות נלמד תקשורת אפקטיבית, שפת גוף, אילוף בסיסי, ספורט כלבני וכלבי שירות. ההדרכה מתבצעת "בגובה העיניים" תוך יצירת אמון ומחויבות הדדית.',
+        methods_desc_2: 'הקבוצות הינן קבועות (ללא חילופי תלמידים) כדי לשמור על מרחב בטוח ואינטימי. אנו מבצעים מעקב אישי אחר כל תלמיד כדי לדייק את המענה.',
 
         why_dogs_title: 'למה דווקא כלבים בחינוך?',
         why_dogs_text_1: 'השילוב של כלבים אינו רק אלמנט בידורי - זהו מנגנון חינוכי היוצר תוצאות ברורות. כלב מגיב באופן טיפוסי לבהירות, ליציבות ולתקשורת איכותית.',
@@ -265,13 +269,8 @@ const translations = {
         why_dogs_result_3: 'שיפור ביכולת האמפתיה המשותפת.',
         why_dogs_result_4: 'למידת ערכי עזרה הדדית וכבוד בעלי חיים.',
 
-        benefits_title: 'קהל יעד ומאפיינים',
-        benefit_1: 'תלמידים ולומדים מכתה א׳ עד יב׳',
-        benefit_2: 'מותאם למגוון אוכלוסיות',
-        benefit_3: 'ילדי החינוך המיוחד',
-        benefit_4: 'נוער בסיכון ולקויות למידה',
-        benefit_5: 'נוער עולה',
-        benefit_6: 'קבוצות הומוגניות וקבועות לצורך יצירת אמון.',
+        benefits_title: 'קהל היעד',
+        benefits_desc: 'התוכנית מיועדת לתלמידים מכיתה א\' ועד י"ב מכל המגזרים. מותאמת למגוון רחב של אוכלוסיות: מצטיינים, מחוננים, חינוך מיוחד, נוער בסיכון, הפרעות קשב, לקויות למידה, עולים חדשים וכו\'.',
 
         audience_title: 'פרטים טכניים',
         audience_1: 'גודל קבוצה מומלץ: 6-8 תלמידים יחד',
@@ -304,10 +303,10 @@ const translations = {
     },
     en: {
         back: 'Back',
-        hero_title_1: 'Gefen Program /',
-        hero_title_highlight: ' Educational Institutions',
-        hero_subtitle: 'Therapeutic dog training operating as a mirror to life',
-        hero_description: 'An approved educational program giving youth crucial tools through engaging work with dogs.',
+        hero_title_1: 'Therapeutic ',
+        hero_title_highlight: 'Dog Training',
+        hero_subtitle: 'Gefen Approved Program for Educational Institutions',
+        hero_description: 'The program is an educational initiative that combines the world of cynology with personal development. It aims to develop social skills, communication, and self-confidence in students.',
         cta_check: 'Check Suitability',
 
         intro_text_1: 'The program offers an experiential environment - applying tools for challenges in real time.',
@@ -343,12 +342,7 @@ const translations = {
         why_dogs_result_4: 'Respect towards life.',
 
         benefits_title: 'Target Audience',
-        benefit_1: 'Grades 1 through 12',
-        benefit_2: 'Adapted for all populations',
-        benefit_3: 'Special Needs',
-        benefit_4: 'At-risk Youth',
-        benefit_5: 'New immigrants',
-        benefit_6: 'Fixed, consistent group environments',
+        benefits_desc: 'The program is designed for students from 1st to 12th grade across all sectors. Adapted for a wide range of populations: gifted, special education, at-risk youth, ADHD, learning disabilities, new immigrants, and more.',
 
         audience_title: 'Technical Details',
         audience_1: 'Groups of 6-8',
@@ -507,7 +501,7 @@ function GefenLanding() {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ type: 'form_submit', name: 'gefen_lead', metadata: formData.company || 'N/A' })
-                    }).catch(() => {});
+                    }).catch(() => { });
                 }
             }
             else setSubmitStatus('error');
@@ -526,13 +520,13 @@ function GefenLanding() {
     };
 
     const practiceItems = [
-        { title: t.practice_1_title, desc: t.practice_1_desc },
-        { title: t.practice_2_title, desc: t.practice_2_desc },
-        { title: t.practice_3_title, desc: t.practice_3_desc },
-        { title: t.practice_4_title, desc: t.practice_4_desc }
+        { title: t.practice_1_title },
+        { title: t.practice_2_title },
+        { title: t.practice_3_title },
+        { title: t.practice_4_title },
+        { title: t.practice_5_title }
     ];
 
-    const benefits = [t.benefit_1, t.benefit_2, t.benefit_3, t.benefit_4, t.benefit_5, t.benefit_6];
 
     const audiences = [t.audience_1, t.audience_2, t.audience_3, t.audience_4];
 
@@ -629,12 +623,6 @@ function GefenLanding() {
                         <motion.p variants={fadeUp} className="workshop-hero-description">
                             {t.hero_description}
                         </motion.p>
-                        <motion.div variants={fadeUp} className="workshop-cta-desktop" style={{ justifyContent: 'center' }}>
-                            <a href="#contact" className="workshop-cta-btn">
-                                <span>{t.cta_check}</span>
-                                <ArrowNext />
-                            </a>
-                        </motion.div>
                     </motion.div>
                 </div>
             </section>
@@ -666,7 +654,7 @@ function GefenLanding() {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json' },
                                                     body: JSON.stringify({ type: 'video_click', name: 'workshop_video', metadata: 'workshop_page' })
-                                                }).catch(() => {});
+                                                }).catch(() => { });
                                             }
                                         }}
                                         role="button"
@@ -705,201 +693,130 @@ function GefenLanding() {
                 </div>
             </section>
 
-            {/* ===== INTRO SECTION (Image on Left in RTL, Right in LTR) ===== */}
-            <section id="intro" className="workshop-intro">
-                <div className="workshop-split-container">
-                    <div className="workshop-split-grid">
-                        <motion.div
-                            initial="hidden" whileInView="visible"
-                            viewport={{ once: true, margin: '-80px' }}
-                            variants={stagger}
-                            className="workshop-intro-content"
-                        >
-                            <motion.p variants={fadeUp} className="workshop-intro-text">
-                                {t.intro_text_1}
-                            </motion.p>
-                            <motion.h2 variants={fadeUp} className="workshop-intro-highlight" style={{ fontSize: '1.25rem' }}>
-                                {t.intro_highlight}
-                                <span style={{ fontWeight: 400, color: 'var(--tw-color-slate-600)' }}> {t.intro_text_2}</span>
-                            </motion.h2>
-                            <motion.p variants={fadeUp} className="workshop-intro-text workshop-intro-text--accent">
-                                {t.intro_text_3}
-                            </motion.p>
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true, margin: '-80px' }}
-                            transition={{ duration: 0.8 }}
-                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack workshop-hide-mobile"
-                        >
-                            <MobileSlider>
-                                <img
-                                    src={imgHighfive}
-                                    alt="High five connection"
-                                    className="workshop-split-image workshop-split-image--clickable"
-                                    loading="lazy"
-                                    onClick={() => setSelectedImageIndex(0)}
-                                />
-                                <img
-                                    src={imgStare}
-                                    alt="Focus and connection"
-                                    className="workshop-split-image workshop-split-image--clickable"
-                                    loading="lazy"
-                                    onClick={() => setSelectedImageIndex(4)}
-                                />
-                            </MobileSlider>
-                            <div className="workshop-split-image-decoration"></div>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
+            
 
             {/* ===== PRACTICE SECTION (6 items with polygon art) ===== */}
-            <section id="practice" className="workshop-practice">
-                <div className="workshop-practice-container">
-                    <motion.div
-                        initial="hidden" whileInView="visible"
-                        viewport={{ once: true, margin: '-80px' }}
-                        variants={stagger}
-                        className="workshop-practice-header"
-                    >
-                        <motion.div variants={fadeUp} className="workshop-section-divider" />
-                        <motion.h2 variants={fadeUp} className="workshop-practice-title">
-                            {t.practice_title}
-                        </motion.h2>
-                    </motion.div>
-
-                    <motion.div
-                        initial="hidden" whileInView="visible"
-                        viewport={{ once: true, margin: '-50px' }}
-                        variants={stagger}
-                        className="workshop-practice-grid"
-                    >
-                        {practiceItems.map((item, i) => (
-                            <motion.div
-                                key={i}
-                                variants={fadeUp}
-                                whileHover={{ y: -3, transition: { duration: 0.25 } }}
-                                className="workshop-practice-card"
-                            >
-                                <h3 className="workshop-practice-card-title">{item.title}</h3>
-                                <p className="workshop-practice-card-desc">{item.desc}</p>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* ===== WHY DOGS SECTION ===== */}
-            <section id="why-dogs" className="workshop-why-dogs">
+            <section id="practice" className="workshop-practice" style={{ padding: '80px 0', backgroundColor: '#fff' }}>
                 <div className="workshop-split-container">
-                    <div className="workshop-split-grid">
+                    <div className="workshop-split-grid workshop-practice-split-grid" style={{ alignItems: 'center' }}>
+                        
+                        {/* Text / Goals Side (Now on the left) */}
                         <motion.div
                             initial="hidden" whileInView="visible"
                             viewport={{ once: true, margin: '-80px' }}
                             variants={stagger}
                         >
                             <motion.div variants={fadeUp} className="workshop-section-divider" />
-                            <motion.h2 variants={fadeUp} className="workshop-why-dogs-title">
-                                {t.why_dogs_title}
+                            <motion.h2 variants={fadeUp} className="workshop-practice-title" style={{ marginBottom: '2.5rem', textAlign: isRTL ? 'right' : 'left' }}>
+                                {t.practice_title}
                             </motion.h2>
-                            <motion.p variants={fadeUp} className="workshop-why-dogs-lead">
-                                {t.why_dogs_text_1}
-                            </motion.p>
 
-                            <motion.p variants={fadeUp} className="workshop-why-dogs-text">
-                                {t.why_dogs_text_2}
-                            </motion.p>
-                            <motion.p variants={fadeUp} className="workshop-why-dogs-text workshop-why-dogs-text--strong">
-                                {t.why_dogs_text_3}
-                            </motion.p>
-
-                            {/* Principles */}
-                            <motion.div variants={fadeUp} className="workshop-principles">
-                                <h3 className="workshop-principles-title">{t.why_dogs_principles_title}</h3>
-                                <div className="workshop-principles-grid">
-                                    {[t.why_dogs_principle_1, t.why_dogs_principle_2, t.why_dogs_principle_3, t.why_dogs_principle_4].map((p, i) => (
-                                        <motion.div
-                                            key={i}
-                                            className="workshop-principle-item"
-                                            initial={{ opacity: 0, x: isRTL ? 30 : -30 }}
-                                            whileInView={{ opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: i * 0.15, duration: 0.5 }}
-                                        >
-                                            <div className="workshop-principle-marker" />
-                                            <span>{p}</span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </motion.div>
+                            <div className="workshop-practice-list" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
+                                {practiceItems.map((item, i) => (
+                                    <motion.div
+                                        key={i}
+                                        variants={fadeUp}
+                                        whileHover={{ scale: 1.02, backgroundColor: '#f8fafc' }}
+                                        className="workshop-practice-card"
+                                        style={{ 
+                                            padding: '18px 24px', 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            width: '100%', 
+                                            borderRadius: '16px',
+                                            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                                            border: '1px solid #f1f5f9'
+                                        }}
+                                    >
+                                        <div style={{ 
+                                            width: '8px', 
+                                            height: '8px', 
+                                            borderRadius: '50%', 
+                                            backgroundColor: 'var(--tw-color-blue-500)', 
+                                            marginLeft: isRTL ? '16px' : '0',
+                                            marginRight: isRTL ? '0' : '16px'
+                                        }} />
+                                        <h3 className="workshop-practice-card-title" style={{ fontSize: '1.15rem', fontWeight: 600, margin: 0, color: '#1e293b' }}>
+                                            {item.title}
+                                        </h3>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </motion.div>
 
-                        {/* Why Dogs Image Stack */}
+                        {/* Image Side - Collage style (Now on the right) */}
                         <motion.div
-                            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
+                            initial={{ opacity: 0, x: isRTL ? -50 : 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true, margin: '-80px' }}
                             transition={{ duration: 0.8 }}
-                            className="workshop-split-image-wrapper workshop-split-image-wrapper--stack workshop-hide-mobile"
+                            className="workshop-split-image-wrapper workshop-hide-mobile"
                         >
-                            <MobileSlider>
-                                <img
-                                    src={imgFeed}
-                                    alt="Training with treats"
-                                    className="workshop-split-image workshop-split-image--clickable"
-                                    loading="lazy"
-                                    onClick={() => setSelectedImageIndex(1)}
-                                />
-                                <img
-                                    src={imgRelax2}
-                                    alt="Workshop interaction"
-                                    className="workshop-split-image workshop-split-image--clickable"
-                                    loading="lazy"
-                                    onClick={() => setSelectedImageIndex(2)}
-                                />
-                                <img
-                                    src={imgCube}
-                                    alt="Playful learning"
-                                    className="workshop-split-image workshop-split-image--clickable"
-                                    loading="lazy"
-                                    onClick={() => setSelectedImageIndex(5)}
-                                />
-                            </MobileSlider>
-                            <div className="workshop-split-image-decoration workshop-split-image-decoration--secondary"></div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                <div style={{ gridColumn: '1 / span 2' }}>
+                                    <img
+                                        src={imgHighfive}
+                                        alt="Connection"
+                                        className="workshop-split-image workshop-split-image--clickable"
+                                        style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '24px', margin: 0 }}
+                                        loading="lazy"
+                                        onClick={() => setSelectedImageIndex(0)}
+                                    />
+                                </div>
+                                <div>
+                                    <img
+                                        src={imgStare}
+                                        alt="Focus"
+                                        className="workshop-split-image workshop-split-image--clickable"
+                                        style={{ width: '100%', height: '220px', objectFit: 'cover', borderRadius: '20px', margin: 0 }}
+                                        loading="lazy"
+                                        onClick={() => setSelectedImageIndex(4)}
+                                    />
+                                </div>
+                                <div>
+                                    <img
+                                        src={imgRelax2}
+                                        alt="Interaction"
+                                        className="workshop-split-image workshop-split-image--clickable"
+                                        style={{ width: '100%', height: '220px', objectFit: 'cover', borderRadius: '20px', margin: 0 }}
+                                        loading="lazy"
+                                        onClick={() => setSelectedImageIndex(2)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="workshop-split-image-decoration"></div>
                         </motion.div>
+
                     </div>
+                </div>
+            </section>
 
-                    {/* Experiential Text and Result Box (Full Width) */}
+            {/* ===== METHODS SECTION (Text + Images) ===== */}
+            <section id="methods" className="workshop-methods" style={{ padding: '80px 0', backgroundColor: '#fdfdfd' }}>
+                <div className="workshop-benefits-container" style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px' }}>
                     <motion.div
-                        initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}
-                        variants={stagger} className="workshop-fullwidth-content mt-16"
-                        style={{ marginTop: '64px' }}
+                        initial="hidden" whileInView="visible"
+                        viewport={{ once: true, margin: '-80px' }}
+                        variants={stagger}
                     >
-                        <motion.p variants={fadeUp} className="workshop-why-dogs-text" style={{ maxWidth: '800px', margin: '0 auto 20px', textAlign: 'center' }}>
-                            {t.why_dogs_experiential_1}
-                        </motion.p>
-                        <motion.p variants={fadeUp} className="workshop-why-dogs-text" style={{ maxWidth: '800px', margin: '0 auto 40px', textAlign: 'center' }}>
-                            {t.why_dogs_experiential_2}
-                        </motion.p>
+                        <motion.div variants={fadeUp} className="workshop-section-divider" />
+                        <motion.h2 variants={fadeUp} className="workshop-practice-title" style={{ marginBottom: '1.5rem', textAlign: isRTL ? 'right' : 'left' }}>
+                            {t.methods_title}
+                        </motion.h2>
 
-                        <motion.div variants={fadeUp} className="workshop-result-box" style={{ maxWidth: '900px', margin: '0 auto' }}>
-                            <h3 style={{ textAlign: isRTL ? 'right' : 'left' }}>{t.why_dogs_result_title}</h3>
-                            <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-                                {[t.why_dogs_result_1, t.why_dogs_result_2, t.why_dogs_result_3, t.why_dogs_result_4].map((r, i) => (
-                                    <motion.li
-                                        key={i}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: 0.1 * i }}
-                                    >
-                                        {r}
-                                    </motion.li>
-                                ))}
-                            </ul>
-                        </motion.div>
+                        <motion.p
+                            variants={fadeUp}
+                            style={{ fontSize: '1.15rem', lineHeight: 1.8, color: 'var(--tw-color-slate-600)', marginBottom: '1.5rem' }}
+                        >
+                            {t.methods_desc_1}
+                        </motion.p>
+                        
+                        <motion.p
+                            variants={fadeUp}
+                            style={{ fontSize: '1.15rem', lineHeight: 1.8, color: 'var(--tw-color-slate-600)' }}
+                        >
+                            {t.methods_desc_2}
+                        </motion.p>
                     </motion.div>
                 </div>
             </section>
@@ -919,22 +836,12 @@ function GefenLanding() {
                                 {t.benefits_title}
                             </motion.h2>
 
-                            <div className="workshop-benefits-stack">
-                                {benefits.map((b, i) => (
-                                    <motion.div
-                                        key={i}
-                                        className="workshop-benefit-block"
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.1, duration: 0.4 }}
-                                        whileHover={{ y: -3 }}
-                                    >
-                                        <div className="workshop-benefit-block-num">{i + 1}</div>
-                                        <span>{b}</span>
-                                    </motion.div>
-                                ))}
-                            </div>
+                            <motion.p
+                                variants={fadeUp}
+                                style={{ fontSize: '1.15rem', lineHeight: 1.8, color: 'rgba(255,255,255,0.9)', marginTop: '1.5rem' }}
+                            >
+                                {t.benefits_desc}
+                            </motion.p>
                         </motion.div>
 
                         {/* Image side */}

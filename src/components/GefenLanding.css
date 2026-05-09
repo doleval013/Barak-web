@@ -124,3 +124,44 @@
 .gefen-page .workshop-principles {
     margin: 24px 0;
 }
+
+/* ============================================================
+   PRACTICE CARDS — Title-only compact layout
+   ============================================================ */
+.gefen-page .workshop-practice-card {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+}
+
+.gefen-page .workshop-practice-card-title {
+    margin-bottom: 0;
+    font-size: 1.15rem;
+}
+
+/* 2-column on mobile/tablet, 3-column on desktop */
+.gefen-page .workshop-practice-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 900px) {
+    .gefen-page .workshop-practice-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ============================================================
+   PRACTICE GRID — Responsive columns
+   ============================================================ */
+.workshop-practice-split-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
+
+@media (min-width: 900px) {
+    .workshop-practice-split-grid {
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 60px;
+    }
+}

@@ -1050,89 +1050,87 @@
 }
 
 .workshop-slider-arrow {
-    display: none;
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: var(--tw-color-slate-800);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.workshop-slider-arrow:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.workshop-slider-arrow--prev {
+    left: 12px;
+}
+
+.workshop-slider-arrow--next {
+    right: 12px;
+}
+
+[dir="rtl"] .workshop-slider-arrow--prev {
+    left: auto;
+    right: 12px;
+    transform: translateY(-50%) scaleX(-1);
+}
+
+[dir="rtl"] .workshop-slider-arrow--next {
+    right: auto;
+    left: 12px;
+    transform: translateY(-50%) scaleX(-1);
+}
+
+[dir="rtl"] .workshop-slider-arrow--prev:hover,
+[dir="rtl"] .workshop-slider-arrow--next:hover {
+    transform: translateY(-50%) scaleX(-1) scale(1.05);
 }
 
 .workshop-stack-scroller {
     display: flex;
-    flex-direction: column;
-    gap: 32px;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    z-index: 2;
+    padding-bottom: 8px;
+}
+
+.workshop-stack-scroller::-webkit-scrollbar {
+    display: none;
+}
+
+.workshop-stack-scroller > .workshop-split-image {
+    flex: 0 0 100%;
+    width: 100%;
+    scroll-snap-align: center;
+    margin: 0;
+}
+
+@media (min-width: 900px) {
+    .workshop-stack-scroller > .workshop-split-image {
+        flex: 0 0 33.333%;
+        padding: 0 10px;
+    }
 }
 
 @media (max-width: 899px) {
-    .workshop-slider-arrow {
-        display: flex;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.9);
-        border: none;
-        border-radius: 50%;
-        width: 44px;
-        height: 44px;
-        justify-content: center;
-        align-items: center;
-        z-index: 10;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        color: var(--tw-color-slate-800);
-        transition: transform 0.2s ease, background 0.2s ease;
-    }
-
-    .workshop-slider-arrow:hover {
-        background: white;
-        transform: translateY(-50%) scale(1.05);
-    }
-
-    .workshop-slider-arrow--prev {
-        left: 12px;
-    }
-
-    .workshop-slider-arrow--next {
-        right: 12px;
-    }
-
-    [dir="rtl"] .workshop-slider-arrow--prev {
-        left: auto;
-        right: 12px;
-        transform: translateY(-50%) scaleX(-1);
-    }
-
-    [dir="rtl"] .workshop-slider-arrow--next {
-        right: auto;
-        left: 12px;
-        transform: translateY(-50%) scaleX(-1);
-    }
-
-    [dir="rtl"] .workshop-slider-arrow--prev:hover,
-    [dir="rtl"] .workshop-slider-arrow--next:hover {
-        transform: translateY(-50%) scaleX(-1) scale(1.05);
-    }
-
-    .workshop-stack-scroller {
-        flex-direction: row;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
-        gap: 0;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-        position: relative;
-        z-index: 2;
-        padding-bottom: 8px;
-        /* space for snap scrolling bounce */
-    }
-
-    .workshop-stack-scroller::-webkit-scrollbar {
-        display: none;
-    }
-
-    .workshop-stack-scroller>.workshop-split-image {
-        flex: 0 0 100%;
-        width: 100%;
-        scroll-snap-align: center;
-        margin: 0;
-    }
 }
 
 .workshop-split-image {
@@ -1928,7 +1926,7 @@
    MOBILE GALLERY
    ============================ */
 .workshop-mobile-gallery {
-    display: none;
+    display: block;
     padding: 32px 0 16px;
     background: var(--tw-color-slate-50);
 }
@@ -1940,9 +1938,6 @@
 }
 
 @media (max-width: 899px) {
-    .workshop-mobile-gallery {
-        display: block;
-    }
 
     .workshop-hide-mobile {
         display: none !important;
@@ -1955,13 +1950,7 @@
 
 /* Hide clones on desktop (vertical stack) */
 .workshop-slider-clone {
-    display: none;
-}
-
-@media (max-width: 899px) {
-    .workshop-slider-clone {
-        display: block;
-    }
+    display: block;
 }
 
 /* ============================

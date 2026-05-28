@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { School, PartyPopper, HeartHandshake, ChevronDown, Sparkles, X, Play, FileText } from 'lucide-react';
-import ProgramModal from './ProgramModal';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Programs() {
     const { t } = useLanguage();
     const [videoModal, setVideoModal] = useState(null);
-    const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
     const [activeSlide, setActiveSlide] = useState(0);
     const [isFocused, setIsFocused] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
@@ -201,23 +199,6 @@ export default function Programs() {
                                     </div>
 
                                     <div className="mt-auto pt-4 border-t border-[var(--color-border)] w-full flex flex-col gap-3">
-                                        {program.hasModal && (
-                                            <button
-                                                onClick={() => {
-                                                    setIsProgramModalOpen(true);
-                                                    fetch('/api/event', {
-                                                        method: 'POST',
-                                                        headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({ type: 'program_view', name: 'program_card', metadata: t(program.title) })
-                                                    }).catch(console.error);
-                                                }}
-                                                className="w-full py-3 px-4 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-bold flex items-center justify-center gap-2 hover:!bg-blue-600 hover:!text-white hover:!border-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                                            >
-                                                {t('more_details')}
-                                                <FileText size={18} />
-                                            </button>
-                                        )}
-
                                         {(program.workshopLink || program.programLink) && (
                                             <button
                                                 onClick={() => {
@@ -312,11 +293,6 @@ export default function Programs() {
                     </div>
                 )}
             </AnimatePresence>
-
-            <ProgramModal
-                isOpen={isProgramModalOpen}
-                onClose={() => setIsProgramModalOpen(false)}
-            />
         </section>
     );
 

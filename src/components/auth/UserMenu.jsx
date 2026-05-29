@@ -7,15 +7,14 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, FileText, LogOut, Trash2, ChevronDown, Shield } from 'lucide-react';
+import { User, FileText, LogOut, ChevronDown, Shield } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function UserMenu() {
-    const { user, isAdmin, logout, deleteAccount } = useAuth();
+    const { user, isAdmin, logout } = useAuth();
     const { language } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const menuRef = useRef(null);
 
     // Close menu on outside click
@@ -23,7 +22,6 @@ export default function UserMenu() {
         const handleClickOutside = (e) => {
             if (menuRef.current && !menuRef.current.contains(e.target)) {
                 setIsOpen(false);
-                setShowDeleteConfirm(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -35,16 +33,6 @@ export default function UserMenu() {
     const handleLogout = async () => {
         setIsOpen(false);
         await logout();
-    };
-
-    const handleDeleteAccount = async () => {
-        try {
-            await deleteAccount();
-            setIsOpen(false);
-            setShowDeleteConfirm(false);
-        } catch (err) {
-            alert(err.message);
-        }
     };
 
     const navigate = (path) => {
@@ -151,34 +139,6 @@ export default function UserMenu() {
                                 <LogOut size={16} className="text-slate-400" />
                                 Sign Out
                             </button>
-
-                            {!showDeleteConfirm ? (
-                                <button
-                                    onClick={() => setShowDeleteConfirm(true)}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                                >
-                                    <Trash2 size={16} className="text-red-400" />
-                                    Delete Account
-                                </button>
-                            ) : (
-                                <div className="px-4 py-3 bg-red-50">
-                                    <p className="text-xs text-red-600 mb-2">Are you sure? This cannot be undone.</p>
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={handleDeleteAccount}
-                                            className="flex-1 text-xs py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-                                        >
-                                            Yes, Delete
-                                        </button>
-                                        <button
-                                            onClick={() => setShowDeleteConfirm(false)}
-                                            className="flex-1 text-xs py-1.5 bg-white text-slate-600 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </motion.div>
                 )}

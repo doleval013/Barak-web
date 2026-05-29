@@ -7,14 +7,14 @@
  * Access application history.
  */
 
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, User, Mail, Phone, Calendar, FileText, Upload, Save, Check, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, User, Mail, Phone, Calendar, FileText, Upload, Save, Check, AlertCircle, AlertTriangle, Trash2, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function UserProfile() {
-    const { user, updateProfile, uploadCV } = useAuth();
+    const { user, isLoading, updateProfile, uploadCV, deleteAccount } = useAuth();
     const { language } = useLanguage();
     const isHebrew = language === 'he';
     const fileInputRef = useRef(null);
@@ -25,6 +25,16 @@ export default function UserProfile() {
     const [uploadingCV, setUploadingCV] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState('');
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+
+    // Redirect to home if not logged in
+    useEffect(() => {
+        if (!isLoading && !user) {
+            window.history.pushState({}, '', '/');
+            window.dispatchEvent(new PopStateEvent('popstate'));
+        }
+    }, [user, isLoading]);
 
     const navigateBack = () => {
         window.history.pushState({}, '', '/');
@@ -63,12 +73,29 @@ export default function UserProfile() {
         }
     };
 
-    if (!user) {
+    const handleDeleteAccount = async () => {
+        setDeleting(true);
+        setError('');
+        try {
+            await deleteAccount();
+            window.history.pushState({}, '', '/');
+            window.dispatchEvent(new PopStateEvent('popstate'));
+        } catch (err) {
+            setError(err.message);
+            setDeleting(false);
+        }
+    };
+
+    if (isLoading) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <p className="text-slate-500">{isHebrew ? 'נדרשת התחברות' : 'Sign in required'}</p>
+                <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
             </div>
         );
+    }
+
+    if (!user) {
+        return null;
     }
 
     return (
@@ -270,7 +297,133 @@ export default function UserProfile() {
                         </p>
                     </div>
                 </motion.div>
+
+                {/* Danger Zone */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="bg-red-50/20 rounded-2xl border border-red-100/60 shadow-sm overflow-hidden mt-6 p-6"
+                >
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 className="text-lg font-bold text-red-950 flex items-center gap-2">
+                                <AlertTriangle className="text-red-600" size={20} />
+                                {isHebrew ? 'אזור מסוכן' : 'Danger Zone'}
+                            </h2>
+                            <p className="text-sm text-slate-600 mt-1">
+                                {isHebrew 
+                                    ? 'פעולות בלתי הפיכות הקשורות לחשבון שלך.'
+                                    : 'Irreversible actions related to your account.'}
+                            </p>
+                        </div>
+                        <div className="shrink-0">
+                            <button
+                                onClick={() => {
+                                    setError('');
+                                    setShowDeleteConfirm(true);
+                                }}
+                                className="px-5 py-2.5 border border-slate-300 text-black bg-white rounded-xl font-semibold hover:bg-red-50/50 hover:text-red-700 hover:border-red-200 transition-all flex items-center gap-2 text-sm shadow-sm"
+                            >
+                                <Trash2 size={16} className="text-red-500" />
+                                {isHebrew ? 'מחק חשבון' : 'Delete Account'}
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <AnimatePresence>
+                {showDeleteConfirm && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        {/* Overlay */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => {
+                                setShowDeleteConfirm(false);
+                                setError('');
+                            }}
+                            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
+                        />
+
+                        {/* Modal Box */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 z-10 relative overflow-hidden"
+                        >
+                            {/* Accent line */}
+                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-600" />
+
+                            <button
+                                onClick={() => {
+                                    setShowDeleteConfirm(false);
+                                    setError('');
+                                }}
+                                className={`absolute top-4 ${isHebrew ? 'left-4' : 'right-4'} text-slate-400 hover:text-slate-600 transition-colors`}
+                            >
+                                <X size={20} />
+                            </button>
+
+                            <div className="flex items-start gap-4 mt-2">
+                                <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                                    <AlertTriangle className="text-red-600" size={24} />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-lg font-bold text-slate-900 mb-2">
+                                        {isHebrew ? 'מחיקת חשבון' : 'Delete Account'}
+                                    </h3>
+                                    <p className="text-sm text-slate-600 leading-relaxed">
+                                        {isHebrew 
+                                            ? 'נתוני החשבון יימחקו. האם ברצונך להמשיך?'
+                                            : 'The account data will be deleted. Do you want to proceed?'}
+                                    </p>
+
+                                    {/* Modal Error Display */}
+                                    {error && (
+                                        <div className="flex items-start gap-2 mt-3 p-3 bg-red-50 rounded-xl text-red-600 text-sm border border-red-100/60 font-medium">
+                                            <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                                            <span>
+                                                {isHebrew && error === 'Cannot delete the last admin account' 
+                                                    ? 'לא ניתן למחוק את חשבון המנהל (Admin) האחרון במערכת.' 
+                                                    : error}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className={`flex gap-3 justify-end mt-6 ${isHebrew ? 'flex-row-reverse' : ''}`}>
+                                <button
+                                    onClick={() => {
+                                        setShowDeleteConfirm(false);
+                                        setError('');
+                                    }}
+                                    className="px-4 py-2 border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-medium text-sm"
+                                >
+                                    {isHebrew ? 'ביטול' : 'Cancel'}
+                                </button>
+                                <button
+                                    onClick={handleDeleteAccount}
+                                    disabled={deleting}
+                                    className="px-5 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center justify-center min-w-[90px] disabled:opacity-50 hover:bg-red-55 hover:text-red-700 transition-all"
+                                    style={{ backgroundColor: '#ffffff', color: '#000000', border: '1px solid #cbd5e1' }}
+                                >
+                                    {deleting ? (
+                                        <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                                    ) : (
+                                        isHebrew ? 'אישור' : 'Approve'
+                                    )}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

@@ -13,6 +13,8 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AlertTriangle, X } from 'lucide-react';
 
 const AuthContext = createContext(null);
 
@@ -28,6 +30,7 @@ export function AuthProvider({ children, googleClientId }) {
     const [token, setToken] = useState(getStoredToken());
     const [isLoading, setIsLoading] = useState(true);
     const [googleLoaded, setGoogleLoaded] = useState(false);
+    const [blockedError, setBlockedError] = useState(false);
 
     const isAdmin = user?.role === 'admin';
 
@@ -146,6 +149,9 @@ export function AuthProvider({ children, googleClientId }) {
 
             if (!res.ok) {
                 const error = await res.json();
+                if (error.error === 'Account has been blocked') {
+                    setBlockedError(true);
+                }
                 throw new Error(error.error || 'Authentication failed');
             }
 
@@ -347,11 +353,69 @@ export function AuthProvider({ children, googleClientId }) {
         refreshUser,
         renderGoogleButton,
         authFetch,
+        blockedError,
+        setBlockedError,
     };
 
     return (
         <AuthContext.Provider value={value}>
             {children}
+            
+            {/* Global Blocked User Modal */}
+            <AnimatePresence>
+                {blockedError && (
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                        {/* Overlay */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setBlockedError(false)}
+                            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
+                        />
+
+                        {/* Modal Box */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 z-10 relative overflow-hidden text-center"
+                            style={{ direction: (localStorage.getItem('language') || 'he') === 'he' ? 'rtl' : 'ltr' }}
+                        >
+                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-red-600" />
+                            
+                            <button
+                                onClick={() => setBlockedError(false)}
+                                className={`absolute top-4 ${(localStorage.getItem('language') || 'he') === 'he' ? 'left-4' : 'right-4'} text-slate-400 hover:text-slate-600 transition-colors`}
+                            >
+                                <X size={20} />
+                            </button>
+
+                            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4 mt-2">
+                                <AlertTriangle className="text-red-600" size={32} />
+                            </div>
+
+                            <h3 className="text-xl font-bold text-slate-900 mb-2 font-display">
+                                {(localStorage.getItem('language') || 'he') === 'he' ? 'הגישה חסומה' : 'Access Denied'}
+                            </h3>
+                            
+                            <p className="text-sm text-slate-600 mb-6 leading-relaxed font-sans">
+                                {(localStorage.getItem('language') || 'he') === 'he' 
+                                    ? 'החשבון שלך חסום. אינך יכול להתחבר לאתר.'
+                                    : 'Your account is blocked. You cannot log in to the website.'}
+                            </p>
+
+                            <button
+                                onClick={() => setBlockedError(false)}
+                                className="w-full py-3 text-white rounded-xl font-medium transition-all shadow-md shadow-black/10 cursor-pointer"
+                                style={{ backgroundColor: '#0f172a' }}
+                            >
+                                {(localStorage.getItem('language') || 'he') === 'he' ? 'סגור' : 'Close'}
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </AuthContext.Provider>
     );
 }

@@ -156,6 +156,14 @@ export const LanguageProvider = ({ children }) => {
             'cookies_policy_title': 'עוגיות (Cookies)',
             'cookies_policy_text_1': 'האתר עשוי להשתמש ב"עוגיות" (Cookies) לצורך תפעולו השוטף והתקין, ובכלל זה כדי לאסוף נתונים סטטיסטיים אודות השימוש באתר, לאימות פרטים, וכדי להתאים את האתר להעדפותיכם האישיות.',
             'cookies_policy_text_2': 'דפדפנים מודרניים מאפשרים לכם להימנע מקבלת Cookies. אם אינכם יודעים כיצד לעשות זאת, בדקו בקובץ העזרה של הדפדפן שבו אתם משתמשים.',
+            // User Menu
+            'profile': 'פרופיל',
+            'my_applications': 'הגשות המועמדות שלי',
+            'admin_dashboard': 'לוח בקרה מנהל',
+            'recruiter_dashboard': 'לוח בקרה מגייס',
+            'sign_out': 'התנתק',
+            'admin_role': 'מנהל',
+            'recruiter_role': 'מגייס',
         },
         en: {
             // Header
@@ -294,6 +302,14 @@ export const LanguageProvider = ({ children }) => {
             'cookies_policy_title': 'Cookies',
             'cookies_policy_text_1': 'The site may use "Cookies" for its ongoing and proper operation, including to collect statistical data about site usage, for details verification, and to adapt the site to your personal preferences.',
             'cookies_policy_text_2': 'Modern browsers allow you to avoid receiving Cookies. If you do not know how to do this, check the help file of the browser you are using.',
+            // User Menu
+            'profile': 'Profile',
+            'my_applications': 'My Applications',
+            'admin_dashboard': 'Admin Dashboard',
+            'recruiter_dashboard': 'Recruiter Dashboard',
+            'sign_out': 'Sign Out',
+            'admin_role': 'Admin',
+            'recruiter_role': 'Recruiter',
         }
     };
 

@@ -183,7 +183,9 @@ function App() {
   if (currentPath === '/admin') {
     return (
       <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
-        <AdminDashboard />
+        <ErrorBoundary>
+          <AdminDashboard />
+        </ErrorBoundary>
       </AuthProvider>
     );
   }
@@ -281,3 +283,46 @@ function App() {
 }
 
 export default App;
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-red-50 p-8 flex flex-col items-center justify-center font-sans" style={{ direction: 'ltr' }}>
+          <div className="max-w-2xl bg-white p-6 rounded-2xl shadow-xl border border-red-200">
+            <h1 className="text-2xl font-bold text-red-600 mb-4 flex items-center gap-2">
+              🚨 Application Render Error
+            </h1>
+            <p className="text-slate-800 font-semibold mb-2">
+              {this.state.error?.toString()}
+            </p>
+            <pre className="bg-slate-50 p-4 rounded-xl text-xs text-slate-600 overflow-auto max-h-[300px] font-mono leading-relaxed">
+              {this.state.error?.stack}
+            </pre>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}

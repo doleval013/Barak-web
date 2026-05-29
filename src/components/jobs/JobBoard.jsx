@@ -26,6 +26,7 @@ const JOB_TYPE_COLORS = {
 };
 
 export default function JobBoard() {
+    const { user } = useAuth();
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -96,14 +97,30 @@ export default function JobBoard() {
                         {isHebrew ? 'חזרה לעמוד הראשי' : 'Back to Home'}
                     </button>
 
-                    <h1 className="text-3xl md:text-4xl font-bold mb-3">
-                        {isHebrew ? '💼 לוח משרות' : '💼 Job Board'}
-                    </h1>
-                    <p className="text-blue-100 text-lg max-w-2xl">
-                        {isHebrew 
-                            ? 'הצטרפו לצוות שלנו! כאן תמצאו את המשרות הפתוחות שלנו.'
-                            : 'Join our team! Browse our open positions below.'}
-                    </p>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-bold mb-3">
+                                {isHebrew ? '💼 לוח משרות' : '💼 Job Board'}
+                            </h1>
+                            <p className="text-blue-100 text-lg max-w-2xl">
+                                {isHebrew 
+                                    ? 'הצטרפו לצוות שלנו! כאן תמצאו את המשרות הפתוחות שלנו.'
+                                    : 'Join our team! Browse our open positions below.'}
+                            </p>
+                        </div>
+                        {(user?.role === 'admin' || user?.role === 'recruiter') && (
+                            <button
+                                onClick={() => {
+                                    window.history.pushState({}, '', '/admin');
+                                    window.dispatchEvent(new PopStateEvent('popstate'));
+                                }}
+                                className="flex items-center gap-2 px-5 py-3 bg-white text-blue-700 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-102 active:scale-98 transition-all text-sm shrink-0 border border-blue-100 self-start md:self-center cursor-pointer"
+                            >
+                                <Briefcase size={16} />
+                                {isHebrew ? 'ניהול משרות' : 'Manage Jobs'}
+                            </button>
+                        )}
+                    </div>
 
                     {/* Search */}
                     <div className="mt-8 max-w-xl">

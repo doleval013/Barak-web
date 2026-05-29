@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, BarChart, RefreshCw, Eye, Video, MousePointer, Activity, Globe, MapPin, Smartphone, Users, ArrowUpRight, TrendingUp, Clock, Monitor, MessageCircle, Filter, Layers, Zap, Target, ChevronRight, Briefcase, UserCheck } from 'lucide-react';
+import { Lock, BarChart, RefreshCw, Eye, Video, MousePointer, Activity, Globe, MapPin, Smartphone, Users, ArrowUpRight, TrendingUp, Clock, Monitor, MessageCircle, Filter, Layers, Zap, Target, ChevronRight, Briefcase, UserCheck, Home } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import AdminJobManager from './admin/AdminJobManager';
 import AdminApplicationViewer from './admin/AdminApplicationViewer';
@@ -73,20 +73,41 @@ export default function AdminDashboard() {
     const [pageFilter, setPageFilter] = useState('all');
     const [viewingApplicationsFor, setViewingApplicationsFor] = useState(null);
 
-    // Try to use auth context if available
-    let authContext = null;
-    try {
-        authContext = useAuth();
-    } catch (e) {
-        // Auth context not available — legacy mode
-    }
+    // Use auth context
+    const authContext = useAuth();
 
     useEffect(() => {
-        if (authContext?.isAdmin && authContext?.token) {
+        const isManager = authContext?.isAdmin || authContext?.user?.role === 'recruiter';
+        if (isManager && authContext?.token) {
             setAuthToken(authContext.token);
             setIsAuthenticated(true);
         }
-    }, [authContext?.isAdmin, authContext?.token]);
+    }, [authContext?.isAdmin, authContext?.user?.role, authContext?.token]);
+
+    const visibleTabs = useMemo(() => {
+        const isRecruiter = authContext?.user?.role === 'recruiter' && !authContext?.isAdmin;
+        if (isRecruiter) {
+            return TABS.filter(t => t.id === 'jobs');
+        }
+        return TABS;
+    }, [authContext?.isAdmin, authContext?.user?.role]);
+
+    useEffect(() => {
+        if (authContext?.user?.role === 'recruiter' && !authContext?.isAdmin) {
+            setActiveTab('jobs');
+        }
+    }, [authContext?.user?.role, authContext?.isAdmin]);
+
+    // Redirect to home if not logged in or doesn't have manager/recruiter role
+    useEffect(() => {
+        if (!authContext?.isLoading) {
+            const isManager = authContext?.isAdmin || authContext?.user?.role === 'recruiter';
+            if (!isManager) {
+                window.history.pushState({}, '', '/');
+                window.dispatchEvent(new PopStateEvent('popstate'));
+            }
+        }
+    }, [authContext?.isLoading, authContext?.isAdmin, authContext?.user?.role]);
 
     useEffect(() => {
         if (!authToken) return;
@@ -151,31 +172,6 @@ export default function AdminDashboard() {
         const d = Math.floor(mins/1440), h = Math.floor((mins%1440)/60), m = mins%60;
         return d > 0 ? `${d}d ${h}h ${m}m` : `${h}h ${m}m`;
     };
-
-    // LOGIN SCREEN
-    if (authContext?.isLoading) {
-        return (
-            <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4">
-                <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-            </div>
-        );
-    }
-
-    if (!isAuthenticated) {
-        return (
-            <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4">
-                <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
-                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6"><Lock className="text-blue-600" size={32}/></div>
-                    <h2 className="text-2xl font-bold text-slate-800 mb-6 font-display">Secured Access</h2>
-                    <form onSubmit={handleLogin} className="space-y-4">
-                        <input type="password" value={password} onChange={e=>{setPassword(e.target.value);setError('');}} placeholder="Enter Password" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"/>
-                        {error && <p className="text-red-500 text-sm">{error}</p>}
-                        <button type="submit" className="w-full py-3 text-white rounded-xl font-medium transition-colors shadow-lg shadow-black/10" style={{backgroundColor:'#0f172a'}}>Login</button>
-                    </form>
-                </motion.div>
-            </div>
-        );
-    }
 
     // PROCESSED DATA
     const visitTrendData = useMemo(() => (stats.trendData||[]).map(d => ({ date: d.date, total: parseInt(d.total_visits||0), unique: parseInt(d.unique_visitors||0) })), [stats.trendData]);
@@ -261,6 +257,20 @@ export default function AdminDashboard() {
     // TOOLTIP STYLE
     const tooltipStyle = { borderRadius:'12px', border:'none', boxShadow:'0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize:'13px' };
 
+    // LOGIN SCREEN
+    if (authContext?.isLoading) {
+        return (
+            <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4">
+                <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    const isManager = authContext?.isAdmin || authContext?.user?.role === 'recruiter';
+    if (!isManager) {
+        return null;
+    }
+
     // RENDER
     return (
         <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900" dir="ltr">
@@ -271,13 +281,24 @@ export default function AdminDashboard() {
                     <p className="text-slate-400 text-xs mt-1">Analytics Dashboard</p>
                 </div>
                 <nav className="flex-1 p-3 space-y-1">
-                    {TABS.map(tab => (
+                    {visibleTabs.map(tab => (
                         <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab===tab.id ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
                             <tab.icon size={18}/> {tab.label}
                         </button>
                     ))}
                 </nav>
+                <div className="p-3 border-t border-slate-700/30">
+                    <button
+                        onClick={() => {
+                            window.history.pushState({}, '', '/');
+                            window.dispatchEvent(new PopStateEvent('popstate'));
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                    >
+                        <Home size={18}/> Home Website
+                    </button>
+                </div>
                 <div className="p-4 border-t border-slate-700/50 text-xs text-slate-500">
                     <p>Uptime: {formatUptime(uptime)}</p>
                     <p>v{stats.version}</p>
@@ -286,12 +307,21 @@ export default function AdminDashboard() {
 
             {/* MOBILE TAB BAR */}
             <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 flex">
-                {TABS.map(tab => (
+                {visibleTabs.map(tab => (
                     <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                         className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors ${activeTab===tab.id ? 'text-blue-600' : 'text-slate-400'}`}>
                         <tab.icon size={18}/> {tab.label}
                     </button>
                 ))}
+                <button
+                    onClick={() => {
+                        window.history.pushState({}, '', '/');
+                        window.dispatchEvent(new PopStateEvent('popstate'));
+                    }}
+                    className="flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium text-slate-400 transition-colors cursor-pointer"
+                >
+                    <Home size={18}/> Home
+                </button>
             </div>
 
             {/* MAIN CONTENT */}

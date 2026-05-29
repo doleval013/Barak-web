@@ -14,7 +14,8 @@ const JOB_TYPES = ['full-time', 'part-time', 'contract'];
 const JOB_STATUSES = ['open', 'closed'];
 
 export default function AdminJobManager({ onViewApplications }) {
-    const { authFetch } = useAuth();
+    const authContext = useAuth();
+    const { authFetch } = authContext;
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);

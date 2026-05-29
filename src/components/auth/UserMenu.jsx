@@ -7,13 +7,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, FileText, LogOut, ChevronDown, Shield } from 'lucide-react';
+import { User, FileText, LogOut, ChevronDown, Shield, Briefcase } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function UserMenu() {
     const { user, isAdmin, logout } = useAuth();
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef(null);
 
@@ -73,7 +73,7 @@ export default function UserMenu() {
                         exit={{ opacity: 0, y: -10, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
                         className={`absolute ${language === 'he' ? 'left-0' : 'right-0'} mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50`}
-                        style={{ direction: 'ltr' }}
+                        style={{ direction: language === 'he' ? 'rtl' : 'ltr' }}
                     >
                         {/* User Info Header */}
                         <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
@@ -95,7 +95,12 @@ export default function UserMenu() {
                                     <div className="text-xs text-slate-500 truncate">{user.email}</div>
                                     {isAdmin && (
                                         <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full mt-1">
-                                            <Shield size={10} /> Admin
+                                            <Shield size={10} /> {t('admin_role')}
+                                        </span>
+                                    )}
+                                    {user.role === 'recruiter' && (
+                                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full mt-1">
+                                            <Briefcase size={10} /> {t('recruiter_role')}
                                         </span>
                                     )}
                                 </div>
@@ -109,7 +114,7 @@ export default function UserMenu() {
                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
                             >
                                 <User size={16} className="text-slate-400" />
-                                Profile
+                                {t('profile')}
                             </button>
 
                             <button
@@ -117,16 +122,16 @@ export default function UserMenu() {
                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
                             >
                                 <FileText size={16} className="text-slate-400" />
-                                My Applications
+                                {t('my_applications')}
                             </button>
 
-                            {isAdmin && (
+                            {(isAdmin || user.role === 'recruiter') && (
                                 <button
                                     onClick={() => navigate('/admin')}
                                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-amber-700 hover:bg-amber-50 transition-colors"
                                 >
                                     <Shield size={16} className="text-amber-500" />
-                                    Admin Dashboard
+                                    {isAdmin ? t('admin_dashboard') : t('recruiter_dashboard')}
                                 </button>
                             )}
                         </div>
@@ -137,7 +142,7 @@ export default function UserMenu() {
                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
                             >
                                 <LogOut size={16} className="text-slate-400" />
-                                Sign Out
+                                {t('sign_out')}
                             </button>
                         </div>
                     </motion.div>

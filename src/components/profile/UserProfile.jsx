@@ -14,11 +14,12 @@ import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function UserProfile() {
-    const { user, isLoading, updateProfile, uploadCV, deleteAccount } = useAuth();
+    const { user, isLoading, updateProfile, uploadCV, deleteCV, deleteAccount } = useAuth();
     const { language } = useLanguage();
     const isHebrew = language === 'he';
     const fileInputRef = useRef(null);
 
+    const [fullName, setFullName] = useState(user?.fullName || '');
     const [phone, setPhone] = useState(user?.phone || '');
     const [age, setAge] = useState(user?.age || '');
     const [saving, setSaving] = useState(false);
@@ -27,6 +28,7 @@ export default function UserProfile() {
     const [error, setError] = useState('');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [deletingCV, setDeletingCV] = useState(false);
 
     // Redirect to home if not logged in
     useEffect(() => {
@@ -47,7 +49,7 @@ export default function UserProfile() {
         setSaved(false);
 
         try {
-            await updateProfile({ phone: phone || null, age: age || null });
+            await updateProfile({ fullName: fullName || null, phone: phone || null, age: age || null });
             setSaved(true);
             setTimeout(() => setSaved(false), 2000);
         } catch (err) {
@@ -70,6 +72,24 @@ export default function UserProfile() {
             setError(err.message);
         } finally {
             setUploadingCV(false);
+        }
+    };
+
+    const handleDeleteCV = async () => {
+        if (isHebrew) {
+            if (!window.confirm('האם אתה בטוח שברצונך למחוק את קורות החיים?')) return;
+        } else {
+            if (!window.confirm('Are you sure you want to delete your CV?')) return;
+        }
+
+        setDeletingCV(true);
+        setError('');
+        try {
+            await deleteCV();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setDeletingCV(false);
         }
     };
 
@@ -146,13 +166,6 @@ export default function UserProfile() {
                         </h2>
                         <div className="space-y-3">
                             <div className="flex items-center gap-3">
-                                <User size={18} className="text-slate-400 shrink-0" />
-                                <div>
-                                    <div className="text-xs text-slate-500">{isHebrew ? 'שם מלא' : 'Full Name'}</div>
-                                    <div className="font-medium text-slate-900">{user.fullName}</div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3">
                                 <Mail size={18} className="text-slate-400 shrink-0" />
                                 <div>
                                     <div className="text-xs text-slate-500">{isHebrew ? 'אימייל' : 'Email'}</div>
@@ -162,17 +175,31 @@ export default function UserProfile() {
                         </div>
                         <p className="text-xs text-slate-400 mt-3">
                             {isHebrew 
-                                ? 'שם ואימייל מנוהלים דרך חשבון Google שלך.'
-                                : 'Name and email are managed by your Google account.'}
+                                ? 'האימייל מנוהל ומאומת דרך חשבון Google שלך.'
+                                : 'Email is managed and verified by your Google account.'}
                         </p>
                     </div>
 
                     {/* Editable Fields */}
                     <div className="p-6 border-b border-slate-100">
                         <h2 className="text-lg font-bold text-slate-900 mb-4">
-                            {isHebrew ? 'פרטים נוספים' : 'Additional Info'}
+                            {isHebrew ? 'פרטי פרופיל' : 'Profile Info'}
                         </h2>
                         <div className="space-y-4">
+                            <div>
+                                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1.5">
+                                    <User size={14} />
+                                    {isHebrew ? 'שם מלא' : 'Full Name'} <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    placeholder={isHebrew ? 'ישראל ישראלי' : 'John Doe'}
+                                    required
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                                />
+                            </div>
                             <div>
                                 <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1.5">
                                     <Phone size={14} />
@@ -250,14 +277,28 @@ export default function UserProfile() {
                                     </div>
                                     <div className="text-xs text-green-600">{user.cvUrl.split('/').pop()}</div>
                                 </div>
-                                <a
-                                    href={user.cvUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm text-green-700 hover:underline"
-                                >
-                                    {isHebrew ? 'צפה' : 'View'}
-                                </a>
+                                <div className="flex items-center gap-3">
+                                    <a
+                                        href={user.cvUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm text-green-700 hover:underline font-semibold"
+                                    >
+                                        {isHebrew ? 'צפה' : 'View'}
+                                    </a>
+                                    <span className="text-slate-300">|</span>
+                                    <button
+                                        onClick={handleDeleteCV}
+                                        disabled={deletingCV}
+                                        className="text-sm text-red-600 hover:underline disabled:opacity-50 font-semibold"
+                                    >
+                                        {deletingCV ? (
+                                            <div className="w-3.5 h-3.5 border-2 border-red-300 border-t-red-600 rounded-full animate-spin inline-block" />
+                                        ) : (
+                                            isHebrew ? 'הסר' : 'Remove'
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl mb-4">

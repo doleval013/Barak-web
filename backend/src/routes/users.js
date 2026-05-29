@@ -91,17 +91,24 @@ module.exports = (pool) => {
      * Update own profile. Only specific fields can be updated by the user:
      * - phone (string, optional)
      * - age (integer, optional)
-     * 
-     * Name and email come from Google and can't be changed here.
+     * - fullName (string, optional)
      */
     router.patch('/me', authenticateToken(pool), async (req, res) => {
-        const { phone, age } = req.body;
+        const { phone, age, fullName } = req.body;
 
         try {
             // Build dynamic update query based on provided fields
             const updates = [];
             const values = [];
             let paramIndex = 1;
+
+            if (fullName !== undefined) {
+                if (fullName !== null && fullName.trim() === '') {
+                    return res.status(400).json({ error: 'Full name cannot be empty' });
+                }
+                updates.push(`full_name = $${paramIndex++}`);
+                values.push(fullName ? fullName.trim() : null);
+            }
 
             if (phone !== undefined) {
                 updates.push(`phone = $${paramIndex++}`);
@@ -191,6 +198,41 @@ module.exports = (pool) => {
             res.status(500).json({ error: 'Internal server error' });
         }
     });
+
+    /**
+     * DELETE /api/users/me/cv
+     * 
+     * Remove the user's uploaded CV file.
+     */
+    router.delete('/me/cv', authenticateToken(pool), async (req, res) => {
+        try {
+            const oldUser = await pool.query(
+                'SELECT cv_url FROM users WHERE id = $1',
+                [req.user.id]
+            );
+
+            if (oldUser.rows[0]?.cv_url) {
+                const oldPath = path.join(__dirname, '..', '..', oldUser.rows[0].cv_url);
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            }
+
+            await pool.query(
+                'UPDATE users SET cv_url = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+                [req.user.id]
+            );
+
+            res.json({ 
+                success: true, 
+                message: 'CV removed successfully' 
+            });
+        } catch (err) {
+            console.error('[Users] CV deletion error:', err.message);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
 
     /**
      * GET /api/users

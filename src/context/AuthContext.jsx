@@ -299,6 +299,22 @@ export function AuthProvider({ children, googleClientId }) {
     }, [authFetch]);
 
     /**
+     * Delete/Remove CV file
+     */
+    const deleteCV = useCallback(async () => {
+        const res = await authFetch(`${API_BASE}/users/me/cv`, {
+            method: 'DELETE',
+        });
+
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.error || 'CV deletion failed');
+        }
+
+        setUser(prev => ({ ...prev, cvUrl: null }));
+    }, [authFetch]);
+
+    /**
      * Re-fetch current user data from server
      */
     const refreshUser = useCallback(async () => {
@@ -327,6 +343,7 @@ export function AuthProvider({ children, googleClientId }) {
         deleteAccount,
         updateProfile,
         uploadCV,
+        deleteCV,
         refreshUser,
         renderGoogleButton,
         authFetch,

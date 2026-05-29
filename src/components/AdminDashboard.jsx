@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, BarChart, RefreshCw, Eye, Video, MousePointer, Activity, Globe, MapPin, Smartphone, Users, ArrowUpRight, TrendingUp, Clock, Monitor, MessageCircle, Filter, Layers, Zap, Target, ChevronRight } from 'lucide-react';
+import { Lock, BarChart, RefreshCw, Eye, Video, MousePointer, Activity, Globe, MapPin, Smartphone, Users, ArrowUpRight, TrendingUp, Clock, Monitor, MessageCircle, Filter, Layers, Zap, Target, ChevronRight, Briefcase, UserCheck } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import AdminJobManager from './admin/AdminJobManager';
+import AdminApplicationViewer from './admin/AdminApplicationViewer';
+import AdminUserList from './admin/AdminUserList';
+import { useAuth } from '../context/AuthContext';
 
 const TABS = [
     { id: 'overview', label: 'Overview', icon: Layers },
@@ -9,6 +13,8 @@ const TABS = [
     { id: 'content', label: 'Content', icon: Video },
     { id: 'geo', label: 'Geo & Devices', icon: Globe },
     { id: 'feed', label: 'Live Feed', icon: Activity },
+    { id: 'jobs', label: 'Jobs', icon: Briefcase },
+    { id: 'users', label: 'Users', icon: UserCheck },
 ];
 
 const COLORS = ['#6366f1','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
@@ -65,6 +71,22 @@ export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('overview');
     const [feedFilter, setFeedFilter] = useState('all');
     const [pageFilter, setPageFilter] = useState('all');
+    const [viewingApplicationsFor, setViewingApplicationsFor] = useState(null);
+
+    // Try to use auth context if available
+    let authContext = null;
+    try {
+        authContext = useAuth();
+    } catch (e) {
+        // Auth context not available — legacy mode
+    }
+
+    useEffect(() => {
+        if (authContext?.isAdmin && authContext?.token) {
+            setAuthToken(authContext.token);
+            setIsAuthenticated(true);
+        }
+    }, [authContext?.isAdmin, authContext?.token]);
 
     useEffect(() => {
         if (!authToken) return;
@@ -102,14 +124,25 @@ export default function AdminDashboard() {
     const fetchStats = async (token, page) => {
         try {
             const pageParam = page && page !== 'all' ? `?page=${encodeURIComponent(page)}` : '';
-            const res = await fetch(`/api/stats${pageParam}`, { headers: { 'x-admin-auth': token } });
+            const url = `/api/stats${pageParam}`;
+            let res;
+            
+            // Use authContext.authFetch if it's a JWT from context, else use legacy x-admin-auth
+            if (authContext && authContext.isAdmin && token === authContext.token) {
+                res = await authContext.authFetch(url);
+            } else {
+                res = await fetch(url, { headers: { 'x-admin-auth': token } });
+            }
+
             if (res.ok) {
                 const data = await res.json();
                 setStats(prev => ({ ...prev, ...data }));
                 if (data.uptime) setUptime(Math.floor(data.uptime / 60));
             } else if (res.status === 401) {
-                setAuthToken(''); setIsAuthenticated(false);
-                sessionStorage.removeItem('barak_admin_token');
+                if (token !== authContext?.token) {
+                    setAuthToken(''); setIsAuthenticated(false);
+                    sessionStorage.removeItem('barak_admin_token');
+                }
             }
         } catch (err) { console.error(err); }
     };
@@ -120,6 +153,14 @@ export default function AdminDashboard() {
     };
 
     // LOGIN SCREEN
+    if (authContext?.isLoading) {
+        return (
+            <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4">
+                <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+            </div>
+        );
+    }
+
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4">
@@ -260,6 +301,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-4">
                         <h2 className="text-2xl font-bold text-slate-900 capitalize">{activeTab === 'feed' ? 'Live Feed' : activeTab === 'geo' ? 'Geo & Devices' : activeTab}</h2>
                         {/* Page/Endpoint Filter */}
+                        {['overview', 'traffic', 'content', 'geo'].includes(activeTab) && (
                         <select
                             value={pageFilter}
                             onChange={e => setPageFilter(e.target.value)}
@@ -270,6 +312,7 @@ export default function AdminDashboard() {
                                 <option key={p} value={p}>/{p}</option>
                             ))}
                         </select>
+                        )}
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="bg-white px-4 py-2 rounded-full border border-slate-200/60 shadow-sm flex items-center gap-2">
@@ -695,6 +738,31 @@ export default function AdminDashboard() {
                                 </tbody>
                             </table>
                         </div>
+                    </Card>
+                </>}
+
+                {/* ============ TAB: JOBS ============ */}
+                {activeTab === 'jobs' && <>
+                    {viewingApplicationsFor ? (
+                        <Card>
+                            <AdminApplicationViewer
+                                job={viewingApplicationsFor}
+                                onBack={() => setViewingApplicationsFor(null)}
+                            />
+                        </Card>
+                    ) : (
+                        <Card>
+                            <AdminJobManager
+                                onViewApplications={(job) => setViewingApplicationsFor(job)}
+                            />
+                        </Card>
+                    )}
+                </>}
+
+                {/* ============ TAB: USERS ============ */}
+                {activeTab === 'users' && <>
+                    <Card>
+                        <AdminUserList />
                     </Card>
                 </>}
 

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X, Globe, Briefcase } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
+import UserMenu from './auth/UserMenu';
+import GoogleSignInButton from './auth/GoogleSignInButton';
 
 const TikTok = ({ size = 24, className = "" }) => (
   <svg
@@ -24,6 +27,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { language, toggleLanguage, t } = useLanguage();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +41,7 @@ export default function Header() {
     { name: t('programs'), href: '#programs' },
     { name: language === 'he' ? 'סדנאות לצוותים' : 'Team Workshops', href: '/workshop' },
     { name: language === 'he' ? 'מוסדות חינוך' : 'Educational Institutions', href: '/gefen' },
+    { name: language === 'he' ? 'משרות' : 'Jobs', href: '/jobs', icon: Briefcase },
   ];
 
   return (
@@ -79,10 +84,21 @@ export default function Header() {
           >
             <span className="relative z-20">{t('lets_talk')}</span>
           </a>
+
+          {/* Auth: User menu or Sign-in button */}
+          {!authLoading && (
+            isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <GoogleSignInButton size="medium" theme="outline" />
+            )
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
-        <div className="flex items-center gap-4 md:hidden z-50">
+        <div className="flex items-center gap-3 md:hidden z-50">
+          {!authLoading && isAuthenticated && <UserMenu />}
+
           <button
             onClick={toggleLanguage}
             className="flex items-center gap-1 font-bold text-[var(--color-primary)]"
@@ -126,6 +142,11 @@ export default function Header() {
               >
                 {t('lets_talk')}
               </a>
+              {!authLoading && !isAuthenticated && (
+                <div className="flex justify-center mt-2">
+                  <GoogleSignInButton size="large" />
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LanguageProvider } from './context/LanguageContext';
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 
@@ -13,6 +14,14 @@ import FloatingWhatsApp from './components/FloatingWhatsApp';
 import AdminDashboard from './components/AdminDashboard';
 import TeamWorkshopLanding from './components/TeamWorkshopLanding';
 import GefenLanding from './components/GefenLanding';
+import JobBoard from './components/jobs/JobBoard';
+import UserProfile from './components/profile/UserProfile';
+import MyApplications from './components/jobs/MyApplications';
+
+// Google Client ID — set via env or meta tag
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  || document.querySelector('meta[name="google-client-id"]')?.content
+  || '';
 
 function App() {
   // Simple Routing
@@ -172,59 +181,102 @@ function App() {
 
   // Route: Admin Dashboard
   if (currentPath === '/admin') {
-    return <AdminDashboard />;
+    return (
+      <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
+        <AdminDashboard />
+      </AuthProvider>
+    );
   }
 
   // Route: Team Workshop Landing Page
   if (currentPath === '/teams' || currentPath === '/workshop') {
     return (
-      <LanguageProvider>
-        <TeamWorkshopLanding />
-        <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
-      </LanguageProvider>
+      <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
+        <LanguageProvider>
+          <TeamWorkshopLanding />
+          <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
+        </LanguageProvider>
+      </AuthProvider>
     );
   }
 
   // Route: Gefen Landing Page
   if (currentPath === '/gefen') {
     return (
-      <LanguageProvider>
-        <GefenLanding />
-        <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
-      </LanguageProvider>
+      <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
+        <LanguageProvider>
+          <GefenLanding />
+          <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
+        </LanguageProvider>
+      </AuthProvider>
+    );
+  }
+
+  // Route: Job Board
+  if (currentPath === '/jobs') {
+    return (
+      <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
+        <LanguageProvider>
+          <JobBoard />
+        </LanguageProvider>
+      </AuthProvider>
+    );
+  }
+
+  // Route: User Profile
+  if (currentPath === '/profile') {
+    return (
+      <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
+        <LanguageProvider>
+          <UserProfile />
+        </LanguageProvider>
+      </AuthProvider>
+    );
+  }
+
+  // Route: My Applications
+  if (currentPath === '/my-applications') {
+    return (
+      <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
+        <LanguageProvider>
+          <MyApplications />
+        </LanguageProvider>
+      </AuthProvider>
     );
   }
 
   return (
-    <LanguageProvider>
-      <div className="min-h-screen">
-        <Header />
-        <main>
-          <Hero />
+    <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
+      <LanguageProvider>
+        <div className="min-h-screen">
+          <Header />
+          <main>
+            <Hero />
 
 
 
-          <Programs />
-          <Contact />
-        </main>
+            <Programs />
+            <Contact />
+          </main>
 
 
-        <Footer onOpenLegal={openLegal} />
+          <Footer onOpenLegal={openLegal} />
 
-        <LegalModal
-          isOpen={isLegalModalOpen}
-          onClose={() => setIsLegalModalOpen(false)}
-          initialTab={legalTab}
-        />
-        <CookieBanner
-          isVisible={isCookieBannerOpen}
-          onAccept={handleCookieAccept}
-          onOpenPrivacy={() => openLegal('privacy')}
-        />
-        <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
-        <FloatingWhatsApp isBannerOpen={isCookieBannerOpen} />
-      </div>
-    </LanguageProvider>
+          <LegalModal
+            isOpen={isLegalModalOpen}
+            onClose={() => setIsLegalModalOpen(false)}
+            initialTab={legalTab}
+          />
+          <CookieBanner
+            isVisible={isCookieBannerOpen}
+            onAccept={handleCookieAccept}
+            onOpenPrivacy={() => openLegal('privacy')}
+          />
+          <AccessibilityWidget isBannerOpen={isCookieBannerOpen} />
+          <FloatingWhatsApp isBannerOpen={isCookieBannerOpen} />
+        </div>
+      </LanguageProvider>
+    </AuthProvider>
   );
 }
 

@@ -1,6 +1,6 @@
 # Barak Aloni – Therapeutic Dog Training Website
 
-A premium, responsive, and high-performance single-page application (SPA) built for Barak Aloni's therapeutic dog training business. This project showcases modern web development practices with a focus on aesthetics, user experience, and accessibility.
+A premium, responsive, and high-performance single-page application (SPA) built for Barak Aloni's therapeutic dog training business. This project showcases modern web development practices with a focus on aesthetics, user experience, and accessibility. 
 
 ![Project Banner](public/assets/BARAK-ALONI-logo-1024x319.png)
 

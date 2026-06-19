@@ -59,13 +59,16 @@ module.exports = (pool) => {
             let user;
 
             if (userResult.rows.length > 0) {
-                // Existing user — update their Google info (name, picture, locale may change)
+                // Existing user — update their Google info and check if they should be promoted to admin
+                const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase());
+                const role = adminEmails.includes(email.toLowerCase()) ? 'admin' : userResult.rows[0].role;
+
                 user = await pool.query(
                     `UPDATE users 
-                     SET full_name = $1, picture_url = $2, locale = $3, email = $4, updated_at = CURRENT_TIMESTAMP
-                     WHERE google_id = $5
+                     SET full_name = $1, picture_url = $2, locale = $3, email = $4, role = $5, updated_at = CURRENT_TIMESTAMP
+                     WHERE google_id = $6
                      RETURNING *`,
-                    [fullName, pictureUrl, locale, email, googleId]
+                    [fullName, pictureUrl, locale, email, role, googleId]
                 );
                 user = user.rows[0];
             } else {

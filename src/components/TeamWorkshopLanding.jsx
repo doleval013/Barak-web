@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import FloatingWhatsApp from './FloatingWhatsApp';
 import imgFeed from '../assets/workshop/feed.jpg';
-import imgGate from '../assets/workshop/gate.jpg';
 import imgHighfive from '../assets/workshop/highfive.jpg';
 import imgRelax from '../assets/workshop/relax.jpg';
 import imgRelax2 from '../assets/workshop/relax2.jpg';

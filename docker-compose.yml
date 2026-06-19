@@ -1,7 +1,53 @@
 services:
-  web:
-    build: .
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: barakuser
+      POSTGRES_PASSWORD: barakpassword
+      POSTGRES_DB: barakdb
     ports:
-      - "3000:80"
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U barakuser -d barakdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+      - .env
+    environment:
+      DB_HOST: db
+      DB_USER: barakuser
+      DB_PASSWORD: barakpassword
+      DB_NAME: barakdb
+      DB_PORT: 5432
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads:/app/uploads
+    restart: always
+
+  web:
+    build:
+      context: .
+      args:
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
     container_name: barak-web-app
     restart: always
+
+volumes:
+  pgdata:
+  uploads:

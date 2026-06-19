@@ -94,10 +94,15 @@ a {
 }
 
 button {
-  border: none;
-  background: none;
   cursor: pointer;
   font-family: inherit;
+}
+button:not([class*='bg-']):not([style*='background']) {
+  background-color: transparent;
+  background: transparent;
+}
+button:not([class*='border']):not([style*='border']) {
+  border: none;
 }
 
 /* Modern Utilities */

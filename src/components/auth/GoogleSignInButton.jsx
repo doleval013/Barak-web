@@ -5,7 +5,7 @@
  * Falls back to a styled custom button if Google SDK isn't loaded.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function GoogleSignInButton({ 
@@ -17,20 +17,20 @@ export default function GoogleSignInButton({
     className = '' 
 }) {
     const { googleLoaded, renderGoogleButton, isAuthenticated } = useAuth();
-    const buttonId = useRef(`google-signin-${Math.random().toString(36).slice(2)}`);
+    const [buttonId] = useState(() => `google-signin-${Math.random().toString(36).slice(2)}`);
     const containerRef = useRef(null);
 
     useEffect(() => {
         if (googleLoaded && !isAuthenticated && containerRef.current) {
-            renderGoogleButton(buttonId.current, { size, theme, text, shape, width });
+            renderGoogleButton(buttonId, { size, theme, text, shape, width });
         }
-    }, [googleLoaded, isAuthenticated, renderGoogleButton, size, theme, text, shape, width]);
+    }, [googleLoaded, isAuthenticated, renderGoogleButton, buttonId, size, theme, text, shape, width]);
 
     if (isAuthenticated) return null;
 
     return (
         <div className={className} ref={containerRef}>
-            <div id={buttonId.current} />
+            <div id={buttonId} />
             {!googleLoaded && (
                 <button 
                     disabled 

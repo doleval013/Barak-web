@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
@@ -183,9 +183,11 @@ function App() {
   if (currentPath === '/admin') {
     return (
       <AuthProvider googleClientId={GOOGLE_CLIENT_ID}>
-        <ErrorBoundary>
-          <AdminDashboard />
-        </ErrorBoundary>
+        <LanguageProvider>
+          <ErrorBoundary>
+            <AdminDashboard />
+          </ErrorBoundary>
+        </LanguageProvider>
       </AuthProvider>
     );
   }

@@ -12,8 +12,9 @@
  * - refreshUser(): re-fetch user data from server
  */
 
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { AlertTriangle, X } from 'lucide-react';
 
 const AuthContext = createContext(null);
@@ -100,16 +101,9 @@ export function AuthProvider({ children, googleClientId }) {
     useEffect(() => {
         if (!googleClientId) return;
 
-        const initGoogle = () => {
-            if (window.google?.accounts?.id) {
-                setGoogleLoaded(true);
-                return;
-            }
-        };
-
         // Check if script already loaded
         if (window.google?.accounts?.id) {
-            setGoogleLoaded(true);
+            setTimeout(() => setGoogleLoaded(true), 0);
             return;
         }
 
@@ -366,19 +360,13 @@ export function AuthProvider({ children, googleClientId }) {
                 {blockedError && (
                     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                         {/* Overlay */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
+                        <div
                             onClick={() => setBlockedError(false)}
                             className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
-                        />
+                        ></div>
 
                         {/* Modal Box */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        <div
                             className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 z-10 relative overflow-hidden text-center"
                             style={{ direction: (localStorage.getItem('language') || 'he') === 'he' ? 'rtl' : 'ltr' }}
                         >
@@ -412,7 +400,7 @@ export function AuthProvider({ children, googleClientId }) {
                             >
                                 {(localStorage.getItem('language') || 'he') === 'he' ? 'סגור' : 'Close'}
                             </button>
-                        </motion.div>
+                        </div>
                     </div>
                 )}
             </AnimatePresence>

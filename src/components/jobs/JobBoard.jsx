@@ -6,7 +6,7 @@
  * Sign-in required to apply.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Briefcase, Clock, ArrowLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -34,11 +34,7 @@ export default function JobBoard() {
     const { language } = useLanguage();
     const isHebrew = language === 'he';
 
-    useEffect(() => {
-        fetchJobs();
-    }, []);
-
-    const fetchJobs = async () => {
+    const fetchJobs = useCallback(async () => {
         try {
             const res = await fetch('/api/jobs');
             if (res.ok) {
@@ -50,7 +46,13 @@ export default function JobBoard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            fetchJobs();
+        }, 0);
+    }, [fetchJobs]);
 
     const filteredJobs = jobs.filter(job => {
         if (!search) return true;
@@ -114,7 +116,7 @@ export default function JobBoard() {
                                     window.history.pushState({}, '', '/admin');
                                     window.dispatchEvent(new PopStateEvent('popstate'));
                                 }}
-                                className="flex items-center gap-2 px-5 py-3 bg-white text-blue-700 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-102 active:scale-98 transition-all text-sm shrink-0 border border-blue-100 self-start md:self-center cursor-pointer"
+                                className="flex items-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-102 active:scale-98 transition-all text-sm shrink-0 self-start md:self-center cursor-pointer"
                             >
                                 <Briefcase size={16} />
                                 {isHebrew ? 'ניהול משרות' : 'Manage Jobs'}

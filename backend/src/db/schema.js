@@ -130,6 +130,9 @@ const initSchema = async (pool) => {
                 creator_email VARCHAR(255),
                 edit_policy   VARCHAR(20) DEFAULT 'owner_only',
                 shared_recruiter_ids INTEGER[] DEFAULT '{}',
+                custom_fields JSONB DEFAULT '[]',
+                questions     JSONB DEFAULT '[]',
+                expiration_date TIMESTAMP DEFAULT NULL,
                 created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
@@ -141,7 +144,10 @@ const initSchema = async (pool) => {
             'creator_name VARCHAR(255)',
             'creator_email VARCHAR(255)',
             "edit_policy VARCHAR(20) DEFAULT 'owner_only'",
-            "shared_recruiter_ids INTEGER[] DEFAULT '{}'"
+            "shared_recruiter_ids INTEGER[] DEFAULT '{}'",
+            "custom_fields JSONB DEFAULT '[]'",
+            "questions JSONB DEFAULT '[]'",
+            "expiration_date TIMESTAMP DEFAULT NULL"
         ];
 
         for (const col of jobColumns) {
@@ -151,6 +157,23 @@ const initSchema = async (pool) => {
                 // Ignore duplicate column errors
             }
         }
+
+        // ============================================================
+        // NEW: job_templates table
+        // Reusable templates for job postings
+        // ============================================================
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS job_templates (
+                id            SERIAL PRIMARY KEY,
+                title         VARCHAR(255) NOT NULL,
+                description   TEXT,
+                custom_fields JSONB DEFAULT '[]',
+                questions     JSONB DEFAULT '[]',
+                created_by    INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
 
         // ============================================================
         // NEW: applications table
@@ -168,9 +191,15 @@ const initSchema = async (pool) => {
                 cv_url            TEXT,
                 cover_letter      TEXT,
                 status            VARCHAR(20) DEFAULT 'pending',
+                answers           JSONB DEFAULT '{}',
                 applied_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
+
+        // Migration: Add answers to applications if missing
+        try {
+            await pool.query(`ALTER TABLE applications ADD COLUMN IF NOT EXISTS answers JSONB DEFAULT '{}'`);
+        } catch (e) {}
 
         // Indexes for applications
         await pool.query(`
@@ -178,6 +207,24 @@ const initSchema = async (pool) => {
         `);
         await pool.query(`
             CREATE INDEX IF NOT EXISTS idx_applications_user_id ON applications(user_id)
+        `);
+
+        // ============================================================
+        // NEW: site_settings table
+        // Site-wide settings (e.g. email notifications toggle)
+        // ============================================================
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS site_settings (
+                key   VARCHAR(255) PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+        `);
+
+        // Seed default key-value pairs if not exists
+        await pool.query(`
+            INSERT INTO site_settings (key, value)
+            VALUES ('email_notifications_enabled', 'false')
+            ON CONFLICT (key) DO NOTHING
         `);
 
         console.log('[DB] Schema initialized successfully — all tables ready');

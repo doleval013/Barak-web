@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CheckCircle, X, Play } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -8,8 +8,9 @@ export default function Hero() {
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
     const { t } = useLanguage();
 
-    // Generate random positions for paw prints once on mount
-    const pawPrints = useMemo(() => {
+    const [pawPrints, setPawPrints] = useState([]);
+
+    useEffect(() => {
         // Define safe horizontal zones to avoid center text
         // Left side: 2-25%, Right side: 75-98%
         const xZones = [
@@ -31,10 +32,13 @@ export default function Hero() {
                 // bias towards positive delay to have fewer paws initially
                 // -0.2*D to +0.8*D => ~20% visible at start
                 delay: Math.random() * duration - (duration * 0.2),
-                duration: duration
+                duration: duration,
+                rotation: `${Math.random() * 30 - 15}deg`
             });
         }
-        return paws;
+        setTimeout(() => {
+            setPawPrints(paws);
+        }, 0);
     }, []);
 
     return (
@@ -167,7 +171,7 @@ export default function Hero() {
                         style={{
                             left: paw.left,
                             top: paw.top,
-                            '--r': `${Math.random() * 30 - 15}deg`,
+                            '--r': paw.rotation,
                             animationDuration: `${paw.duration}s`,
                             animationDelay: `${paw.delay}s`
                         }}

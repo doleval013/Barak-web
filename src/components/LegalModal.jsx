@@ -9,7 +9,9 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'accessibilit
 
     useEffect(() => {
         if (isOpen) {
-            setActiveTab(initialTab);
+            setTimeout(() => {
+                setActiveTab(initialTab);
+            }, 0);
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';

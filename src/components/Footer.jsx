@@ -20,12 +20,6 @@ const TikTok = ({ size = 24, className = "" }) => (
 
 export default function Footer({ onOpenLegal }) {
     const { t } = useLanguage();
-    const socialLinks = [
-        { icon: Facebook, href: "https://www.facebook.com/barakaloni.dogs", label: "Facebook" },
-        { icon: Instagram, href: "https://www.instagram.com/barakaloni.dogs/", label: "Instagram" },
-        { icon: TikTok, href: "https://www.tiktok.com/@barakaloni", label: "TikTok" },
-        { icon: Youtube, href: "https://www.youtube.com/channel/UC56vSCOnTh1K-5FkiwoIdvA/videos", label: "YouTube" },
-    ];
 
     return (
         <footer className="glass-panel mt-20 py-12 border-x-0 border-b-0 rounded-none relative z-10">

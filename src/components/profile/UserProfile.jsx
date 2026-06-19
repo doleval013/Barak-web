@@ -8,13 +8,20 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, User, Mail, Phone, Calendar, FileText, Upload, Save, Check, AlertCircle, AlertTriangle, Trash2, X } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { ArrowLeft, User, Mail, Phone, Calendar, FileText, Upload, Save, Check, AlertCircle, AlertTriangle, Trash2, X, Clock, Eye, Briefcase } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 
+const STATUS_CONFIG = {
+    pending: { label: 'ממתין', labelEn: 'Pending', color: 'bg-amber-50 text-amber-700', icon: Clock },
+    reviewed: { label: 'נבדק', labelEn: 'Reviewed', color: 'bg-blue-50 text-blue-700', icon: Eye },
+    accepted: { label: 'התקבל', labelEn: 'Accepted', color: 'bg-green-50 text-green-700', icon: Check },
+    rejected: { label: 'נדחה', labelEn: 'Rejected', color: 'bg-red-50 text-red-700', icon: X },
+};
+
 export default function UserProfile() {
-    const { user, isLoading, updateProfile, uploadCV, deleteCV, deleteAccount } = useAuth();
+    const { user, isLoading, updateProfile, uploadCV, deleteCV, deleteAccount, authFetch } = useAuth();
     const { language } = useLanguage();
     const isHebrew = language === 'he';
     const fileInputRef = useRef(null);
@@ -29,6 +36,8 @@ export default function UserProfile() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [deletingCV, setDeletingCV] = useState(false);
+    const [applications, setApplications] = useState([]);
+    const [appsLoading, setAppsLoading] = useState(true);
 
     // Redirect to home if not logged in
     useEffect(() => {
@@ -37,6 +46,28 @@ export default function UserProfile() {
             window.dispatchEvent(new PopStateEvent('popstate'));
         }
     }, [user, isLoading]);
+
+    // Fetch user's job applications
+    useEffect(() => {
+        const fetchApps = async () => {
+            if (!user) return;
+            try {
+                const res = await authFetch('/api/jobs/my/applications');
+                if (res.ok) {
+                    const data = await res.json();
+                    setApplications(data.applications || []);
+                }
+            } catch (err) {
+                console.error('[UserProfile] Apps fetch error:', err);
+            } finally {
+                setAppsLoading(false);
+            }
+        };
+
+        setTimeout(() => {
+            fetchApps();
+        }, 0);
+    }, [user, authFetch]);
 
     const navigateBack = () => {
         window.history.pushState({}, '', '/');
@@ -154,9 +185,7 @@ export default function UserProfile() {
 
             {/* Profile Form */}
             <div className="max-w-3xl mx-auto px-4 py-8">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                <div
                     className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden"
                 >
                     {/* Google Info (read-only) */}
@@ -337,13 +366,60 @@ export default function UserProfile() {
                             PDF, DOC, DOCX — {isHebrew ? 'עד 5MB' : 'max 5MB'}
                         </p>
                     </div>
-                </motion.div>
+                </div>
+
+                {/* Applications Section */}
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mt-6 p-6">
+                    <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <Briefcase size={20} className="text-blue-600" />
+                        {isHebrew ? 'הגשות המועמדות שלי' : 'My Job Applications'}
+                    </h2>
+                    
+                    {appsLoading ? (
+                        <div className="flex justify-center py-6">
+                            <div className="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+                        </div>
+                    ) : applications.length === 0 ? (
+                        <div className="text-center py-8 text-slate-400">
+                            <p className="text-sm">{isHebrew ? 'טרם הגשתם מועמדות למשרות כלשהן.' : 'You have not applied to any jobs yet.'}</p>
+                            <button
+                                onClick={() => {
+                                    window.history.pushState({}, '', '/jobs');
+                                    window.dispatchEvent(new PopStateEvent('popstate'));
+                                }}
+                                className="mt-3 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-semibold hover:bg-blue-100 transition-colors border-none cursor-pointer"
+                            >
+                                {isHebrew ? 'צפייה במשרות פתוחות' : 'Browse Open Jobs'}
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="divide-y divide-slate-100">
+                            {applications.map((app) => {
+                                const status = STATUS_CONFIG[app.status] || STATUS_CONFIG.pending;
+                                const StatusIcon = status.icon;
+                                return (
+                                    <div key={app.id} className="py-4 first:pt-0 last:pb-0 flex items-center justify-between gap-4">
+                                        <div className="min-w-0">
+                                            <h4 className="font-bold text-slate-800 text-sm truncate">{app.jobTitle}</h4>
+                                            <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
+                                                {app.jobLocation && <span>📍 {app.jobLocation}</span>}
+                                                <span>📅 {new Date(app.appliedAt).toLocaleDateString(isHebrew ? 'he-IL' : 'en-US')}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 ${status.color}`}>
+                                            <StatusIcon size={12} />
+                                            <span>{isHebrew ? status.label : status.labelEn}</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
 
                 {/* Danger Zone */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
+                <div
                     className="bg-red-50/20 rounded-2xl border border-red-100/60 shadow-sm overflow-hidden mt-6 p-6"
                 >
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -371,7 +447,7 @@ export default function UserProfile() {
                             </button>
                         </div>
                     </div>
-                </motion.div>
+                </div>
             </div>
 
             {/* Delete Confirmation Modal */}
@@ -379,22 +455,16 @@ export default function UserProfile() {
                 {showDeleteConfirm && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         {/* Overlay */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
+                        <div
                             onClick={() => {
                                 setShowDeleteConfirm(false);
                                 setError('');
                             }}
                             className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
-                        />
+                        ></div>
 
                         {/* Modal Box */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        <div
                             className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 z-10 relative overflow-hidden"
                         >
                             {/* Accent line */}
@@ -461,7 +531,7 @@ export default function UserProfile() {
                                     )}
                                 </button>
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
                 )}
             </AnimatePresence>

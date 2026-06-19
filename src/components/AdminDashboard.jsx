@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Lock, BarChart, RefreshCw, Eye, Video, MousePointer, Activity, Globe, MapPin, Smartphone, Users, ArrowUpRight, TrendingUp, Clock, Monitor, MessageCircle, Filter, Layers, Zap, Target, ChevronRight, Briefcase, UserCheck, Home } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import AdminJobManager from './admin/AdminJobManager';
 import AdminApplicationViewer from './admin/AdminApplicationViewer';
 import AdminUserList from './admin/AdminUserList';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const TABS = [
     { id: 'overview', label: 'Overview', icon: Layers },
@@ -52,9 +52,8 @@ function SectionTitle({ title, sub }) {
 }
 
 export default function AdminDashboard() {
+    const { language, t, toggleLanguage } = useLanguage();
     const [authToken, setAuthToken] = useState(() => sessionStorage.getItem('barak_admin_token') || '');
-    const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem('barak_admin_token'));
-    const [password, setPassword] = useState('');
     const [stats, setStats] = useState({
         visits:0, visitsToday:0, liveUsers:0, videoClicks:0, contactClicks:0, programViews:0,
         trendData:[], videoTrend:[], contactTrend:[], durationTrend:[], deviceStats:[], pageStats:[],
@@ -66,7 +65,6 @@ export default function AdminDashboard() {
         whatsappClicks:{ clicks_24h:0, clicks_30d:0 }, timePerPage:[], availablePages:[]
     });
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
     const [uptime, setUptime] = useState(0);
     const [activeTab, setActiveTab] = useState('overview');
     const [feedFilter, setFeedFilter] = useState('all');
@@ -76,73 +74,9 @@ export default function AdminDashboard() {
     // Use auth context
     const authContext = useAuth();
 
-    useEffect(() => {
-        const isManager = authContext?.isAdmin || authContext?.user?.role === 'recruiter';
-        if (isManager && authContext?.token) {
-            setAuthToken(authContext.token);
-            setIsAuthenticated(true);
-        }
-    }, [authContext?.isAdmin, authContext?.user?.role, authContext?.token]);
-
-    const visibleTabs = useMemo(() => {
-        const isRecruiter = authContext?.user?.role === 'recruiter' && !authContext?.isAdmin;
-        if (isRecruiter) {
-            return TABS.filter(t => t.id === 'jobs');
-        }
-        return TABS;
-    }, [authContext?.isAdmin, authContext?.user?.role]);
-
-    useEffect(() => {
-        if (authContext?.user?.role === 'recruiter' && !authContext?.isAdmin) {
-            setActiveTab('jobs');
-        }
-    }, [authContext?.user?.role, authContext?.isAdmin]);
-
-    // Redirect to home if not logged in or doesn't have manager/recruiter role
-    useEffect(() => {
-        if (!authContext?.isLoading) {
-            const isManager = authContext?.isAdmin || authContext?.user?.role === 'recruiter';
-            if (!isManager) {
-                window.history.pushState({}, '', '/');
-                window.dispatchEvent(new PopStateEvent('popstate'));
-            }
-        }
-    }, [authContext?.isLoading, authContext?.isAdmin, authContext?.user?.role]);
-
-    useEffect(() => {
-        if (!authToken) return;
-        fetchStats(authToken, pageFilter);
-        const interval = setInterval(() => fetchStats(authToken, pageFilter), 30000);
-        return () => clearInterval(interval);
-    }, [authToken, pageFilter]);
-
-    const hashPassword = async (pass) => {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(pass);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-    };
-
-    const handleLogin = async (e) => {
-        e.preventDefault();
+    // Define fetchStats first so it can be safely referenced
+    const fetchStats = useCallback(async (token, page) => {
         setLoading(true);
-        const hash = await hashPassword(password);
-        try {
-            const res = await fetch('/api/stats', { headers: { 'x-admin-auth': hash } });
-            if (res.ok) {
-                setAuthToken(hash);
-                setIsAuthenticated(true);
-                sessionStorage.setItem('barak_admin_token', hash);
-                localStorage.setItem('barak_is_admin', 'true');
-                const data = await res.json();
-                setStats(prev => ({ ...prev, ...data }));
-                if (data.uptime) setUptime(Math.floor(data.uptime / 60));
-            } else { setError('Invalid Password'); }
-        } catch { setError('Connection Error'); }
-        finally { setLoading(false); }
-    };
-
-    const fetchStats = async (token, page) => {
         try {
             const pageParam = page && page !== 'all' ? `?page=${encodeURIComponent(page)}` : '';
             const url = `/api/stats${pageParam}`;
@@ -161,12 +95,58 @@ export default function AdminDashboard() {
                 if (data.uptime) setUptime(Math.floor(data.uptime / 60));
             } else if (res.status === 401) {
                 if (token !== authContext?.token) {
-                    setAuthToken(''); setIsAuthenticated(false);
+                    setAuthToken('');
                     sessionStorage.removeItem('barak_admin_token');
                 }
             }
         } catch (err) { console.error(err); }
-    };
+        finally { setLoading(false); }
+    }, [authContext]);
+
+    useEffect(() => {
+        const isManager = authContext?.isAdmin || authContext?.user?.role === 'recruiter';
+        if (isManager && authContext?.token) {
+            setTimeout(() => {
+                setAuthToken(authContext.token);
+            }, 0);
+        }
+    }, [authContext?.isAdmin, authContext?.user?.role, authContext?.token]);
+
+    const visibleTabs = useMemo(() => {
+        const isRecruiter = authContext?.user?.role === 'recruiter' && !authContext?.isAdmin;
+        if (isRecruiter) {
+            return TABS.filter(t => t.id === 'jobs');
+        }
+        return TABS;
+    }, [authContext?.isAdmin, authContext?.user?.role]);
+
+    useEffect(() => {
+        if (authContext?.user?.role === 'recruiter' && !authContext?.isAdmin) {
+            setTimeout(() => {
+                setActiveTab('jobs');
+            }, 0);
+        }
+    }, [authContext?.user?.role, authContext?.isAdmin]);
+
+    // Redirect to home if not logged in or doesn't have manager/recruiter role
+    useEffect(() => {
+        if (!authContext?.isLoading) {
+            const isManager = authContext?.isAdmin || authContext?.user?.role === 'recruiter';
+            if (!isManager) {
+                window.history.pushState({}, '', '/');
+                window.dispatchEvent(new PopStateEvent('popstate'));
+            }
+        }
+    }, [authContext?.isLoading, authContext?.isAdmin, authContext?.user?.role]);
+
+    useEffect(() => {
+        if (!authToken) return;
+        setTimeout(() => {
+            fetchStats(authToken, pageFilter);
+        }, 0);
+        const interval = setInterval(() => fetchStats(authToken, pageFilter), 30000);
+        return () => clearInterval(interval);
+    }, [authToken, pageFilter, fetchStats]);
 
     const formatUptime = (mins) => {
         const d = Math.floor(mins/1440), h = Math.floor((mins%1440)/60), m = mins%60;
@@ -232,7 +212,7 @@ export default function AdminDashboard() {
     }, [stats.peakHours]);
 
     const peakDaysData = useMemo(() => {
-        const days = DAY_NAMES.map((n,i)=>({name:n,count:0}));
+        const days = DAY_NAMES.map(n=>({name:n,count:0}));
         (stats.peakDays||[]).forEach(d => { if(days[d.dow]) days[d.dow].count = parseInt(d.count); });
         return days;
     }, [stats.peakDays]);
@@ -273,22 +253,28 @@ export default function AdminDashboard() {
 
     // RENDER
     return (
-        <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900" dir="ltr">
+        <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900" dir={language === 'he' ? 'rtl' : 'ltr'}>
             {/* SIDEBAR */}
-            <div className="fixed left-0 top-0 bottom-0 w-[220px] bg-slate-900 text-white z-30 hidden lg:flex flex-col">
+            <div className={`fixed top-0 bottom-0 w-[220px] bg-slate-900 text-white z-30 hidden lg:flex flex-col ${language === 'he' ? 'right-0' : 'left-0'}`}>
                 <div className="p-6 border-b border-slate-700/50">
-                    <h1 className="text-lg font-bold tracking-tight">Mission Control</h1>
-                    <p className="text-slate-400 text-xs mt-1">Analytics Dashboard</p>
+                    <h1 className="text-lg font-bold tracking-tight">{t('mission_control')}</h1>
+                    <p className="text-slate-400 text-xs mt-1">{t('analytics_dashboard_sub')}</p>
                 </div>
                 <nav className="flex-1 p-3 space-y-1">
                     {visibleTabs.map(tab => (
                         <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab===tab.id ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
-                            <tab.icon size={18}/> {tab.label}
+                            <tab.icon size={18}/> {t(tab.id)}
                         </button>
                     ))}
                 </nav>
-                <div className="p-3 border-t border-slate-700/30">
+                <div className="p-3 border-t border-slate-700/30 space-y-1">
+                    <button
+                        onClick={toggleLanguage}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                    >
+                        <Globe size={18}/> {language === 'he' ? 'English' : 'עברית'}
+                    </button>
                     <button
                         onClick={() => {
                             window.history.pushState({}, '', '/');
@@ -296,11 +282,11 @@ export default function AdminDashboard() {
                         }}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
                     >
-                        <Home size={18}/> Home Website
+                        <Home size={18}/> {t('home_website')}
                     </button>
                 </div>
                 <div className="p-4 border-t border-slate-700/50 text-xs text-slate-500">
-                    <p>Uptime: {formatUptime(uptime)}</p>
+                    <p>{t('uptime')}: {formatUptime(uptime)}</p>
                     <p>v{stats.version}</p>
                 </div>
             </div>
@@ -310,9 +296,15 @@ export default function AdminDashboard() {
                 {visibleTabs.map(tab => (
                     <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                         className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors ${activeTab===tab.id ? 'text-blue-600' : 'text-slate-400'}`}>
-                        <tab.icon size={18}/> {tab.label}
+                        <tab.icon size={18}/> {t(tab.id)}
                     </button>
                 ))}
+                <button
+                    onClick={toggleLanguage}
+                    className="flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium text-slate-400 transition-colors cursor-pointer"
+                >
+                    <Globe size={18}/> {language === 'he' ? 'EN' : 'עב'}
+                </button>
                 <button
                     onClick={() => {
                         window.history.pushState({}, '', '/');
@@ -320,12 +312,12 @@ export default function AdminDashboard() {
                     }}
                     className="flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium text-slate-400 transition-colors cursor-pointer"
                 >
-                    <Home size={18}/> Home
+                    <Home size={18}/> {language === 'he' ? 'בית' : 'Home'}
                 </button>
             </div>
 
             {/* MAIN CONTENT */}
-            <div className="lg:ml-[220px] p-4 md:p-8 pb-24 lg:pb-8">
+            <div className={`${language === 'he' ? 'lg:mr-[220px]' : 'lg:ml-[220px]'} p-4 md:p-8 pb-24 lg:pb-8`}>
                 {/* TOP BAR */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
                     <div className="flex items-center gap-4">

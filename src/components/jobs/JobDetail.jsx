@@ -1,12 +1,12 @@
 /**
  * JobDetail — Single job detail page with apply functionality
  * 
- * Shows full job description.
+ * Shows full job description and custom fields.
  * Sign-in required to apply.
- * Shows application form modal for authenticated users.
+ * Render candidate questions with validation in apply modal.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, MapPin, Briefcase, Clock, User, Send, Check, X, LogIn } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -24,6 +24,7 @@ export default function JobDetail({ jobId, onBack }) {
     const [loading, setLoading] = useState(true);
     const [showApplyModal, setShowApplyModal] = useState(false);
     const [coverLetter, setCoverLetter] = useState('');
+    const [answers, setAnswers] = useState({});
     const [applying, setApplying] = useState(false);
     const [applied, setApplied] = useState(false);
     const [error, setError] = useState('');
@@ -31,11 +32,7 @@ export default function JobDetail({ jobId, onBack }) {
     const { language } = useLanguage();
     const isHebrew = language === 'he';
 
-    useEffect(() => {
-        fetchJob();
-    }, [jobId]);
-
-    const fetchJob = async () => {
+    const fetchJob = useCallback(async () => {
         try {
             const res = await fetch(`/api/jobs/${jobId}`);
             if (res.ok) {
@@ -46,16 +43,112 @@ export default function JobDetail({ jobId, onBack }) {
         } finally {
             setLoading(false);
         }
+    }, [jobId]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            fetchJob();
+        }, 0);
+    }, [jobId, fetchJob]);
+
+    const isQuestionVisible = useCallback(function checkVisible(q, allQuestions, currentAnswers) {
+        if (!q.dependsOn || !q.dependsOn.parentId) return true;
+        
+        const parentQ = allQuestions.find(parent => parent.id === q.dependsOn.parentId);
+        if (!parentQ) return true;
+        
+        if (!checkVisible(parentQ, allQuestions, currentAnswers)) return false;
+        
+        const parentAnswer = currentAnswers[parentQ.text];
+        
+        if (parentQ.type === 'checkbox') {
+            const isChecked = !!parentAnswer;
+            return q.dependsOn.triggerValues.some(val => {
+                const valBool = (val === true || val === 'true');
+                return isChecked === valBool;
+            });
+        } else if (parentQ.type === 'list') {
+            if (parentAnswer === undefined || parentAnswer === '') return false;
+            return q.dependsOn.triggerValues.includes(parentAnswer);
+        }
+        
+        return true;
+    }, []);
+
+    const getCleanedAnswers = useCallback((allQuestions, currentAnswers) => {
+        const cleaned = { ...currentAnswers };
+        
+        const isVisible = (q) => {
+            if (!q.dependsOn || !q.dependsOn.parentId) return true;
+            const parentQ = allQuestions.find(p => p.id === q.dependsOn.parentId);
+            if (!parentQ) return true;
+            if (!isVisible(parentQ)) return false;
+            
+            const parentAnswer = cleaned[parentQ.text];
+            if (parentQ.type === 'checkbox') {
+                const isChecked = !!parentAnswer;
+                return q.dependsOn.triggerValues.some(val => (val === true || val === 'true') === isChecked);
+            } else if (parentQ.type === 'list') {
+                if (parentAnswer === undefined || parentAnswer === '') return false;
+                return q.dependsOn.triggerValues.includes(parentAnswer);
+            }
+            return true;
+        };
+        
+        for (const q of allQuestions) {
+            if (!isVisible(q) && cleaned[q.text] !== undefined) {
+                delete cleaned[q.text];
+            }
+        }
+        
+        return cleaned;
+    }, []);
+
+    const handleAnswerChange = (questionText, value) => {
+        setAnswers(prev => {
+            const next = { ...prev, [questionText]: value };
+            return getCleanedAnswers(job?.questions || [], next);
+        });
     };
 
     const handleApply = async () => {
+        // Validate candidate questions
+        if (job.questions && job.questions.length > 0) {
+            for (const q of job.questions) {
+                if (!isQuestionVisible(q, job.questions, answers)) {
+                    continue;
+                }
+                if (q.required) {
+                    const ans = answers[q.text];
+                    if (q.type === 'checkbox') {
+                        if (!ans) {
+                            setError(isHebrew 
+                                ? `עליכם לאשר את סעיף החובה: "${q.text}"` 
+                                : `You must confirm the required item: "${q.text}"`);
+                            return;
+                        }
+                    } else {
+                        if (!ans || (typeof ans === 'string' && !ans.trim())) {
+                            setError(isHebrew 
+                                ? `נא לענות על השאלה: "${q.text}"` 
+                                : `Please answer: "${q.text}"`);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         setApplying(true);
         setError('');
 
         try {
             const res = await authFetch(`/api/jobs/${jobId}/apply`, {
                 method: 'POST',
-                body: JSON.stringify({ coverLetter: coverLetter || null }),
+                body: JSON.stringify({ 
+                    coverLetter: coverLetter || null,
+                    answers: answers 
+                }),
             });
 
             if (res.ok) {
@@ -94,7 +187,7 @@ export default function JobDetail({ jobId, onBack }) {
                     <h2 className="text-xl font-bold text-slate-700 mb-2">
                         {isHebrew ? 'המשרה לא נמצאה' : 'Job not found'}
                     </h2>
-                    <button onClick={onBack} className="text-blue-600 hover:underline">
+                    <button onClick={onBack} className="text-blue-600 hover:underline bg-transparent border-none cursor-pointer font-semibold">
                         {isHebrew ? 'חזרה למשרות' : 'Back to jobs'}
                     </button>
                 </div>
@@ -109,7 +202,7 @@ export default function JobDetail({ jobId, onBack }) {
                 <div className="max-w-4xl mx-auto px-4 py-10">
                     <button
                         onClick={onBack}
-                        className="flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm"
+                        className="flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm bg-transparent border-none cursor-pointer font-semibold"
                     >
                         <ArrowLeft size={16} />
                         {isHebrew ? 'חזרה למשרות' : 'Back to Jobs'}
@@ -151,9 +244,25 @@ export default function JobDetail({ jobId, onBack }) {
                             <h2 className="text-lg font-bold text-slate-900 mb-4">
                                 {isHebrew ? 'תיאור המשרה' : 'Job Description'}
                             </h2>
-                            <div className="prose prose-slate max-w-none whitespace-pre-wrap text-slate-600 leading-relaxed">
+                            <div className="prose prose-slate max-w-none whitespace-pre-wrap text-slate-600 leading-relaxed mb-6">
                                 {job.description}
                             </div>
+
+                            {/* Render candidate questions list */}
+                            {job.questions && job.questions.length > 0 && (
+                                <div className="mt-8 pt-8 border-t border-slate-100">
+                                    <h3 className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wider">
+                                        {isHebrew ? 'שאלות למועמד בהגשת מועמדות' : 'Candidate Application Questions'}
+                                    </h3>
+                                    <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                        {job.questions.map((q, idx) => (
+                                            <li key={idx}>
+                                                <span className="font-semibold">{q.text}</span> ({q.type === 'list' ? (isHebrew ? 'רשימה / בחירה' : 'Dropdown List') : q.type === 'checkbox' ? (isHebrew ? 'תיבת סימון (כן/לא)' : 'Checkbox') : (isHebrew ? 'טקסט חופשי' : 'Free Text')})
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -191,8 +300,12 @@ export default function JobDetail({ jobId, onBack }) {
                                         </div>
                                     </div>
                                     <button
-                                        onClick={() => setShowApplyModal(true)}
-                                        className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                                        onClick={() => {
+                                            setAnswers({});
+                                            setError('');
+                                            setShowApplyModal(true);
+                                        }}
+                                        className="w-full py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 cursor-pointer border-none"
                                     >
                                         <Send size={16} />
                                         {isHebrew ? 'הגש מועמדות' : 'Apply'}
@@ -233,22 +346,22 @@ export default function JobDetail({ jobId, onBack }) {
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-white rounded-2xl w-full max-w-lg shadow-2xl"
+                            className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-y-auto max-h-[90vh]"
                             onClick={(e) => e.stopPropagation()}
                             dir={isHebrew ? 'rtl' : 'ltr'}
                         >
-                            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+                            <div className="flex items-center justify-between p-6 border-b border-slate-100 sticky top-0 bg-white z-10">
                                 <h3 className="text-lg font-bold text-slate-900">
                                     {isHebrew ? 'הגשת מועמדות' : 'Apply to'} — {job.title}
                                 </h3>
-                                <button onClick={() => setShowApplyModal(false)} className="p-1 text-slate-400 hover:text-slate-600">
+                                <button onClick={() => setShowApplyModal(false)} className="p-1 text-slate-400 hover:text-slate-600 bg-transparent border-none cursor-pointer">
                                     <X size={20} />
                                 </button>
                             </div>
 
-                            <div className="p-6">
+                            <div className="p-6 space-y-4">
                                 {/* User info summary */}
-                                <div className="bg-slate-50 rounded-xl p-4 mb-4 text-sm">
+                                <div className="bg-slate-50 rounded-xl p-4 text-sm">
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
                                             <span className="text-slate-500">{isHebrew ? 'שם:' : 'Name:'}</span>
@@ -279,33 +392,89 @@ export default function JobDetail({ jobId, onBack }) {
                                 </div>
 
                                 {/* Cover Letter */}
-                                <label className="block mb-2 text-sm font-medium text-slate-700">
-                                    {isHebrew ? 'מכתב מקדים (אופציונלי)' : 'Cover Letter (optional)'}
-                                </label>
-                                <textarea
-                                    value={coverLetter}
-                                    onChange={(e) => setCoverLetter(e.target.value)}
-                                    placeholder={isHebrew ? 'ספרו לנו קצת על עצמכם...' : 'Tell us a bit about yourself...'}
-                                    rows={4}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all resize-none text-sm"
-                                />
+                                <div>
+                                    <label className="block mb-2 text-sm font-medium text-slate-700">
+                                        {isHebrew ? 'מכתב מקדים (אופציונלי)' : 'Cover Letter (optional)'}
+                                    </label>
+                                    <textarea
+                                        value={coverLetter}
+                                        onChange={(e) => setCoverLetter(e.target.value)}
+                                        placeholder={isHebrew ? 'ספרו לנו קצת על עצמכם...' : 'Tell us a bit about yourself...'}
+                                        rows={3}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all resize-none text-sm bg-white"
+                                    />
+                                </div>
+
+                                {/* Dynamic Questions with conditional visibility */}
+                                {job.questions && job.questions.length > 0 && (() => {
+                                     const visibleQuestions = job.questions.filter(q => isQuestionVisible(q, job.questions, answers));
+                                     if (visibleQuestions.length === 0) return null;
+                                     return (
+                                         <div className="pt-4 border-t border-slate-100 space-y-4">
+                                             <h4 className="text-sm font-bold text-slate-900">
+                                                 {isHebrew ? 'שאלות למועמד בהגשת מועמדות' : 'Candidate Questions'}
+                                             </h4>
+                                             {visibleQuestions.map((q, idx) => (
+                                                 <div key={idx} className="space-y-1.5 animate-fadeIn">
+                                                     <label className="block text-sm font-medium text-slate-700">
+                                                         {q.text} {q.required && <span className="text-red-500">*</span>}
+                                                     </label>
+                                                     {q.type === 'checkbox' ? (
+                                                         <label className="flex items-center gap-2 cursor-pointer select-none text-sm text-slate-600">
+                                                             <input
+                                                                 type="checkbox"
+                                                                 checked={!!answers[q.text]}
+                                                                 onChange={(e) => handleAnswerChange(q.text, e.target.checked)}
+                                                                 className="rounded border-slate-300 text-blue-600 focus:ring-blue-200 cursor-pointer"
+                                                             />
+                                                             <span>{isHebrew ? 'כן, מאשר/ת' : 'Yes, I confirm'}</span>
+                                                         </label>
+                                                     ) : q.type === 'list' ? (
+                                                         <select
+                                                             value={answers[q.text] || ''}
+                                                             onChange={(e) => handleAnswerChange(q.text, e.target.value)}
+                                                             className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm cursor-pointer bg-white"
+                                                         >
+                                                             <option value="">
+                                                                 -- {isHebrew ? 'בחרו אפשרות' : 'Select an option'} --
+                                                             </option>
+                                                             {(q.options || []).map((opt, oIdx) => (
+                                                                 <option key={oIdx} value={opt}>
+                                                                     {opt}
+                                                                 </option>
+                                                             ))}
+                                                         </select>
+                                                     ) : (
+                                                         <textarea
+                                                             value={answers[q.text] || ''}
+                                                             onChange={(e) => handleAnswerChange(q.text, e.target.value)}
+                                                             placeholder={isHebrew ? 'הקלידו תשובה כאן...' : 'Type your answer here...'}
+                                                             rows={2}
+                                                             className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm resize-none bg-white"
+                                                         />
+                                                     )}
+                                                 </div>
+                                             ))}
+                                         </div>
+                                     );
+                                 })()}
 
                                 {error && (
-                                    <p className="text-red-500 text-sm mt-2">{error}</p>
+                                    <p className="text-red-500 text-sm font-semibold mt-2">{error}</p>
                                 )}
                             </div>
 
-                            <div className="flex gap-3 p-6 pt-0">
+                            <div className="flex gap-3 p-6 pt-0 sticky bottom-0 bg-white border-t border-slate-50">
                                 <button
                                     onClick={() => setShowApplyModal(false)}
-                                    className="flex-1 py-3 border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors"
+                                    className="flex-1 py-3 border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition-colors cursor-pointer bg-white"
                                 >
                                     {isHebrew ? 'ביטול' : 'Cancel'}
                                 </button>
                                 <button
                                     onClick={handleApply}
                                     disabled={applying}
-                                    className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                                    className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer border-none shadow-sm"
                                 >
                                     {applying ? (
                                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -4,8 +4,7 @@
  * Shows all jobs the user has applied to, with status badges.
  */
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, Briefcase, Clock, Check, X, Eye, MapPin } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -24,11 +23,7 @@ export default function MyApplications() {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (isAuthenticated) fetchApplications();
-    }, [isAuthenticated]);
-
-    const fetchApplications = async () => {
+    const fetchApplications = useCallback(async () => {
         try {
             const res = await authFetch('/api/jobs/my/applications');
             if (res.ok) {
@@ -40,7 +35,15 @@ export default function MyApplications() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [authFetch]);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            setTimeout(() => {
+                fetchApplications();
+            }, 0);
+        }
+    }, [isAuthenticated, fetchApplications]);
 
     const navigateBack = () => {
         window.history.pushState({}, '', '/');
@@ -98,16 +101,13 @@ export default function MyApplications() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {applications.map((app, i) => {
+                        {applications.map((app) => {
                             const status = STATUS_CONFIG[app.status] || STATUS_CONFIG.pending;
                             const StatusIcon = status.icon;
 
                             return (
-                                <motion.div
+                                <div
                                     key={app.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.05 }}
                                     className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm"
                                 >
                                     <div className="flex items-start justify-between gap-4">
@@ -133,7 +133,7 @@ export default function MyApplications() {
                                             {isHebrew ? status.label : status.labelEn}
                                         </div>
                                     </div>
-                                </motion.div>
+                                </div>
                             );
                         })}
                     </div>
